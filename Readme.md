@@ -1,7 +1,7 @@
 # Личный проект «Киноман» [![Build status][travis-image]][travis-url]
 
 * Студент: [Никита Толстик](https://up.htmlacademy.ru/ecmascript/10/user/1126133).
-* Наставник: `Неизвестно`.
+* Наставник: [Александр Тимоновский](https://up.htmlacademy.ru/javascript/18/user/768125).
 
 ---
 
