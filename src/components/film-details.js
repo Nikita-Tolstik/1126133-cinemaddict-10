@@ -1,4 +1,94 @@
-export const createFilmDetailsPopupTemplate = () => `<section class="film-details">
+import {genres, RANDOM_NUMBER, ZERO, ONE} from '../const.js';
+import {getRandomNumber} from '../util.js';
+
+const COMMENT_MAX = 7;
+
+
+const faces = [
+  `angry.png`,
+  `puke.png`,
+  `sleeping.png`,
+  `smile.png`
+];
+
+const comments = [
+  `Interesting setting and a good cast`,
+  `Booooooooooring`,
+  `Very very old. Meh`,
+  `Almost two hours? Seriously?`,
+  `Very very interesting movie`,
+  `I liked the actors and the genre of the film`,
+  `Cool special effects and shooting`
+];
+
+const commentAuthors = [
+  `Jeff Bridges`,
+  `Sidney Poitier`,
+  `Gene Hackman`,
+  `Charles Chaplin`,
+  `Ben Kingsley`,
+  `Russell Crowe`,
+  `Ralph Fiennes`
+];
+
+const times = [
+  `2019/12/31 23:59`,
+  `2018/05/24 10:37`,
+  `2016/03/15 16:25`,
+  `Today`,
+  `2 days ago`,
+  `Yesterday`
+];
+
+
+const generateGenreTemplate = (allGenres) => {
+
+  const newGenres = allGenres
+    .filter(() => Math.random() > RANDOM_NUMBER)
+    .map((genre) => `<span class="film-details__genre">${genre}</span>`)
+    .join(`\n`);
+
+  return newGenres;
+
+};
+
+const generateCommentTemplate = () => {
+
+  const emoji = faces[getRandomNumber(ZERO, faces.length - ONE)];
+  const comment = comments[getRandomNumber(ZERO, comments.length - ONE)];
+  const author = commentAuthors[getRandomNumber(ZERO, commentAuthors.length - ONE)];
+  const time = times[getRandomNumber(ZERO, times.length - ONE)];
+
+  return (
+    `<li class="film-details__comment">
+          <span class="film-details__comment-emoji">
+            <img src="./images/emoji/${emoji}" width="55" height="55" alt="emoji">
+          </span>
+          <div>
+            <p class="film-details__comment-text">${comment}</p>
+            <p class="film-details__comment-info">
+              <span class="film-details__comment-author">${author}</span>
+              <span class="film-details__comment-day">${time}</span>
+              <button class="film-details__comment-delete">Delete</button>
+            </p>
+          </div>
+        </li>`
+  );
+};
+
+
+export const createFilmDetailsPopupTemplate = (card) => {
+
+  const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, dateFilm} = card;
+
+  const genreTemplate = generateGenreTemplate(genres);
+
+  const randomNumber = getRandomNumber(ONE, COMMENT_MAX);
+
+  const commentTemplate = new Array(randomNumber).fill(``).map(() => generateCommentTemplate());
+
+  return (
+    `<section class="film-details">
 <form class="film-details__inner" action="" method="get">
   <div class="form-details__top-container">
     <div class="film-details__close">
@@ -6,60 +96,55 @@ export const createFilmDetailsPopupTemplate = () => `<section class="film-detail
     </div>
     <div class="film-details__info-wrap">
       <div class="film-details__poster">
-        <img class="film-details__poster-img" src="./images/posters/the-great-flamarion.jpg" alt="">
+        <img class="film-details__poster-img" src="./images/posters/${image}" alt="">
 
-        <p class="film-details__age">18+</p>
+        <p class="film-details__age">${age}+</p>
       </div>
 
       <div class="film-details__info">
         <div class="film-details__info-head">
           <div class="film-details__title-wrap">
-            <h3 class="film-details__title">The Great Flamarion</h3>
-            <p class="film-details__title-original">Original: The Great Flamarion</p>
+            <h3 class="film-details__title">${title}</h3>
+            <p class="film-details__title-original">Original: ${originalTitle}</p>
           </div>
 
           <div class="film-details__rating">
-            <p class="film-details__total-rating">8.9</p>
+            <p class="film-details__total-rating">${rating}</p>
           </div>
         </div>
 
         <table class="film-details__table">
           <tr class="film-details__row">
             <td class="film-details__term">Director</td>
-            <td class="film-details__cell">Anthony Mann</td>
+            <td class="film-details__cell">${director}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Writers</td>
-            <td class="film-details__cell">Anne Wigton, Heinz Herald, Richard Weil</td>
+            <td class="film-details__cell">${writer}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Actors</td>
-            <td class="film-details__cell">Erich von Stroheim, Mary Beth Hughes, Dan Duryea</td>
+            <td class="film-details__cell">${actor}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
-            <td class="film-details__cell">30 March 1945</td>
+            <td class="film-details__cell">${dateFilm}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">1h 18m</td>
+            <td class="film-details__cell">${time}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Country</td>
-            <td class="film-details__cell">USA</td>
+            <td class="film-details__cell">${country}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Genres</td>
-            <td class="film-details__cell">
-              <span class="film-details__genre">Drama</span>
-              <span class="film-details__genre">Film-Noir</span>
-              <span class="film-details__genre">Mystery</span></td>
+            <td class="film-details__cell">${genreTemplate}</td>
           </tr>
         </table>
 
-        <p class="film-details__film-description">
-          The film opens following a murder at a cabaret in Mexico City in 1936, and then presents the events leading up to it in flashback. The Great Flamarion (Erich von Stroheim) is an arrogant, friendless, and misogynous marksman who displays his trick gunshot act in the vaudeville circuit. His show features a beautiful assistant, Connie (Mary Beth Hughes) and her drunken husband Al (Dan Duryea), Flamarion's other assistant. Flamarion falls in love with Connie, the movie's femme fatale, and is soon manipulated by her into killing her no good husband during one of their acts.
-        </p>
+        <p class="film-details__film-description">${description}</p>
       </div>
     </div>
 
@@ -80,58 +165,7 @@ export const createFilmDetailsPopupTemplate = () => `<section class="film-detail
       <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
 
       <ul class="film-details__comments-list">
-        <li class="film-details__comment">
-          <span class="film-details__comment-emoji">
-            <img src="./images/emoji/smile.png" width="55" height="55" alt="emoji">
-          </span>
-          <div>
-            <p class="film-details__comment-text">Interesting setting and a good cast</p>
-            <p class="film-details__comment-info">
-              <span class="film-details__comment-author">Tim Macoveev</span>
-              <span class="film-details__comment-day">2019/12/31 23:59</span>
-              <button class="film-details__comment-delete">Delete</button>
-            </p>
-          </div>
-        </li>
-        <li class="film-details__comment">
-          <span class="film-details__comment-emoji">
-            <img src="./images/emoji/sleeping.png" width="55" height="55" alt="emoji">
-          </span>
-          <div>
-            <p class="film-details__comment-text">Booooooooooring</p>
-            <p class="film-details__comment-info">
-              <span class="film-details__comment-author">John Doe</span>
-              <span class="film-details__comment-day">2 days ago</span>
-              <button class="film-details__comment-delete">Delete</button>
-            </p>
-          </div>
-        </li>
-        <li class="film-details__comment">
-          <span class="film-details__comment-emoji">
-            <img src="./images/emoji/puke.png" width="55" height="55" alt="emoji">
-          </span>
-          <div>
-            <p class="film-details__comment-text">Very very old. Meh</p>
-            <p class="film-details__comment-info">
-              <span class="film-details__comment-author">John Doe</span>
-              <span class="film-details__comment-day">2 days ago</span>
-              <button class="film-details__comment-delete">Delete</button>
-            </p>
-          </div>
-        </li>
-        <li class="film-details__comment">
-          <span class="film-details__comment-emoji">
-            <img src="./images/emoji/angry.png" width="55" height="55" alt="emoji">
-          </span>
-          <div>
-            <p class="film-details__comment-text">Almost two hours? Seriously?</p>
-            <p class="film-details__comment-info">
-              <span class="film-details__comment-author">John Doe</span>
-              <span class="film-details__comment-day">Today</span>
-              <button class="film-details__comment-delete">Delete</button>
-            </p>
-          </div>
-        </li>
+        ${commentTemplate}
       </ul>
 
       <div class="film-details__new-comment">
@@ -166,4 +200,6 @@ export const createFilmDetailsPopupTemplate = () => `<section class="film-detail
     </section>
   </div>
 </form>
-</section>`;
+</section>`
+  );
+};
