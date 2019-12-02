@@ -46,7 +46,7 @@ ratedCards.forEach((card) => render(filmsListElements[ONE], createCardFilmTempla
 commentedCards.forEach((card) => render(filmsListElements[TWO], createCardFilmTemplate(card), `beforeend`));
 
 const bodyElement = document.querySelector(`body`);
-render(bodyElement, createFilmDetailsPopupTemplate(FilmDetailsPopup), `beforeend`);
+// render(bodyElement, createFilmDetailsPopupTemplate(FilmDetailsPopup), `beforeend`);
 
 const loadMoreButtonElement = siteMainElement.querySelector(`.films-list__show-more`);
 
@@ -67,6 +67,23 @@ loadMoreButtonElement.addEventListener(`click`, () => {
 });
 
 const footerStatisticsElement = bodyElement.querySelector(`.footer__statistics p`);
-footerStatisticsElement.textContent = `${COUNT_MAIN_CARDS} movies inside`;
+footerStatisticsElement.textContent = `${mainCards.length} movies inside`;
 
 export {mainCards};
+
+// отсортировал элементы, теперь нужно создать функцию (параметром функции будет массив карточек), которая будет выполнять различные проверки
+//  и в соответствии с этими проверками выполнять отрисовку 2 лучших карточек, или 2 случайные карточки если показатели равны
+// или не будет отображать их и будет удалять блок популярности, если показатели фильмов будут равны 0
+const sortRating = mainCards.slice().sort((a, b) => b.filmInfo.rating - a.filmInfo.rating);
+const sortComment = mainCards.slice().sort((a, b) => b.filmInfo.comment - a.filmInfo.comment);
+
+
+// const isRatingSame = sortRating.every((card) => sortRating[0].filmInfo.rating === card.filmInfo.rating);
+
+const isCommentSame = sortComment.every((card) => sortRating[0].filmInfo.comment === card.filmInfo.comment);
+
+const isRatingSame = sortRating.every((card) => card.filmInfo.rating === 0);
+
+
+console.log(isRatingSame);
+console.log(isCommentSame);
