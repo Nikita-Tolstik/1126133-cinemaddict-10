@@ -8,6 +8,11 @@ const MINUTE_MIN = 60;
 const MINUTE_MAX = 140;
 const COMMENT_MAX = 200;
 
+const Feature = {
+  comment: `comment`,
+  rating: `rating`
+};
+
 const genres = [
   `Action`,
   `Adventure`,
@@ -64,4 +69,4 @@ const sentences = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
-export {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, YEAR_MIN, YEAR_MAX, MINUTE_MIN, MINUTE_MAX, COMMENT_MAX, sentences, posters, films, genres};
+export {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, YEAR_MIN, YEAR_MAX, MINUTE_MIN, MINUTE_MAX, COMMENT_MAX, sentences, posters, films, genres, Feature};
