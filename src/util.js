@@ -4,6 +4,8 @@ import {createCardFilmTemplate} from './components/card-film.js';
 
 const MINUTE = 60;
 const TWO = 2;
+const NUMBER_TIME = 2999547470716;
+
 
 const getRandomNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max + ONE - min));
@@ -52,6 +54,15 @@ const renderExtraFilmBlock = (cards, feature, blockElement, extraElement) => {
   }
 };
 
-export {getRandomNumber, getRatingNumber, getDescription, getTimeFilm, render, renderExtraFilmBlock};
 
+const getRandomDate = () => {
 
+  const targetDate = new Date();
+  const diffValue = getRandomNumber(ZERO, NUMBER_TIME);
+
+  targetDate.setTime(targetDate.getTime() - diffValue);
+
+  return targetDate.getTime();
+};
+
+export {getRandomNumber, getRatingNumber, getDescription, getTimeFilm, renderExtraFilmBlock, getRandomDate};

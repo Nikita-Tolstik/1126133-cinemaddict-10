@@ -1,12 +1,10 @@
-import {ZERO, ONE, MAX_RATING, YEAR_MIN, YEAR_MAX, MINUTE_MIN, MINUTE_MAX, COMMENT_MAX, sentences, posters, films, genres} from '../const.js';
-import {getRandomNumber, getRatingNumber, getDescription, getTimeFilm} from '../util.js';
+import {ZERO, ONE, MAX_RATING, MINUTE_MIN, MINUTE_MAX, COMMENT_MAX, SENTENCES, POSTERS, FILMS, GENRES} from '../const.js';
+import {getRandomNumber, getRatingNumber, getDescription, getRandomDate} from '../util.js';
+
 
 const SENTENCES_MAX = 7;
-const DAY_MIN = 1;
-const DAY_MAX = 31;
 
-
-const ages = [
+const AGES = [
   `0`,
   `6`,
   `12`,
@@ -14,7 +12,7 @@ const ages = [
   `18`
 ];
 
-const directors = [
+const DIRECTORS = [
   `David Lynch`,
   `Martin Scorsese`,
   `Joel and Ethan Coen`,
@@ -22,14 +20,14 @@ const directors = [
   `Terrence Malick`
 ];
 
-const actors = [
+const ACTORS = [
   `Robert De Niro, Jack Nicholson, Marlon Brando, Denzel Washington`,
   `Clark Gable, Tom Hanks, Humphrey Bogart, Daniel Day-Lewis, Sidney Poitier`,
   `Gregory Peck, Leonardo DiCaprio, Spencer Tracy, Shah Rukh Khan, Cary Grant`,
   `Laurence Olivier, James Stewart, Steve McQueen, Bruce Lee, Henry Fonda, Morgan Freeman`
 ];
 
-const writers = [
+const WRITERS = [
   `Quentin Tarantino, Terrence Malick, David Lynch`,
   `Christopher Nolan`,
   `Joel Coen, Steve McQueen, Bruce Lee`,
@@ -39,7 +37,7 @@ const writers = [
   `Damien Chazelle, Tom Hanks, Humphrey Bogart, Daniel Day-Lewis`
 ];
 
-const countrys = [
+const COUNTRYS = [
   `USA`,
   `Spain`,
   `Georgia`,
@@ -49,48 +47,27 @@ const countrys = [
   `Sweden`
 ];
 
-const monthNames = [
-  `January`,
-  `February`,
-  `March`,
-  `April`,
-  `May`,
-  `June`,
-  `July`,
-  `August`,
-  `September`,
-  `October`,
-  `November`,
-  `December`,
-];
-
-const generateDate = () => {
-
-  return `${getRandomNumber(DAY_MIN, DAY_MAX)} ${monthNames[getRandomNumber(ZERO, monthNames.length - ONE)]} ${getRandomNumber(YEAR_MIN, YEAR_MAX)}`;
-
-};
-
 
 const generateFilmDetails = () => {
 
-  const filmTitle = films[getRandomNumber(ZERO, films.length - ONE)];
+  const filmTitle = FILMS[getRandomNumber(ZERO, FILMS.length - ONE)];
 
   return {
 
     title: filmTitle,
     originalTitle: filmTitle,
-    image: posters[getRandomNumber(ZERO, posters.length - ONE)],
-    description: getDescription(sentences, SENTENCES_MAX),
+    image: POSTERS[getRandomNumber(ZERO, POSTERS.length - ONE)],
+    description: getDescription(SENTENCES, SENTENCES_MAX),
     rating: getRatingNumber(ONE, MAX_RATING),
-    time: getTimeFilm(getRandomNumber(MINUTE_MIN, MINUTE_MAX)),
-    genre: genres[getRandomNumber(ZERO, genres.length)],
+    time: getRandomNumber(MINUTE_MIN, MINUTE_MAX),
+    genre: GENRES[getRandomNumber(ZERO, GENRES.length)],
     comment: getRandomNumber(ZERO, COMMENT_MAX),
-    age: ages[getRandomNumber(ZERO, ages.length - ONE)],
-    actor: actors[getRandomNumber(ZERO, actors.length - ONE)],
-    director: directors[getRandomNumber(ZERO, directors.length - ONE)],
-    writer: writers[getRandomNumber(ZERO, writers.length - ONE)],
-    country: countrys[getRandomNumber(ZERO, countrys.length - ONE)],
-    dateFilm: generateDate()
+    age: AGES[getRandomNumber(ZERO, AGES.length - ONE)],
+    actor: ACTORS[getRandomNumber(ZERO, ACTORS.length - ONE)],
+    director: DIRECTORS[getRandomNumber(ZERO, DIRECTORS.length - ONE)],
+    writer: WRITERS[getRandomNumber(ZERO, WRITERS.length - ONE)],
+    country: COUNTRYS[getRandomNumber(ZERO, COUNTRYS.length - ONE)],
+    date: getRandomDate()
   };
 };
 

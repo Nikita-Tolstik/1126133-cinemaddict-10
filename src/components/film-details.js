@@ -1,17 +1,17 @@
-import {genres, RANDOM_NUMBER, ZERO, ONE} from '../const.js';
-import {getRandomNumber} from '../util.js';
+import {GENRES, RANDOM_NUMBER, ZERO, ONE, MONTH_NAMES} from '../const.js';
+import {getRandomNumber, getTimeFilm} from '../util.js';
 
 const COMMENT_MAX = 7;
 
 
-const faces = [
+const FACES = [
   `angry.png`,
   `puke.png`,
   `sleeping.png`,
   `smile.png`
 ];
 
-const comments = [
+const COMMENTS = [
   `Interesting setting and a good cast`,
   `Booooooooooring`,
   `Very very old. Meh`,
@@ -21,7 +21,7 @@ const comments = [
   `Cool special effects and shooting`
 ];
 
-const commentAuthors = [
+const COMMENT_AUTHORS = [
   `Jeff Bridges`,
   `Sidney Poitier`,
   `Gene Hackman`,
@@ -31,7 +31,7 @@ const commentAuthors = [
   `Ralph Fiennes`
 ];
 
-const times = [
+const TIMES = [
   `2019/12/31 23:59`,
   `2018/05/24 10:37`,
   `2016/03/15 16:25`,
@@ -54,10 +54,10 @@ const generateGenreTemplate = (allGenres) => {
 
 const generateCommentTemplate = () => {
 
-  const emoji = faces[getRandomNumber(ZERO, faces.length - ONE)];
-  const comment = comments[getRandomNumber(ZERO, comments.length - ONE)];
-  const author = commentAuthors[getRandomNumber(ZERO, commentAuthors.length - ONE)];
-  const time = times[getRandomNumber(ZERO, times.length - ONE)];
+  const emoji = FACES[getRandomNumber(ZERO, FACES.length - ONE)];
+  const comment = COMMENTS[getRandomNumber(ZERO, COMMENTS.length - ONE)];
+  const author = COMMENT_AUTHORS[getRandomNumber(ZERO, COMMENT_AUTHORS.length - ONE)];
+  const time = TIMES[getRandomNumber(ZERO, TIMES.length - ONE)];
 
   return (
     `<li class="film-details__comment">
@@ -76,16 +76,24 @@ const generateCommentTemplate = () => {
   );
 };
 
+const getDateMonthYear = (date) => {
+
+  const newDate = new Date(date);
+
+  return `${newDate.getDate()} ${MONTH_NAMES[newDate.getMonth()]} ${newDate.getFullYear()}`;
+
+};
+
 
 export const createFilmDetailsPopupTemplate = (card) => {
 
-  const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, dateFilm} = card;
+  const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, date} = card;
 
-  const genreTemplate = generateGenreTemplate(genres);
-
+  const timeFilm = getTimeFilm(time);
+  const genreTemplate = generateGenreTemplate(GENRES);
   const randomNumber = getRandomNumber(ONE, COMMENT_MAX);
-
   const commentTemplate = new Array(randomNumber).fill(``).map(() => generateCommentTemplate());
+  const dateFilm = getDateMonthYear(date);
 
   return (
     `<section class="film-details">
@@ -132,7 +140,7 @@ export const createFilmDetailsPopupTemplate = (card) => {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">${time}</td>
+            <td class="film-details__cell">${timeFilm}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Country</td>
