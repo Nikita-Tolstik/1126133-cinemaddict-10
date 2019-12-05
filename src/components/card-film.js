@@ -1,4 +1,5 @@
 import {getTimeFilm, createElement} from '../util.js';
+import {ZERO} from '../const.js';
 
 const getYear = (date) => {
 
@@ -10,10 +11,11 @@ const getYear = (date) => {
 
 const createCardFilmTemplate = (card) => {
 
-  const {title, image, description, rating, date, time, genre, comment} = card.filmInfo;
+  const {title, image, description, rating, date, time, genres, comment} = card.filmInfo;
 
   const timeFilm = getTimeFilm(time);
   const filmYear = getYear(date);
+  const mainGenre = genres[ZERO];
 
   return (
     `<article class="film-card">
@@ -22,7 +24,7 @@ const createCardFilmTemplate = (card) => {
     <p class="film-card__info">
       <span class="film-card__year">${filmYear}</span>
       <span class="film-card__duration">${timeFilm}</span>
-      <span class="film-card__genre">${genre}</span>
+      <span class="film-card__genre">${mainGenre}</span>
     </p>
     <img src="./images/posters/${image}" alt="" class="film-card__poster">
     <p class="film-card__description">${description}</p>

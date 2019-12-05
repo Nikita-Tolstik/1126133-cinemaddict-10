@@ -1,4 +1,4 @@
-import {GENRES, RANDOM_NUMBER, ZERO, ONE, MONTH_NAMES} from '../const.js';
+import {ZERO, ONE, MONTH_NAMES} from '../const.js';
 import {getRandomNumber, getTimeFilm, createElement} from '../util.js';
 
 const COMMENT_MAX = 7;
@@ -44,7 +44,6 @@ const TIMES = [
 const generateGenreTemplate = (allGenres) => {
 
   const newGenres = allGenres
-    .filter(() => Math.random() > RANDOM_NUMBER)
     .map((genre) => `<span class="film-details__genre">${genre}</span>`)
     .join(`\n`);
 
@@ -87,12 +86,13 @@ const getDateMonthYear = (date) => {
 
 const createFilmDetailsPopupTemplate = (card) => {
 
-  const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, date} = card;
+  const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, date, genres} = card.filmInfo;
 
   const timeFilm = getTimeFilm(time);
-  const genreTemplate = generateGenreTemplate(GENRES);
+  const genreTemplate = generateGenreTemplate(genres);
   const randomNumber = getRandomNumber(ONE, COMMENT_MAX);
-  const commentTemplate = new Array(randomNumber).fill(``).map(() => generateCommentTemplate());
+  const countComment = new Array(randomNumber).fill(``);
+  const commentTemplate = countComment.map(() => generateCommentTemplate());
   const dateFilm = getDateMonthYear(date);
 
   return (
@@ -170,7 +170,7 @@ const createFilmDetailsPopupTemplate = (card) => {
 
   <div class="form-details__bottom-container">
     <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${countComment.length}</span></h3>
 
       <ul class="film-details__comments-list">
         ${commentTemplate}
