@@ -1,4 +1,4 @@
-import {getTimeFilm} from '../util.js';
+import {getTimeFilm, createElement} from '../util.js';
 
 const getYear = (date) => {
 
@@ -8,7 +8,7 @@ const getYear = (date) => {
 
 };
 
-export const createCardFilmTemplate = (card) => {
+const createCardFilmTemplate = (card) => {
 
   const {title, image, description, rating, date, time, genre, comment} = card.filmInfo;
 
@@ -35,3 +35,25 @@ export const createCardFilmTemplate = (card) => {
     </article>`);
 };
 
+export default class ProfileRating {
+  constructor(card) {
+    this._card = card;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createCardFilmTemplate(this._card);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

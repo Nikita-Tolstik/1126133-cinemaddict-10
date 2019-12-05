@@ -1,5 +1,5 @@
 import {GENRES, RANDOM_NUMBER, ZERO, ONE, MONTH_NAMES} from '../const.js';
-import {getRandomNumber, getTimeFilm} from '../util.js';
+import {getRandomNumber, getTimeFilm, createElement} from '../util.js';
 
 const COMMENT_MAX = 7;
 
@@ -85,7 +85,7 @@ const getDateMonthYear = (date) => {
 };
 
 
-export const createFilmDetailsPopupTemplate = (card) => {
+const createFilmDetailsPopupTemplate = (card) => {
 
   const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, date} = card;
 
@@ -211,3 +211,26 @@ export const createFilmDetailsPopupTemplate = (card) => {
 </section>`
   );
 };
+
+export default class ProfileRating {
+  constructor(card) {
+    this._card = card;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmDetailsPopupTemplate(this._card);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
