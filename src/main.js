@@ -7,7 +7,6 @@ import LoadMoreButtonComponent from './components/load-more-button.js';
 import FilmDetailsPopupComponent from './components/film-details.js';
 import {generateFilmCards} from './mock/card-film.js';
 import {ZERO, ONE, Feature} from './const.js';
-import {generateFilmDetails} from './mock/film-details.js';
 import {render, renderExtraFilmBlock, RenderPosition} from './util.js';
 
 
@@ -16,8 +15,35 @@ const SHOWING_CARDS_COUNT_ON_START = 5;
 const SHOWING_CARDS_COUNT_BY_BUTTON = 5;
 const TWO = 2;
 
+
+const renderCard = (card, container) => {
+
+  const cardFilmComponent = new CardFilmComponent(card);
+  const filmDetailsPopupComponent = new FilmDetailsPopupComponent(card);
+
+  render(container, cardFilmComponent.getElement(), RenderPosition.BEFOREEND);
+
+
+  const cardElements = [];
+  cardElements.push(cardFilmComponent.getElement().querySelector(`.film-card__poster`));
+  cardElements.push(cardFilmComponent.getElement().querySelector(`.film-card__title`));
+  cardElements.push(cardFilmComponent.getElement().querySelector(`.film-card__comments`));
+
+  cardElements.forEach((element) => {
+    element.addEventListener(`click`, () => {
+      render(bodyElement, filmDetailsPopupComponent.getElement(), RenderPosition.BEFOREEND);
+    });
+  });
+
+  const closeButtonElement = filmDetailsPopupComponent.getElement().querySelector(`.film-details__close-btn`);
+  closeButtonElement.addEventListener(`click`, () => {
+    filmDetailsPopupComponent.getElement().remove();
+  });
+
+};
+
+
 const mainCards = generateFilmCards(COUNT_MAIN_CARDS);
-const FilmDetailsPopup = generateFilmDetails();
 
 
 const siteHeaderElement = document.querySelector(`.header`);
@@ -37,14 +63,10 @@ const filmsListElements = filmsListComponent.getElement().querySelectorAll(`.fil
 
 let showingCardCount = SHOWING_CARDS_COUNT_ON_START;
 
-mainCards.slice(ZERO, showingCardCount).forEach((card) => render(filmsListElements[ZERO], new CardFilmComponent(card).getElement(), RenderPosition.BEFOREEND));
+mainCards.slice(ZERO, showingCardCount).forEach((card) => renderCard(card, filmsListElements[ZERO]));
 
 const loadMoreButtonComponent = new LoadMoreButtonComponent();
 render(filmsListElements[ZERO], loadMoreButtonComponent.getElement(), RenderPosition.AFTER);
-
-// Попап
-const bodyElement = document.querySelector(`body`);
-render(bodyElement, new FilmDetailsPopupComponent(FilmDetailsPopup).getElement(), RenderPosition.BEFOREEND);
 
 
 // Обработчик на кнопке показать еще
@@ -53,7 +75,7 @@ loadMoreButtonComponent.getElement().addEventListener(`click`, () => {
   const prevCardCount = showingCardCount;
   showingCardCount = showingCardCount + SHOWING_CARDS_COUNT_BY_BUTTON;
 
-  mainCards.slice(prevCardCount, showingCardCount).forEach((card) => render(filmsListElements[ZERO], new CardFilmComponent(card).getElement(), RenderPosition.BEFOREEND));
+  mainCards.slice(prevCardCount, showingCardCount).forEach((card) => renderCard(card, filmsListElements[ZERO]));
 
 
   if (showingCardCount >= mainCards.length) {
@@ -63,10 +85,13 @@ loadMoreButtonComponent.getElement().addEventListener(`click`, () => {
 
 });
 
-// Отсортировка фильмов в блоки самые комментированные и рейтинговые
+
+const bodyElement = document.querySelector(`body`);
 const footerStatisticsElement = bodyElement.querySelector(`.footer__statistics p`);
 footerStatisticsElement.textContent = `${mainCards.length} movies inside`;
 
+
+// Отсортировка фильмов в блоки самые комментированные и рейтинговые
 const blockFilmElements = document.querySelectorAll(`.films-list__container`);
 const extraFilmElement = document.querySelectorAll(`.films-list--extra`);
 
@@ -80,4 +105,5 @@ const extraMostCommentedElement = extraFilmElement[ONE];
 renderExtraFilmBlock(mainCards, Feature.rating, topRatedElement, extraTopRatedElement);
 renderExtraFilmBlock(mainCards, Feature.comment, mostCommentedElement, extraMostCommentedElement);
 
-export {mainCards};
+
+export {mainCards, renderCard};

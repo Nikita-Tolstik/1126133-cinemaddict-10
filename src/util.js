@@ -1,5 +1,5 @@
 import {ZERO, ONE, RANDOM_NUMBER} from './const.js';
-import CardFilmComponent from './components/card-film.js';
+import {renderCard} from './main.js';
 
 
 const MINUTE = 60;
@@ -69,9 +69,9 @@ const renderExtraFilmBlock = (cards, feature, blockElement, extraElement) => {
     if (isSame && sortCards[ZERO].filmInfo[feature] === ZERO) {
       extraElement.remove();
     } else if (isSame) {
-      new Array(TWO).fill(``).forEach(() => render(blockElement, new CardFilmComponent(cards[getRandomNumber(ZERO, cards.length - ONE)]).getElement(), RenderPosition.BEFOREEND));
+      new Array(TWO).fill(``).forEach(() => renderCard(cards[getRandomNumber(ZERO, cards.length - ONE)], blockElement));
     } else {
-      sortCards.slice(ZERO, TWO).forEach((card) => render(blockElement, new CardFilmComponent(card).getElement(), RenderPosition.BEFOREEND));
+      sortCards.slice(ZERO, TWO).forEach((card) => renderCard(card, blockElement));
     }
 
   } else {
