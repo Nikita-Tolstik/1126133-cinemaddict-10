@@ -1,11 +1,16 @@
 import {ZERO, ONE, RANDOM_NUMBER} from './const.js';
-import {createCardFilmTemplate} from './components/card-film.js';
+import CardFilmComponent from './components/card-film.js';
 
 
 const MINUTE = 60;
 const TWO = 2;
 const NUMBER_TIME = 2999547470716;
 
+const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+  AFTER: `after`
+};
 
 const getRandomNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max + ONE - min));
@@ -29,8 +34,28 @@ const getTimeFilm = (time) => {
 
 };
 
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
+// Отрсивока компонентов на страницу
+const render = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+    case RenderPosition.AFTER:
+      container.after(element);
+      break;
+  }
+};
+
+// Создание елемента из разметки
+const createElement = (template) => {
+
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
 };
 
 // Отсортировка фильмов в блоки самые комментированные и рейтинговые
@@ -44,9 +69,9 @@ const renderExtraFilmBlock = (cards, feature, blockElement, extraElement) => {
     if (isSame && sortCards[ZERO].filmInfo[feature] === ZERO) {
       extraElement.remove();
     } else if (isSame) {
-      new Array(TWO).fill(``).forEach(() => render(blockElement, createCardFilmTemplate(cards[getRandomNumber(ZERO, cards.length - ONE)]), `beforeend`));
+      new Array(TWO).fill(``).forEach(() => render(blockElement, new CardFilmComponent(cards[getRandomNumber(ZERO, cards.length - ONE)]).getElement(), RenderPosition.BEFOREEND));
     } else {
-      sortCards.slice(ZERO, TWO).forEach((card) => render(blockElement, createCardFilmTemplate(card), `beforeend`));
+      sortCards.slice(ZERO, TWO).forEach((card) => render(blockElement, new CardFilmComponent(card).getElement(), RenderPosition.BEFOREEND));
     }
 
   } else {
@@ -65,4 +90,4 @@ const getRandomDate = () => {
   return targetDate.getTime();
 };
 
-export {getRandomNumber, getRatingNumber, getDescription, getTimeFilm, renderExtraFilmBlock, getRandomDate};
+export {getRandomNumber, getRatingNumber, getDescription, getTimeFilm, renderExtraFilmBlock, getRandomDate, RenderPosition, createElement, render};
