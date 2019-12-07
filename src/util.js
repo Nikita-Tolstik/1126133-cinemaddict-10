@@ -61,7 +61,7 @@ const createElement = (template) => {
 // Отсортировка фильмов в блоки самые комментированные и рейтинговые
 const renderExtraFilmBlock = (cards, feature, blockElement, extraElement) => {
 
-  if (cards.length > ZERO) {
+  if (cards.length > ONE) {
 
     const sortCards = cards.slice().sort((a, b) => b.filmInfo[feature] - a.filmInfo[feature]);
     const isSame = sortCards.every((card) => sortCards[ZERO].filmInfo[feature] === card.filmInfo[feature]);
