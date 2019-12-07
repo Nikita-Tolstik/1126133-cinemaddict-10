@@ -1,12 +1,13 @@
-import {createProfileRatingTemplate} from './components/profile-rating.js';
-import {createSiteMenuTemplate} from './components/site-menu.js';
-import {createCardFilmTemplate} from './components/card-film.js';
-import {createLoadMoreButtonTemplate} from './components/load-more-button.js';
+import ProfileRatingComponent from './components/profile-rating.js';
+import SiteMenuComponent from './components/site-menu.js';
+import SortMenuComponent from './components/sort-menu.js';
+import FilmsListComponent from './components/films-list.js';
+import CardFilmComponent from './components/card-film.js';
+import LoadMoreButtonComponent from './components/load-more-button.js';
+import FilmDetailsPopupComponent from './components/film-details.js';
 import {generateFilmCards} from './mock/card-film.js';
 import {ZERO, ONE, Feature} from './const.js';
-import {generateFilmDetails} from './mock/film-details.js';
-import {createFilmDetailsPopupTemplate} from './components/film-details.js';
-import {render, renderExtraFilmBlock} from './util.js';
+import {render, renderExtraFilmBlock, RenderPosition} from './util.js';
 
 
 const COUNT_MAIN_CARDS = 20;
@@ -14,53 +15,83 @@ const SHOWING_CARDS_COUNT_ON_START = 5;
 const SHOWING_CARDS_COUNT_BY_BUTTON = 5;
 const TWO = 2;
 
+
+const renderCard = (card, container) => {
+
+  const cardFilmComponent = new CardFilmComponent(card);
+  const filmDetailsPopupComponent = new FilmDetailsPopupComponent(card);
+
+  render(container, cardFilmComponent.getElement(), RenderPosition.BEFOREEND);
+
+
+  const cardElements = [];
+  cardElements.push(cardFilmComponent.getElement().querySelector(`.film-card__poster`));
+  cardElements.push(cardFilmComponent.getElement().querySelector(`.film-card__title`));
+  cardElements.push(cardFilmComponent.getElement().querySelector(`.film-card__comments`));
+
+  cardElements.forEach((element) => {
+    element.addEventListener(`click`, () => {
+      render(bodyElement, filmDetailsPopupComponent.getElement(), RenderPosition.BEFOREEND);
+    });
+  });
+
+  const closeButtonElement = filmDetailsPopupComponent.getElement().querySelector(`.film-details__close-btn`);
+  closeButtonElement.addEventListener(`click`, () => {
+    filmDetailsPopupComponent.getElement().remove();
+  });
+
+};
+
+
 const mainCards = generateFilmCards(COUNT_MAIN_CARDS);
-const FilmDetailsPopup = generateFilmDetails();
 
 
 const siteHeaderElement = document.querySelector(`.header`);
-render(siteHeaderElement, createProfileRatingTemplate(), `beforeend`);
+render(siteHeaderElement, new ProfileRatingComponent().getElement(), RenderPosition.BEFOREEND);
 
 const siteMainElement = document.querySelector(`.main`);
-render(siteMainElement, createSiteMenuTemplate(), `beforeend`);
 
-const siteFilmsElement = siteMainElement.querySelector(`.films`);
-const filmsListElements = siteFilmsElement.querySelectorAll(`.films-list__container`);
+render(siteMainElement, new SiteMenuComponent().getElement(), RenderPosition.BEFOREEND);
+render(siteMainElement, new SortMenuComponent().getElement(), RenderPosition.BEFOREEND);
+
+const filmsListComponent = new FilmsListComponent();
+render(siteMainElement, filmsListComponent.getElement(), RenderPosition.BEFOREEND);
+
+
+const filmsListElements = filmsListComponent.getElement().querySelectorAll(`.films-list__container`);
 
 
 let showingCardCount = SHOWING_CARDS_COUNT_ON_START;
 
-mainCards.slice(ZERO, showingCardCount).forEach((card) => render(filmsListElements[ZERO], createCardFilmTemplate(card), `beforeend`));
+mainCards.slice(ZERO, showingCardCount).forEach((card) => renderCard(card, filmsListElements[ZERO]));
 
-
-render(filmsListElements[ZERO], createLoadMoreButtonTemplate(), `afterend`);
-
-// Попап
-const bodyElement = document.querySelector(`body`);
-render(bodyElement, createFilmDetailsPopupTemplate(FilmDetailsPopup), `beforeend`);
-
-const loadMoreButtonElement = siteMainElement.querySelector(`.films-list__show-more`);
+const loadMoreButtonComponent = new LoadMoreButtonComponent();
+render(filmsListElements[ZERO], loadMoreButtonComponent.getElement(), RenderPosition.AFTER);
 
 
 // Обработчик на кнопке показать еще
-loadMoreButtonElement.addEventListener(`click`, () => {
+loadMoreButtonComponent.getElement().addEventListener(`click`, () => {
 
   const prevCardCount = showingCardCount;
   showingCardCount = showingCardCount + SHOWING_CARDS_COUNT_BY_BUTTON;
 
-  mainCards.slice(prevCardCount, showingCardCount).forEach((card) => render(filmsListElements[ZERO], createCardFilmTemplate(card), `beforeend`));
+  mainCards.slice(prevCardCount, showingCardCount).forEach((card) => renderCard(card, filmsListElements[ZERO]));
 
 
   if (showingCardCount >= mainCards.length) {
-    loadMoreButtonElement.remove();
+    loadMoreButtonComponent.getElement().remove();
+    loadMoreButtonComponent.removeElement();
   }
 
 });
 
-// Отсортировка фильмов в блоки самые комментированные и рейтинговые
+
+const bodyElement = document.querySelector(`body`);
 const footerStatisticsElement = bodyElement.querySelector(`.footer__statistics p`);
 footerStatisticsElement.textContent = `${mainCards.length} movies inside`;
 
+
+// Отсортировка фильмов в блоки самые комментированные и рейтинговые
 const blockFilmElements = document.querySelectorAll(`.films-list__container`);
 const extraFilmElement = document.querySelectorAll(`.films-list--extra`);
 
@@ -74,4 +105,5 @@ const extraMostCommentedElement = extraFilmElement[ONE];
 renderExtraFilmBlock(mainCards, Feature.rating, topRatedElement, extraTopRatedElement);
 renderExtraFilmBlock(mainCards, Feature.comment, mostCommentedElement, extraMostCommentedElement);
 
-export {mainCards};
+
+export {mainCards, renderCard};

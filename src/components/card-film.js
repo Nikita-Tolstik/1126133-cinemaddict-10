@@ -1,16 +1,30 @@
-export const createCardFilmTemplate = (card) => {
+import {getTimeFilm, createElement} from '../util.js';
+import {ZERO} from '../const.js';
 
-  const {title, image, description, rating, year, time, genre, comment} = card.filmInfo;
+const getYear = (date) => {
 
+  const time = new Date(date);
+
+  return time.getFullYear();
+
+};
+
+const createCardFilmTemplate = (card) => {
+
+  const {title, image, description, rating, date, time, genres, comment} = card.filmInfo;
+
+  const timeFilm = getTimeFilm(time);
+  const filmYear = getYear(date);
+  const mainGenre = genres[ZERO];
 
   return (
     `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>
     <p class="film-card__rating">${rating}</p>
     <p class="film-card__info">
-      <span class="film-card__year">${year}</span>
-      <span class="film-card__duration">${time}</span>
-      <span class="film-card__genre">${genre}</span>
+      <span class="film-card__year">${filmYear}</span>
+      <span class="film-card__duration">${timeFilm}</span>
+      <span class="film-card__genre">${mainGenre}</span>
     </p>
     <img src="./images/posters/${image}" alt="" class="film-card__poster">
     <p class="film-card__description">${description}</p>
@@ -23,3 +37,25 @@ export const createCardFilmTemplate = (card) => {
     </article>`);
 };
 
+export default class ProfileRating {
+  constructor(card) {
+    this._card = card;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createCardFilmTemplate(this._card);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

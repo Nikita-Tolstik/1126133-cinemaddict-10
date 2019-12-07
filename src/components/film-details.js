@@ -1,17 +1,17 @@
-import {genres, RANDOM_NUMBER, ZERO, ONE} from '../const.js';
-import {getRandomNumber} from '../util.js';
+import {ZERO, ONE, MONTH_NAMES} from '../const.js';
+import {getRandomNumber, getTimeFilm, createElement} from '../util.js';
 
 const COMMENT_MAX = 7;
 
 
-const faces = [
+const FACES = [
   `angry.png`,
   `puke.png`,
   `sleeping.png`,
   `smile.png`
 ];
 
-const comments = [
+const COMMENTS = [
   `Interesting setting and a good cast`,
   `Booooooooooring`,
   `Very very old. Meh`,
@@ -21,7 +21,7 @@ const comments = [
   `Cool special effects and shooting`
 ];
 
-const commentAuthors = [
+const COMMENT_AUTHORS = [
   `Jeff Bridges`,
   `Sidney Poitier`,
   `Gene Hackman`,
@@ -31,7 +31,7 @@ const commentAuthors = [
   `Ralph Fiennes`
 ];
 
-const times = [
+const TIMES = [
   `2019/12/31 23:59`,
   `2018/05/24 10:37`,
   `2016/03/15 16:25`,
@@ -44,7 +44,6 @@ const times = [
 const generateGenreTemplate = (allGenres) => {
 
   const newGenres = allGenres
-    .filter(() => Math.random() > RANDOM_NUMBER)
     .map((genre) => `<span class="film-details__genre">${genre}</span>`)
     .join(`\n`);
 
@@ -54,10 +53,10 @@ const generateGenreTemplate = (allGenres) => {
 
 const generateCommentTemplate = () => {
 
-  const emoji = faces[getRandomNumber(ZERO, faces.length - ONE)];
-  const comment = comments[getRandomNumber(ZERO, comments.length - ONE)];
-  const author = commentAuthors[getRandomNumber(ZERO, commentAuthors.length - ONE)];
-  const time = times[getRandomNumber(ZERO, times.length - ONE)];
+  const emoji = FACES[getRandomNumber(ZERO, FACES.length - ONE)];
+  const comment = COMMENTS[getRandomNumber(ZERO, COMMENTS.length - ONE)];
+  const author = COMMENT_AUTHORS[getRandomNumber(ZERO, COMMENT_AUTHORS.length - ONE)];
+  const time = TIMES[getRandomNumber(ZERO, TIMES.length - ONE)];
 
   return (
     `<li class="film-details__comment">
@@ -76,16 +75,25 @@ const generateCommentTemplate = () => {
   );
 };
 
+const getDateMonthYear = (date) => {
 
-export const createFilmDetailsPopupTemplate = (card) => {
+  const newDate = new Date(date);
 
-  const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, dateFilm} = card;
+  return `${newDate.getDate()} ${MONTH_NAMES[newDate.getMonth()]} ${newDate.getFullYear()}`;
 
+};
+
+
+const createFilmDetailsPopupTemplate = (card) => {
+
+  const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, date, genres} = card.filmInfo;
+
+  const timeFilm = getTimeFilm(time);
   const genreTemplate = generateGenreTemplate(genres);
-
   const randomNumber = getRandomNumber(ONE, COMMENT_MAX);
-
-  const commentTemplate = new Array(randomNumber).fill(``).map(() => generateCommentTemplate());
+  const countComment = new Array(randomNumber).fill(``);
+  const commentTemplate = countComment.map(() => generateCommentTemplate());
+  const dateFilm = getDateMonthYear(date);
 
   return (
     `<section class="film-details">
@@ -132,7 +140,7 @@ export const createFilmDetailsPopupTemplate = (card) => {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Runtime</td>
-            <td class="film-details__cell">${time}</td>
+            <td class="film-details__cell">${timeFilm}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Country</td>
@@ -162,7 +170,7 @@ export const createFilmDetailsPopupTemplate = (card) => {
 
   <div class="form-details__bottom-container">
     <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${countComment.length}</span></h3>
 
       <ul class="film-details__comments-list">
         ${commentTemplate}
@@ -203,3 +211,26 @@ export const createFilmDetailsPopupTemplate = (card) => {
 </section>`
   );
 };
+
+export default class ProfileRating {
+  constructor(card) {
+    this._card = card;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmDetailsPopupTemplate(this._card);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

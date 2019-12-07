@@ -2,8 +2,6 @@ const ZERO = 0;
 const ONE = 1;
 const RANDOM_NUMBER = 0.5;
 const MAX_RATING = 9;
-const YEAR_MIN = 1920;
-const YEAR_MAX = 2020;
 const MINUTE_MIN = 60;
 const MINUTE_MAX = 140;
 const COMMENT_MAX = 200;
@@ -13,7 +11,7 @@ const Feature = {
   rating: `rating`
 };
 
-const genres = [
+const GENRES = [
   `Action`,
   `Adventure`,
   `Animation`,
@@ -27,7 +25,7 @@ const genres = [
   `Thriller`
 ];
 
-const films = [
+const FILMS = [
   `Joker`,
   `Avengers: Endgame`,
   `Knives Out`,
@@ -45,7 +43,7 @@ const films = [
   `Ready Player One`
 ];
 
-const posters = [
+const POSTERS = [
   `made-for-each-other.png`,
   `popeye-meets-sinbad.png`,
   `sagebrush-trail.jpg`,
@@ -55,7 +53,7 @@ const posters = [
   `the-man-with-the-golden-arm.jpg`
 ];
 
-const sentences = [
+const SENTENCES = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
   `Fusce tristique felis at fermentum pharetra.`,
@@ -69,4 +67,19 @@ const sentences = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
-export {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, YEAR_MIN, YEAR_MAX, MINUTE_MIN, MINUTE_MAX, COMMENT_MAX, sentences, posters, films, genres, Feature};
+const MONTH_NAMES = [
+  `January`,
+  `February`,
+  `March`,
+  `April`,
+  `May`,
+  `June`,
+  `July`,
+  `August`,
+  `September`,
+  `October`,
+  `November`,
+  `December`,
+];
+
+export {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, MINUTE_MIN, MINUTE_MAX, COMMENT_MAX, Feature, GENRES, FILMS, POSTERS, SENTENCES, MONTH_NAMES};
