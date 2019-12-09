@@ -26,10 +26,6 @@ const renderCard = (card, container) => {
   const cardFilmComponent = new CardFilmComponent(card);
   const filmDetailsPopupComponent = new FilmDetailsPopupComponent(card);
 
-  let cardElements = [];
-  cardElements.push(cardFilmComponent.getElement().querySelector(`.film-card__poster`));
-  cardElements.push(cardFilmComponent.getElement().querySelector(`.film-card__title`));
-  cardElements.push(cardFilmComponent.getElement().querySelector(`.film-card__comments`));
 
   const onEscKeyDown = (evt) => {
 
@@ -42,18 +38,18 @@ const renderCard = (card, container) => {
   };
 
 
-  cardElements.forEach((element) => {
-    element.addEventListener(`click`, () => {
-      render(bodyElement, filmDetailsPopupComponent, RenderPosition.BEFOREEND);
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
+  // Метод карточки - обработчик события кликов на элементы карточки
+  cardFilmComponent.setOnClickCardElements(() => {
+    render(bodyElement, filmDetailsPopupComponent, RenderPosition.BEFOREEND);
+    document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  const closeButtonElement = filmDetailsPopupComponent.getElement().querySelector(`.film-details__close-btn`);
-  closeButtonElement.addEventListener(`click`, () => {
+  // Метод попапа - обработчик события клика на кнопку зыкрыть
+  filmDetailsPopupComponent.setOnClickCloseButtonPopup(() => {
     filmDetailsPopupComponent.getElement().remove();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
+
 
   render(container, cardFilmComponent, RenderPosition.BEFOREEND);
 
@@ -84,7 +80,7 @@ const renderContainer = (container, cards) => {
 
 
   // Обработчик на кнопке показать еще
-  loadMoreButtonComponent.getElement().addEventListener(`click`, () => {
+  loadMoreButtonComponent.setOnClickLoadMoreButton(() => {
 
     const prevCardCount = showingCardCount;
     showingCardCount = showingCardCount + SHOWING_CARDS_COUNT_BY_BUTTON;
