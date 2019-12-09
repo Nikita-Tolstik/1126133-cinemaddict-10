@@ -1,4 +1,4 @@
-import {getRandomNumber, getRatingNumber, getDescription, getRandomDate} from '../util.js';
+import {getRandomNumber, getRatingNumber, getDescription, getRandomDate} from '../utils/common.js';
 import {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, MINUTE_MIN, MINUTE_MAX, COMMENT_MAX, SENTENCES, POSTERS, FILMS, GENRES} from '../const.js';
 
 const SENTENCES_MAX = 3;
