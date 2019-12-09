@@ -8,7 +8,7 @@ import {render, RenderPosition} from './utils/render.js';
 const COUNT_MAIN_CARDS = 20;
 
 
-const cards = generateFilmCards(COUNT_MAIN_CARDS);
+export const cards = generateFilmCards(COUNT_MAIN_CARDS);
 
 const siteHeaderElement = document.querySelector(`.header`);
 render(siteHeaderElement, new ProfileRatingComponent(), RenderPosition.BEFOREEND);
@@ -22,4 +22,3 @@ const pageController = new PageController(siteMainElement);
 
 pageController.render(cards);
 
-export {cards};

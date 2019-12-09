@@ -53,7 +53,7 @@ const getRandomGenres = (genres) => {
   return randomGenres;
 };
 
-const generateFilmCard = () => {
+export const generateFilmCard = () => {
 
   const filmTitle = FILMS[getRandomNumber(ZERO, FILMS.length - ONE)];
 
@@ -84,11 +84,9 @@ const generateFilmCard = () => {
   };
 };
 
-const generateFilmCards = (count) => {
+export const generateFilmCards = (count) => {
   return new Array(count)
     .fill(``)
     .map(generateFilmCard);
 };
 
-
-export {generateFilmCard, generateFilmCards};
