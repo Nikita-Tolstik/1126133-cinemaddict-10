@@ -48,4 +48,17 @@ export default class ProfileRating extends AbstractComponent {
   getTemplate() {
     return createCardFilmTemplate(this._card);
   }
+
+  setOnClickCardElements(handler) {
+
+    let cardElements = [];
+
+    cardElements.push(this.getElement().querySelector(`.film-card__poster`));
+    cardElements.push(this.getElement().querySelector(`.film-card__title`));
+    cardElements.push(this.getElement().querySelector(`.film-card__comments`));
+
+    cardElements.forEach((element) => {
+      element.addEventListener(`click`, handler);
+    });
+  }
 }

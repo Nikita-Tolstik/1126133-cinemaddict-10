@@ -223,4 +223,9 @@ export default class ProfileRating extends AbstractComponent {
   getTemplate() {
     return createFilmDetailsPopupTemplate(this._card);
   }
+
+  setOnClickCloseButtonPopup(handler) {
+    this.getElement().querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, handler);
+  }
 }

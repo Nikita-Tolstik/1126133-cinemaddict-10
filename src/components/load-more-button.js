@@ -7,4 +7,8 @@ export default class SiteMenu extends AbstractComponent {
   getTemplate() {
     return createLoadMoreButtonTemplate();
   }
+
+  setOnClickLoadMoreButton(handler) {
+    this.getElement().addEventListener(`click`, handler);
+  }
 }
