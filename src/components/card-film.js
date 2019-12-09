@@ -1,4 +1,5 @@
-import {getTimeFilm, createElement} from '../util.js';
+import AbstractComponent from './abstract-component.js';
+import {getTimeFilm} from '../utils/common.js';
 import {ZERO} from '../const.js';
 
 const getYear = (date) => {
@@ -37,25 +38,14 @@ const createCardFilmTemplate = (card) => {
     </article>`);
 };
 
-export default class ProfileRating {
+export default class ProfileRating extends AbstractComponent {
   constructor(card) {
+    super();
+
     this._card = card;
-    this._element = null;
   }
 
   getTemplate() {
     return createCardFilmTemplate(this._card);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,5 +1,5 @@
 import {mainCards} from '../main.js';
-import {createElement} from '../util.js';
+import AbstractComponent from './abstract-component.js';
 
 
 const createSiteMenuTemplate = () => {
@@ -21,24 +21,9 @@ const createSiteMenuTemplate = () => {
   );
 };
 
-export default class SiteMenu {
-  constructor() {
-    this._element = null;
-  }
+export default class SiteMenu extends AbstractComponent {
 
   getTemplate() {
     return createSiteMenuTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
