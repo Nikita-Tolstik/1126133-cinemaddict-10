@@ -1,13 +1,13 @@
-import {mainCards} from '../main.js';
+import {cards} from '../main.js';
 import AbstractComponent from './abstract-component.js';
 
 
 const createSiteMenuTemplate = () => {
 
 
-  const wathclistFilters = mainCards.filter((card) => card.userDetails.isWathclist === true);
-  const historyFilters = mainCards.filter((card) => card.userDetails.isHistory === true);
-  const favoritesFilters = mainCards.filter((card) => card.userDetails.isFavorites === true);
+  const wathclistFilters = cards.filter((card) => card.userDetails.isWathclist === true);
+  const historyFilters = cards.filter((card) => card.userDetails.isHistory === true);
+  const favoritesFilters = cards.filter((card) => card.userDetails.isFavorites === true);
 
 
   return (
