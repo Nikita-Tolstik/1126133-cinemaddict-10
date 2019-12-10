@@ -1,13 +1,13 @@
-import {mainCards} from '../main.js';
-import {createElement} from '../util.js';
+import {cards} from '../main.js';
+import AbstractComponent from './abstract-component.js';
 
 
 const createSiteMenuTemplate = () => {
 
 
-  const wathclistFilters = mainCards.filter((card) => card.userDetails.isWathclist === true);
-  const historyFilters = mainCards.filter((card) => card.userDetails.isHistory === true);
-  const favoritesFilters = mainCards.filter((card) => card.userDetails.isFavorites === true);
+  const wathclistFilters = cards.filter((card) => card.userDetails.isWathclist === true);
+  const historyFilters = cards.filter((card) => card.userDetails.isHistory === true);
+  const favoritesFilters = cards.filter((card) => card.userDetails.isFavorites === true);
 
 
   return (
@@ -21,24 +21,9 @@ const createSiteMenuTemplate = () => {
   );
 };
 
-export default class SiteMenu {
-  constructor() {
-    this._element = null;
-  }
+export default class SiteMenu extends AbstractComponent {
 
   getTemplate() {
     return createSiteMenuTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

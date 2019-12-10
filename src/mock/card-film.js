@@ -1,4 +1,4 @@
-import {getRandomNumber, getRatingNumber, getDescription, getRandomDate} from '../util.js';
+import {getRandomNumber, getRatingNumber, getDescription, getRandomDate} from '../utils/common.js';
 import {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, MINUTE_MIN, MINUTE_MAX, COMMENT_MAX, SENTENCES, POSTERS, FILMS, GENRES} from '../const.js';
 
 const SENTENCES_MAX = 3;
@@ -53,7 +53,7 @@ const getRandomGenres = (genres) => {
   return randomGenres;
 };
 
-const generateFilmCard = () => {
+export const generateFilmCard = () => {
 
   const filmTitle = FILMS[getRandomNumber(ZERO, FILMS.length - ONE)];
 
@@ -84,11 +84,9 @@ const generateFilmCard = () => {
   };
 };
 
-const generateFilmCards = (count) => {
+export const generateFilmCards = (count) => {
   return new Array(count)
     .fill(``)
     .map(generateFilmCard);
 };
 
-
-export {generateFilmCard, generateFilmCards};

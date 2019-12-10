@@ -1,4 +1,5 @@
-import {getRandomNumber, createElement} from '../util.js';
+import AbstractComponent from './abstract-component.js';
+import {getRandomNumber} from '../utils/common.js';
 import {ZERO} from '../const.js';
 
 
@@ -34,24 +35,9 @@ const createProfileRatingTemplate = () => {
     </section>`);
 };
 
-export default class ProfileRating {
-  constructor() {
-    this._element = null;
-  }
+export default class ProfileRating extends AbstractComponent {
 
   getTemplate() {
     return createProfileRatingTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

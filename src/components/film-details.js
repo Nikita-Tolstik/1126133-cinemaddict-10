@@ -1,5 +1,6 @@
+import AbstractComponent from './abstract-component.js';
 import {ZERO, ONE, MONTH_NAMES} from '../const.js';
-import {getRandomNumber, getTimeFilm, createElement} from '../util.js';
+import {getRandomNumber, getTimeFilm} from '../utils/common.js';
 
 const COMMENT_MAX = 7;
 
@@ -212,25 +213,19 @@ const createFilmDetailsPopupTemplate = (card) => {
   );
 };
 
-export default class ProfileRating {
+export default class ProfileRating extends AbstractComponent {
   constructor(card) {
+    super();
+
     this._card = card;
-    this._element = null;
   }
 
   getTemplate() {
     return createFilmDetailsPopupTemplate(this._card);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setOnClickCloseButtonPopup(handler) {
+    this.getElement().querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, handler);
   }
 }

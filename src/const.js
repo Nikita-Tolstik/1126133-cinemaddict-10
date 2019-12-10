@@ -1,17 +1,22 @@
-const ZERO = 0;
-const ONE = 1;
-const RANDOM_NUMBER = 0.5;
-const MAX_RATING = 9;
-const MINUTE_MIN = 60;
-const MINUTE_MAX = 140;
-const COMMENT_MAX = 200;
+export const ZERO = 0;
+export const ONE = 1;
+export const RANDOM_NUMBER = 0.5;
+export const MAX_RATING = 9;
+export const MINUTE_MIN = 60;
+export const MINUTE_MAX = 140;
+export const COMMENT_MAX = 200;
 
-const Feature = {
+export const KeyDown = {
+  ESC: `Esc`,
+  ESCAPE: `Escape`
+};
+
+export const Feature = {
   comment: `comment`,
   rating: `rating`
 };
 
-const GENRES = [
+export const GENRES = [
   `Action`,
   `Adventure`,
   `Animation`,
@@ -25,7 +30,7 @@ const GENRES = [
   `Thriller`
 ];
 
-const FILMS = [
+export const FILMS = [
   `Joker`,
   `Avengers: Endgame`,
   `Knives Out`,
@@ -43,7 +48,7 @@ const FILMS = [
   `Ready Player One`
 ];
 
-const POSTERS = [
+export const POSTERS = [
   `made-for-each-other.png`,
   `popeye-meets-sinbad.png`,
   `sagebrush-trail.jpg`,
@@ -53,7 +58,7 @@ const POSTERS = [
   `the-man-with-the-golden-arm.jpg`
 ];
 
-const SENTENCES = [
+export const SENTENCES = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
   `Fusce tristique felis at fermentum pharetra.`,
@@ -67,7 +72,7 @@ const SENTENCES = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
-const MONTH_NAMES = [
+export const MONTH_NAMES = [
   `January`,
   `February`,
   `March`,
@@ -82,4 +87,3 @@ const MONTH_NAMES = [
   `December`,
 ];
 
-export {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, MINUTE_MIN, MINUTE_MAX, COMMENT_MAX, Feature, GENRES, FILMS, POSTERS, SENTENCES, MONTH_NAMES};
