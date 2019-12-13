@@ -1,12 +1,10 @@
 import NoMoviesComponent from '../components/no-movies.js';
 import FilmsListComponent from '../components/films-list.js';
-import CardFilmComponent from '../components/card-film.js';
 import LoadMoreButtonComponent from '../components/load-more-button.js';
-import FilmDetailsPopupComponent from '../components/film-details.js';
 import SortMenuComponent, {SortType} from '../components/sort-menu.js';
-import {ZERO, ONE, Feature, KeyDown} from '../const.js';
-import {getRandomNumber} from '../utils/common.js';
-import {render, RenderPosition, remove, removePopup} from '../utils/render.js';
+import MovieController from './movie-controller.js';
+import {ZERO, ONE, Feature} from '../const.js';
+import {render, RenderPosition, remove} from '../utils/render.js';
 
 
 const SHOWING_CARDS_COUNT_ON_START = 5;
@@ -14,42 +12,6 @@ const SHOWING_CARDS_COUNT_BY_BUTTON = 5;
 const TWO = 2;
 
 const bodyElement = document.querySelector(`body`);
-
-
-// Функция создания карточки
-const renderCard = (card, container) => {
-
-  const cardFilmComponent = new CardFilmComponent(card);
-  const filmDetailsPopupComponent = new FilmDetailsPopupComponent(card);
-
-
-  const onEscKeyDown = (evt) => {
-
-    const isEscDown = evt.key === KeyDown.ESCAPE || evt.key === KeyDown.ESC;
-
-    if (isEscDown) {
-      removePopup(filmDetailsPopupComponent);
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-
-  // Метод карточки - обработчик события кликов на элементы карточки
-  cardFilmComponent.setOnClickCardElements(() => {
-    render(bodyElement, filmDetailsPopupComponent, RenderPosition.BEFOREEND);
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  // Метод попапа - обработчик события клика на кнопку зыкрыть
-  filmDetailsPopupComponent.setOnClickCloseButtonPopup(() => {
-    filmDetailsPopupComponent.getElement().remove();
-    document.removeEventListener(`keydown`, onEscKeyDown);
-  });
-
-
-  render(container, cardFilmComponent, RenderPosition.BEFOREEND);
-
-};
 
 
 // Отсортировка фильмов в блоки самые комментированные и рейтинговые
@@ -63,9 +25,13 @@ const renderExtraFilmBlock = (cards, feature, blockElement, extraElement) => {
     if (isSame && sortCards[ZERO].filmInfo[feature] === ZERO) {
       extraElement.remove();
     } else if (isSame) {
-      new Array(TWO).fill(``).forEach(() => renderCard(cards[getRandomNumber(ZERO, cards.length - ONE)], blockElement));
+      let sameCards = [];
+      sameCards.push(cards.slice().shift());
+      sameCards.push(cards.slice().pop());
+
+      renderCards(blockElement, sameCards);
     } else {
-      sortCards.slice(ZERO, TWO).forEach((card) => renderCard(card, blockElement));
+      renderCards(blockElement, sortCards.slice(ZERO, TWO));
     }
 
   } else {
@@ -75,7 +41,12 @@ const renderExtraFilmBlock = (cards, feature, blockElement, extraElement) => {
 
 // Отрисовка карточек
 const renderCards = (container, cards) => {
-  cards.forEach((card) => renderCard(card, container));
+  cards.forEach((card) => {
+
+    const movieController = new MovieController(container);
+
+    movieController.render(card);
+  });
 };
 
 
@@ -104,7 +75,8 @@ export default class PageController {
         const prevCardCount = showingCardCount;
         showingCardCount = showingCardCount + SHOWING_CARDS_COUNT_BY_BUTTON;
 
-        cards.slice(prevCardCount, showingCardCount).forEach((card) => renderCard(card, filmsListElements[ZERO]));
+
+        renderCards(filmsListElements[ZERO], cards.slice(prevCardCount, showingCardCount));
 
         if (showingCardCount >= cards.length) {
           remove(this._loadMoreButtonComponent);
