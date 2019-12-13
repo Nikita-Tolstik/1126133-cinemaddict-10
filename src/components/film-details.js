@@ -85,6 +85,16 @@ const getDateMonthYear = (date) => {
 };
 
 
+const createButtonMarkup = (name, nameButton, isActive) => {
+
+  return (
+    `<input type="checkbox" class="film-details__control-input visually-hidden" id=${name} name=${name} ${isActive ? `checked` : ``}>
+    <label for=${name} class="film-details__control-label film-details__control-label--${name}">${nameButton}</label>`
+  );
+
+};
+
+
 const createFilmDetailsPopupTemplate = (card) => {
 
   const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, date, genres} = card.filmInfo;
@@ -95,6 +105,10 @@ const createFilmDetailsPopupTemplate = (card) => {
   const countComment = new Array(randomNumber).fill(``);
   const commentTemplate = countComment.map(() => generateCommentTemplate());
   const dateFilm = getDateMonthYear(date);
+
+  const watchlistButton = createButtonMarkup(`watchlist`, `Add to watchlist`, card.userDetails.isWatchlist);
+  const watchedButton = createButtonMarkup(`watched`, `Already watched`, card.userDetails.isWatched);
+  const favoriteButton = createButtonMarkup(`favorite`, `Add to favorites`, card.userDetails.isFavorite);
 
   return (
     `<section class="film-details">
@@ -158,14 +172,13 @@ const createFilmDetailsPopupTemplate = (card) => {
     </div>
 
     <section class="film-details__controls">
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-      <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
-      <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-      <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+    ${watchlistButton}
+    ${watchedButton}
+    ${favoriteButton}
+
+
     </section>
   </div>
 
@@ -226,6 +239,21 @@ export default class ProfileRating extends AbstractComponent {
 
   setOnClickCloseButtonPopup(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, handler);
+  }
+
+  setOnWatchlistInputClick(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, handler);
+  }
+
+  setOnWatchedInputClick(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, handler);
+  }
+
+  setOnFavoriteInputClick(handler) {
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, handler);
   }
 }
