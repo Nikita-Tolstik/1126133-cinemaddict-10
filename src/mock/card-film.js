@@ -77,9 +77,9 @@ export const generateFilmCard = () => {
     },
 
     userDetails: {
-      isWathclist: Math.random() > RANDOM_NUMBER,
-      isHistory: Math.random() > RANDOM_NUMBER,
-      isFavorites: Math.random() > RANDOM_NUMBER
+      isWatchlist: Math.random() > RANDOM_NUMBER,
+      isWatched: Math.random() > RANDOM_NUMBER,
+      isFavorite: Math.random() > RANDOM_NUMBER
     }
   };
 };
@@ -89,4 +89,5 @@ export const generateFilmCards = (count) => {
     .fill(``)
     .map(generateFilmCard);
 };
+
 
