@@ -12,8 +12,6 @@ const SHOWING_CARDS_COUNT_BY_BUTTON = 5;
 const TWO = 2;
 const NO_ELEMENT = -1;
 
-const bodyElement = document.querySelector(`body`);
-
 
 // Отсортировка фильмов в блоки самые комментированные и рейтинговые
 const renderExtraFilmBlock = (cards, feature, blockElement, extraElement, onDataChange) => {
@@ -63,6 +61,7 @@ export default class PageController {
     this._sortMenuComponent = new SortMenuComponent();
 
     this._onDataChange = this._onDataChange.bind(this);
+    this._bodyElement = document.querySelector(`body`);
   }
 
   render(cards) {
@@ -82,7 +81,7 @@ export default class PageController {
         showingCardCount = showingCardCount + SHOWING_CARDS_COUNT_BY_BUTTON;
 
 
-        renderCards(filmsListElements[ZERO], cards.slice(prevCardCount, showingCardCount));
+        renderCards(filmsListElements[ZERO], cards.slice(prevCardCount, showingCardCount), this._onDataChange);
 
         if (showingCardCount >= cards.length) {
           remove(this._loadMoreButtonComponent);
@@ -139,7 +138,7 @@ export default class PageController {
     });
 
 
-    const footerStatisticsElement = bodyElement.querySelector(`.footer__statistics p`);
+    const footerStatisticsElement = this._bodyElement.querySelector(`.footer__statistics p`);
     footerStatisticsElement.textContent = `${cards.length} movies inside`;
 
 
