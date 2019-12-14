@@ -3,7 +3,6 @@ import FilmDetailsPopupComponent from '../components/film-details.js';
 import {KeyDown} from '../const.js';
 import {render, RenderPosition, removePopup, replace} from '../utils/render.js';
 
-const bodyElement = document.querySelector(`body`);
 
 export default class MovieController {
   constructor(container, onDataChange) {
@@ -13,6 +12,7 @@ export default class MovieController {
 
     this._cardFilmComponent = null;
     this._filmPopupComponent = null;
+    this._bodyElement = document.querySelector(`body`);
   }
 
   render(card) {
@@ -39,50 +39,51 @@ export default class MovieController {
 
     // Метод карточки - обработчик события кликов на элементы карточки
     this._cardFilmComponent.setOnClickCardElements(() => {
-      render(bodyElement, this._filmPopupComponent, RenderPosition.BEFOREEND);
+      render(this._bodyElement, this._filmPopupComponent, RenderPosition.BEFOREEND);
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 
-    // Метод попапа - обработчик события клика на кнопку зыкрыть
-    this._filmPopupComponent.setOnClickCloseButtonPopup(() => {
-      this._filmPopupComponent.getElement().remove();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
 
+    // Связывает изменения в попапе с карточкой фильма
+    this._filmPopupComponent.getElement()
+      .addEventListener(`input`, (evt) => {
 
-    // Метод попапа - обработчик события клика на Watchlist
-    this._filmPopupComponent.setOnWatchlistInputClick(() => {
-      this._onDataChange(this, card, Object.assign({}, card, {
-        userDetails: {
-          isWatchlist: !card.userDetails.isWatchlist,
-          isWatched: card.userDetails.isWatched,
-          isFavorite: card.userDetails.isFavorite,
+        let changedCard = null;
+
+        switch (evt.target.id) {
+          case `watchlist`:
+            changedCard = Object.assign({}, card, {
+              userDetails: {
+                isWatchlist: !card.userDetails.isWatchlist,
+                isWatched: card.userDetails.isWatched,
+                isFavorite: card.userDetails.isFavorite,
+              }
+            });
+            break;
+          case `watched`:
+            changedCard = Object.assign({}, card, {
+              userDetails: {
+                isWatchlist: card.userDetails.isWatchlist,
+                isWatched: !card.userDetails.isWatched,
+                isFavorite: card.userDetails.isFavorite,
+              }
+            });
+            break;
+          case `favorite`:
+            changedCard = Object.assign({}, card, {
+              userDetails: {
+                isWatchlist: card.userDetails.isWatchlist,
+                isWatched: card.userDetails.isWatched,
+                isFavorite: !card.userDetails.isFavorite,
+              }
+            });
+            break;
         }
-      }));
-    });
 
-    // Метод попапа - обработчик события клика на Watched
-    this._filmPopupComponent.setOnWatchedInputClick(() => {
-      this._onDataChange(this, card, Object.assign({}, card, {
-        userDetails: {
-          isWatchlist: card.userDetails.isWatchlist,
-          isWatched: !card.userDetails.isWatched,
-          isFavorite: card.userDetails.isFavorite,
+        if (changedCard) {
+          this._onDataChange(this, card, changedCard);
         }
-      }));
-    });
-
-    // Метод попапа - обработчик события клика на Favorite
-    this._filmPopupComponent.setOnFavoriteInputClick(() => {
-      this._onDataChange(this, card, Object.assign({}, card, {
-        userDetails: {
-          isWatchlist: card.userDetails.isWatchlist,
-          isWatched: card.userDetails.isWatched,
-          isFavorite: !card.userDetails.isFavorite,
-        }
-      }));
-    });
-
+      });
 
     // Метод карточки - обработчик события клика на Watchlist
     this._cardFilmComponent.setOnWatchlistButtonClick(() => {
@@ -94,6 +95,7 @@ export default class MovieController {
         }
       }));
     });
+
 
     // Метод карточки - обработчик события клика Watched
     this._cardFilmComponent.setOnWatchedButtonClick(() => {
@@ -130,3 +132,46 @@ export default class MovieController {
 
 }
 
+
+// Заменил на обычный обработчик в _subcribeOnEvents
+// Метод попапа - обработчик события клика на кнопку зыкрыть
+// this._filmPopupComponent.setOnClickCloseButtonPopup(() => {
+//   this._filmPopupComponent.getElement().remove();
+//   document.removeEventListener(`keydown`, onEscKeyDown);
+// });
+
+// Заменил на обычный обработчик в _subcribeOnEvents
+// // Метод попапа - обработчик события клика на Watchlist
+// this._filmPopupComponent.setOnWatchlistInputClick(() => {
+//   this._onDataChange(this, card, Object.assign({}, card, {
+//     userDetails: {
+//       isWatchlist: !card.userDetails.isWatchlist,
+//       isWatched: card.userDetails.isWatched,
+//       isFavorite: card.userDetails.isFavorite,
+//     }
+//   }));
+// });
+
+// Заменил на обычный обработчик в _subcribeOnEvents
+// // Метод попапа - обработчик события клика на Watched
+// this._filmPopupComponent.setOnWatchedInputClick(() => {
+//   this._onDataChange(this, card, Object.assign({}, card, {
+//     userDetails: {
+//       isWatchlist: card.userDetails.isWatchlist,
+//       isWatched: !card.userDetails.isWatched,
+//       isFavorite: card.userDetails.isFavorite,
+//     }
+//   }));
+// });
+
+// Заменил на обычный обработчик в _subcribeOnEvents
+// // Метод попапа - обработчик события клика на Favorite
+// this._filmPopupComponent.setOnFavoriteInputClick(() => {
+//   this._onDataChange(this, card, Object.assign({}, card, {
+//     userDetails: {
+//       isWatchlist: card.userDetails.isWatchlist,
+//       isWatched: card.userDetails.isWatched,
+//       isFavorite: !card.userDetails.isFavorite,
+//     }
+//   }));
+// });
