@@ -3,12 +3,20 @@ import FilmDetailsPopupComponent from '../components/film-details.js';
 import {KeyDown} from '../const.js';
 import {render, RenderPosition, removePopup, replace} from '../utils/render.js';
 
+const Mode = {
+  DEFAULT: `default`,
+  POPUP: `popup`,
+};
+
 
 export default class MovieController {
-  constructor(container, onDataChange) {
+  constructor(container, onDataChange, onViewChange) {
 
     this._container = container;
     this._onDataChange = onDataChange;
+    this._onViewChange = onViewChange;
+
+    this._mode = Mode.DEFAULT;
 
     this._cardFilmComponent = null;
     this._filmPopupComponent = null;
@@ -31,7 +39,7 @@ export default class MovieController {
       const isEscDown = evt.key === KeyDown.ESCAPE || evt.key === KeyDown.ESC;
 
       if (isEscDown) {
-        removePopup(this._filmPopupComponent);
+        this._switchPopupToCard();
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
@@ -39,7 +47,7 @@ export default class MovieController {
 
     // Метод карточки - обработчик события кликов на элементы карточки
     this._cardFilmComponent.setOnClickCardElements(() => {
-      render(this._bodyElement, this._filmPopupComponent, RenderPosition.BEFOREEND);
+      this._switchCardToPopup();
       document.addEventListener(`keydown`, onEscKeyDown);
     });
 
@@ -129,6 +137,23 @@ export default class MovieController {
     }
   }
 
+  setDefaultView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._switchPopupToCard();
+    }
+  }
+
+  _switchPopupToCard() {
+    removePopup(this._filmPopupComponent);
+    this._mode = Mode.DEFAULT;
+  }
+
+  _switchCardToPopup() {
+    this._onViewChange();
+
+    render(this._bodyElement, this._filmPopupComponent, RenderPosition.BEFOREEND);
+    this._mode = Mode.POPUP;
+  }
 
 }
 
