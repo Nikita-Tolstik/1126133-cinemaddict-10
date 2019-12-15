@@ -1,9 +1,17 @@
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './smart-component.js';
 import {ZERO, ONE, MONTH_NAMES} from '../const.js';
 import {getRandomNumber, getTimeFilm} from '../utils/common.js';
+import {removePopup} from '../utils/render.js';
 
 const COMMENT_MAX = 7;
 
+
+const FacesEmoji = {
+  SMILE: `smile.png`,
+  SLEEPING: `sleeping.png`,
+  PUKE: `puke.png`,
+  ANGRY: `angry.png`
+};
 
 const FACES = [
   `angry.png`,
@@ -85,16 +93,106 @@ const getDateMonthYear = (date) => {
 };
 
 
-const createFilmDetailsPopupTemplate = (card) => {
+const createButtonMarkup = (name, nameButton, isActive) => {
+
+  return (
+    `<input type="checkbox" class="film-details__control-input visually-hidden" id=${name} name=${name} ${isActive ? `checked` : ``}>
+    <label for=${name} class="film-details__control-label film-details__control-label--${name}">${nameButton}</label>`
+  );
+
+};
+
+
+const createRatingBlockMarkup = (isWatched, image, title) => {
+
+
+  return (isWatched ?
+    `<div class="form-details__middle-container">
+    <section class="film-details__user-rating-wrap">
+      <div class="film-details__user-rating-controls">
+        <button class="film-details__watched-reset" type="button">Undo</button>
+      </div>
+
+      <div class="film-details__user-score">
+        <div class="film-details__user-rating-poster">
+          <img src="./images/posters/${image}" alt="film-poster" class="film-details__user-rating-img">
+        </div>
+
+        <section class="film-details__user-rating-inner">
+          <h3 class="film-details__user-rating-title">${title}</h3>
+
+          <p class="film-details__user-rating-feelings">How you feel it?</p>
+
+          <div class="film-details__user-rating-score">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
+            <label class="film-details__user-rating-label" for="rating-1">1</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
+            <label class="film-details__user-rating-label" for="rating-2">2</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
+            <label class="film-details__user-rating-label" for="rating-3">3</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
+            <label class="film-details__user-rating-label" for="rating-4">4</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5">
+            <label class="film-details__user-rating-label" for="rating-5">5</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
+            <label class="film-details__user-rating-label" for="rating-6">6</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
+            <label class="film-details__user-rating-label" for="rating-7">7</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
+            <label class="film-details__user-rating-label" for="rating-8">8</label>
+
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" checked>
+            <label class="film-details__user-rating-label" for="rating-9">9</label>
+
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>` : ``);
+};
+
+const createPersonalRatingMarkup = (isWatched) => {
+
+  return (isWatched ? `<p class="film-details__user-rating">Your rate 9</p>` : ``);
+
+};
+
+const createAddEmojiMarkup = (isEmoji, emojiImage) => {
+
+  return (
+    isEmoji ? `<img src="./images/emoji/${emojiImage}" width="55" height="55" alt="emoji">` : ``
+  );
+};
+
+const createFilmDetailsPopupTemplate = (card, options = {}) => {
 
   const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, date, genres} = card.filmInfo;
+
+  const {isWatchlist, isWatched, isFavorite, isEmoji, emojiImage} = options;
 
   const timeFilm = getTimeFilm(time);
   const genreTemplate = generateGenreTemplate(genres);
   const randomNumber = getRandomNumber(ONE, COMMENT_MAX);
   const countComment = new Array(randomNumber).fill(``);
-  const commentTemplate = countComment.map(() => generateCommentTemplate());
+  const commentTemplate = countComment.map(() => generateCommentTemplate()).join(`\n`);
   const dateFilm = getDateMonthYear(date);
+
+  const watchlistButton = createButtonMarkup(`watchlist`, `Add to watchlist`, isWatchlist);
+  const watchedButton = createButtonMarkup(`watched`, `Already watched`, isWatched);
+  const favoriteButton = createButtonMarkup(`favorite`, `Add to favorites`, isFavorite);
+
+  const ratingMarkup = createRatingBlockMarkup(isWatched, image, title);
+  const personalRatingMarkup = createPersonalRatingMarkup(isWatched);
+
+  const emojiComment = createAddEmojiMarkup(isEmoji, emojiImage);
+
 
   return (
     `<section class="film-details">
@@ -119,6 +217,9 @@ const createFilmDetailsPopupTemplate = (card) => {
 
           <div class="film-details__rating">
             <p class="film-details__total-rating">${rating}</p>
+
+            ${personalRatingMarkup}
+
           </div>
         </div>
 
@@ -158,16 +259,17 @@ const createFilmDetailsPopupTemplate = (card) => {
     </div>
 
     <section class="film-details__controls">
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist">
-      <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched">
-      <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-      <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite">
-      <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
+    ${watchlistButton}
+    ${watchedButton}
+    ${favoriteButton}
+
+
     </section>
   </div>
+
+    ${ratingMarkup}
 
   <div class="form-details__bottom-container">
     <section class="film-details__comments-wrap">
@@ -178,7 +280,9 @@ const createFilmDetailsPopupTemplate = (card) => {
       </ul>
 
       <div class="film-details__new-comment">
-        <div for="add-emoji" class="film-details__add-emoji-label"></div>
+        <div for="add-emoji" class="film-details__add-emoji-label">
+        ${emojiComment}
+        </div>
 
         <label class="film-details__comment-label">
           <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
@@ -213,19 +317,115 @@ const createFilmDetailsPopupTemplate = (card) => {
   );
 };
 
-export default class ProfileRating extends AbstractComponent {
+export default class ProfileRating extends AbstractSmartComponent {
   constructor(card) {
     super();
 
     this._card = card;
+
+    this._isWatchlist = this._card.userDetails.isWatchlist;
+    this._isWatched = this._card.userDetails.isWatched;
+    this._isFavorite = this._card.userDetails.isFavorite;
+
+    this._isEmoji = null;
+    this._emojiImage = null;
+
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
-    return createFilmDetailsPopupTemplate(this._card);
+    return createFilmDetailsPopupTemplate(this._card, {
+      isWatchlist: this._isWatchlist,
+      isWatched: this._isWatched,
+      isFavorite: this._isFavorite,
+      isEmoji: this._isEmoji,
+      emojiImage: this._emojiImage
+    });
   }
 
-  setOnClickCloseButtonPopup(handler) {
-    this.getElement().querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, handler);
+
+  recoveryListeners() {
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.film-details__controls`)
+      .addEventListener(`input`, (evt) => {
+
+        switch (evt.target.id) {
+          case `watchlist`:
+            this._isWatchlist = !this._isWatchlist;
+            break;
+          case `watched`:
+            this._isWatched = !this._isWatched;
+            break;
+          case `favorite`:
+            this._isFavorite = !this._isFavorite;
+            break;
+        }
+
+        this.rerender();
+      });
+
+    element.querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, () => {
+        removePopup(this);
+      });
+
+
+    element.querySelector(`.film-details__emoji-list`)
+      .addEventListener(`input`, (evt) => {
+        evt.stopPropagation();
+
+        switch (evt.target.id) {
+          case `emoji-smile`:
+            this._emojiImage = FacesEmoji.SMILE;
+            break;
+          case `emoji-sleeping`:
+            this._emojiImage = FacesEmoji.SLEEPING;
+            break;
+          case `emoji-gpuke`:
+            this._emojiImage = FacesEmoji.PUKE;
+            break;
+          case `emoji-angry`:
+            this._emojiImage = FacesEmoji.ANGRY;
+            break;
+        }
+
+        if (this._emojiImage) {
+          this._isEmoji = true;
+          this.rerender();
+        }
+
+      });
   }
 }
+
+// Заменил эти методы на обработчики в _subscribeOnEvents
+
+// setOnClickCloseButtonPopup(handler) {
+//   this.getElement().querySelector(`.film-details__close-btn`)
+//     .addEventListener(`click`, handler);
+// }
+
+// setOnWatchlistInputClick(handler) {
+//   this.getElement().querySelector(`.film-details__control-label--watchlist`)
+//     .addEventListener(`click`, handler);
+// }
+
+// setOnWatchedInputClick(handler) {
+//   this.getElement().querySelector(`.film-details__control-label--watched`)
+//     .addEventListener(`click`, handler);
+// }
+
+// setOnFavoriteInputClick(handler) {
+//   this.getElement().querySelector(`.film-details__control-label--favorite`)
+//     .addEventListener(`click`, handler);
+// }
+
