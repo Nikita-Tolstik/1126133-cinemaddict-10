@@ -2,6 +2,7 @@ import {getRandomNumber, getRatingNumber, getDescription, getRandomDate} from '.
 import {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, MINUTE_MIN, MINUTE_MAX, COMMENT_MAX, SENTENCES, POSTERS, FILMS, GENRES} from '../const.js';
 
 const SENTENCES_MAX = 3;
+const NUMBER_TIME = 2999547470716;
 
 const AGES = [
   `0`,
@@ -65,7 +66,7 @@ export const generateFilmCard = () => {
       image: POSTERS[getRandomNumber(ZERO, POSTERS.length - ONE)],
       description: getDescription(SENTENCES, SENTENCES_MAX),
       rating: getRatingNumber(ONE, MAX_RATING),
-      date: getRandomDate(),
+      date: getRandomDate(NUMBER_TIME),
       time: getRandomNumber(MINUTE_MIN, MINUTE_MAX),
       genres: getRandomGenres(GENRES),
       comment: getRandomNumber(ZERO, COMMENT_MAX),

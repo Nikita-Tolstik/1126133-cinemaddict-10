@@ -1,10 +1,11 @@
 import AbstractSmartComponent from './smart-component.js';
-import {ZERO, ONE, MONTH_NAMES} from '../const.js';
-import {getRandomNumber, getTimeFilm} from '../utils/common.js';
+import {ZERO, ONE} from '../const.js';
+import {getRandomNumber, getTimeFilm, formatReleaseDate, formatCommentDate, getRandomDate} from '../utils/common.js';
 import {removePopup} from '../utils/render.js';
 
 
 const COMMENT_MAX = 7;
+const NUMBER_COMMENT_DATE_MAX = 100000000000;
 
 
 const FacesEmoji = {
@@ -41,15 +42,6 @@ const COMMENT_AUTHORS = [
   `Ralph Fiennes`
 ];
 
-const TIMES = [
-  `2019/12/31 23:59`,
-  `2018/05/24 10:37`,
-  `2016/03/15 16:25`,
-  `Today`,
-  `2 days ago`,
-  `Yesterday`
-];
-
 
 const generateGenreTemplate = (allGenres) => {
 
@@ -66,7 +58,7 @@ const generateCommentTemplate = () => {
   const emoji = FACES[getRandomNumber(ZERO, FACES.length - ONE)];
   const comment = COMMENTS[getRandomNumber(ZERO, COMMENTS.length - ONE)];
   const author = COMMENT_AUTHORS[getRandomNumber(ZERO, COMMENT_AUTHORS.length - ONE)];
-  const time = TIMES[getRandomNumber(ZERO, TIMES.length - ONE)];
+  const time = formatCommentDate(getRandomDate(NUMBER_COMMENT_DATE_MAX));
 
   return (
     `<li class="film-details__comment">
@@ -83,14 +75,6 @@ const generateCommentTemplate = () => {
           </div>
         </li>`
   );
-};
-
-const getDateMonthYear = (date) => {
-
-  const newDate = new Date(date);
-
-  return `${newDate.getDate()} ${MONTH_NAMES[newDate.getMonth()]} ${newDate.getFullYear()}`;
-
 };
 
 const createButtonMarkup = (name, nameButton, isActive) => {
@@ -183,7 +167,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
   const randomNumber = getRandomNumber(ONE, COMMENT_MAX);
   const countComment = new Array(randomNumber).fill(``);
   const commentTemplate = countComment.map(() => generateCommentTemplate()).join(`\n`);
-  const dateFilm = getDateMonthYear(date);
+  const dateFilm = formatReleaseDate(date);
 
   const watchlistButton = createButtonMarkup(`watchlist`, `Add to watchlist`, isWatchlist);
   const watchedButton = createButtonMarkup(`watched`, `Already watched`, isWatched);
