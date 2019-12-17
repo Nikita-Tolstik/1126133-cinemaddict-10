@@ -3,6 +3,7 @@ import {ZERO, ONE, MONTH_NAMES} from '../const.js';
 import {getRandomNumber, getTimeFilm} from '../utils/common.js';
 import {removePopup} from '../utils/render.js';
 
+
 const COMMENT_MAX = 7;
 
 
@@ -92,7 +93,6 @@ const getDateMonthYear = (date) => {
 
 };
 
-
 const createButtonMarkup = (name, nameButton, isActive) => {
 
   return (
@@ -101,7 +101,6 @@ const createButtonMarkup = (name, nameButton, isActive) => {
   );
 
 };
-
 
 const createRatingBlockMarkup = (isWatched, image, title) => {
 
@@ -179,6 +178,8 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
 
   const timeFilm = getTimeFilm(time);
   const genreTemplate = generateGenreTemplate(genres);
+  const isOneGenre = genres.length === ONE;
+
   const randomNumber = getRandomNumber(ONE, COMMENT_MAX);
   const countComment = new Array(randomNumber).fill(``);
   const commentTemplate = countComment.map(() => generateCommentTemplate()).join(`\n`);
@@ -249,7 +250,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
             <td class="film-details__cell">${country}</td>
           </tr>
           <tr class="film-details__row">
-            <td class="film-details__term">Genres</td>
+            <td class="film-details__term">${isOneGenre ? `Genre` : `Genres`}</td>
             <td class="film-details__cell">${genreTemplate}</td>
           </tr>
         </table>
@@ -330,6 +331,7 @@ export default class ProfileRating extends AbstractSmartComponent {
     this._isEmoji = null;
     this._emojiImage = null;
 
+
     this._subscribeOnEvents();
   }
 
@@ -343,7 +345,6 @@ export default class ProfileRating extends AbstractSmartComponent {
     });
   }
 
-
   recoveryListeners() {
     this._subscribeOnEvents();
   }
@@ -352,11 +353,20 @@ export default class ProfileRating extends AbstractSmartComponent {
     super.rerender();
   }
 
+  // Сброс неотправленных комментариев-эмодзи при закрытии попапа
+  resetEmoji() {
+
+    this._isEmoji = null;
+    this._emojiImage = null;
+
+    this.rerender();
+  }
+
   _subscribeOnEvents() {
     const element = this.getElement();
 
     element.querySelector(`.film-details__controls`)
-      .addEventListener(`input`, (evt) => {
+      .addEventListener(`change`, (evt) => {
 
         switch (evt.target.id) {
           case `watchlist`:
@@ -378,10 +388,10 @@ export default class ProfileRating extends AbstractSmartComponent {
         removePopup(this);
       });
 
-
     element.querySelector(`.film-details__emoji-list`)
-      .addEventListener(`input`, (evt) => {
+      .addEventListener(`change`, (evt) => {
         evt.stopPropagation();
+
 
         switch (evt.target.id) {
           case `emoji-smile`:
@@ -399,33 +409,16 @@ export default class ProfileRating extends AbstractSmartComponent {
         }
 
         if (this._emojiImage) {
+
           this._isEmoji = true;
           this.rerender();
         }
-
       });
   }
 }
 
-// Заменил эти методы на обработчики в _subscribeOnEvents
 
 // setOnClickCloseButtonPopup(handler) {
 //   this.getElement().querySelector(`.film-details__close-btn`)
 //     .addEventListener(`click`, handler);
 // }
-
-// setOnWatchlistInputClick(handler) {
-//   this.getElement().querySelector(`.film-details__control-label--watchlist`)
-//     .addEventListener(`click`, handler);
-// }
-
-// setOnWatchedInputClick(handler) {
-//   this.getElement().querySelector(`.film-details__control-label--watched`)
-//     .addEventListener(`click`, handler);
-// }
-
-// setOnFavoriteInputClick(handler) {
-//   this.getElement().querySelector(`.film-details__control-label--favorite`)
-//     .addEventListener(`click`, handler);
-// }
-

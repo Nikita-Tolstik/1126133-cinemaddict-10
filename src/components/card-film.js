@@ -55,7 +55,7 @@ const createCardFilmTemplate = (card) => {
     </article>`);
 };
 
-export default class ProfileRating extends AbstractComponent {
+export default class CardFilm extends AbstractComponent {
   constructor(card) {
     super();
 
