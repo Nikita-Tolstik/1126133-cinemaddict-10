@@ -350,7 +350,7 @@ export default class ProfileRating extends AbstractSmartComponent {
     const element = this.getElement();
 
     element.querySelector(`.film-details__controls`)
-      .addEventListener(`change`, (evt) => {
+      .addEventListener(`input`, (evt) => {
 
         switch (evt.target.id) {
           case `watchlist`:
