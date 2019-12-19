@@ -1,3 +1,4 @@
+const MomentLocalesPlugin = require(`moment-locales-webpack-plugin`);
 const path = require(`path`);
 
 module.exports = {
@@ -13,5 +14,10 @@ module.exports = {
     publicPath: `http://localhost:8080/`,
     compress: true,
     watchContentBase: true
-  }
+  },
+  plugins: [
+    new MomentLocalesPlugin({
+      localesToKeep: [`es-us`],
+    }),
+  ],
 };

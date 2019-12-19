@@ -1,8 +1,8 @@
 import {ZERO, ONE, RANDOM_NUMBER} from '../const.js';
-
+import moment from 'moment';
 
 const MINUTE = 60;
-const NUMBER_TIME = 2999547470716;
+
 
 export const getRandomNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max + ONE - min));
@@ -25,12 +25,24 @@ export const getTimeFilm = (time) => {
 
 };
 
-export const getRandomDate = () => {
+export const getRandomDate = (number) => {
 
   const targetDate = new Date();
-  const diffValue = getRandomNumber(ZERO, NUMBER_TIME);
+  const diffValue = getRandomNumber(ZERO, number);
 
   targetDate.setTime(targetDate.getTime() - diffValue);
 
   return targetDate.getTime();
+};
+
+export const formatReleaseDate = (date) => {
+
+  return moment(date).format(`DD MMMM YYYY`);
+
+};
+
+export const formatCommentDate = (date) => {
+
+  return moment(date).format(`YYYY/MM/DD HH:MM`);
+
 };
