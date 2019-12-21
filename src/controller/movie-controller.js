@@ -26,19 +26,24 @@ export default class MovieController {
     this._bodyElement = document.querySelector(`body`);
   }
 
-  render(card) {
+  render(movie) {
 
     const oldCardFilmComponent = this._cardFilmComponent;
     const oldFilmPopupComponent = this._filmPopupComponent;
 
-    this._cardFilmComponent = new CardFilmComponent(card);
-    this._filmPopupComponent = new FilmDetailsPopupComponent(card);
+    this._cardFilmComponent = new CardFilmComponent(movie);
+    this._filmPopupComponent = new FilmDetailsPopupComponent(movie);
 
 
     // Метод карточки - обработчик события кликов на элементы карточки
     this._cardFilmComponent.setOnClickCardElements(() => {
       this._switchCardToPopup();
       document.addEventListener(`keydown`, this._onEscKeyDown);
+    });
+
+    this._filmPopupComponent.setOnClickCloseButtonPopup((evt) => {
+      evt.preventDefault();
+      this._switchPopupToCard();
     });
 
     // Связывает изменения в попапе с карточкой фильма
@@ -50,31 +55,31 @@ export default class MovieController {
 
         switch (evt.target.name) {
           case `watchlist`:
-            changedCard = Object.assign({}, card, {
+            changedCard = Object.assign({}, movie, {
               userDetails: {
-                isWatchlist: !card.userDetails.isWatchlist,
-                isWatched: card.userDetails.isWatched,
-                isFavorite: card.userDetails.isFavorite,
+                isWatchlist: !movie.userDetails.isWatchlist,
+                isWatched: movie.userDetails.isWatched,
+                isFavorite: movie.userDetails.isFavorite,
               }
             });
             cloneDeepCard = clonedeep(changedCard);
             break;
           case `watched`:
-            changedCard = Object.assign({}, card, {
+            changedCard = Object.assign({}, movie, {
               userDetails: {
-                isWatchlist: card.userDetails.isWatchlist,
-                isWatched: !card.userDetails.isWatched,
-                isFavorite: card.userDetails.isFavorite,
+                isWatchlist: movie.userDetails.isWatchlist,
+                isWatched: !movie.userDetails.isWatched,
+                isFavorite: movie.userDetails.isFavorite,
               }
             });
             cloneDeepCard = clonedeep(changedCard);
             break;
           case `favorite`:
-            changedCard = Object.assign({}, card, {
+            changedCard = Object.assign({}, movie, {
               userDetails: {
-                isWatchlist: card.userDetails.isWatchlist,
-                isWatched: card.userDetails.isWatched,
-                isFavorite: !card.userDetails.isFavorite,
+                isWatchlist: movie.userDetails.isWatchlist,
+                isWatched: movie.userDetails.isWatched,
+                isFavorite: !movie.userDetails.isFavorite,
               }
             });
             cloneDeepCard = clonedeep(changedCard);
@@ -82,18 +87,18 @@ export default class MovieController {
         }
 
         if (cloneDeepCard) {
-          this._onDataChange(this, card, cloneDeepCard);
+          this._onDataChange(this, movie, cloneDeepCard);
         }
       });
 
     // Метод карточки - обработчик события клика на Watchlist
     this._cardFilmComponent.setOnWatchlistButtonClick(() => {
-      this._onDataChange(this, card, clonedeep(
-          Object.assign({}, card, {
+      this._onDataChange(this, movie, clonedeep(
+          Object.assign({}, movie, {
             userDetails: {
-              isWatchlist: !card.userDetails.isWatchlist,
-              isWatched: card.userDetails.isWatched,
-              isFavorite: card.userDetails.isFavorite,
+              isWatchlist: !movie.userDetails.isWatchlist,
+              isWatched: movie.userDetails.isWatched,
+              isFavorite: movie.userDetails.isFavorite,
             }
           }))
       );
@@ -102,12 +107,12 @@ export default class MovieController {
 
     // Метод карточки - обработчик события клика Watched
     this._cardFilmComponent.setOnWatchedButtonClick(() => {
-      this._onDataChange(this, card, clonedeep(
-          Object.assign({}, card, {
+      this._onDataChange(this, movie, clonedeep(
+          Object.assign({}, movie, {
             userDetails: {
-              isWatchlist: card.userDetails.isWatchlist,
-              isWatched: !card.userDetails.isWatched,
-              isFavorite: card.userDetails.isFavorite,
+              isWatchlist: movie.userDetails.isWatchlist,
+              isWatched: !movie.userDetails.isWatched,
+              isFavorite: movie.userDetails.isFavorite,
             }
           }))
       );
@@ -115,17 +120,16 @@ export default class MovieController {
 
     // Метод карточки - обработчик события клика Favorite
     this._cardFilmComponent.setOnFavoriteButtonClick(() => {
-      this._onDataChange(this, card, clonedeep(
-          Object.assign({}, card, {
+      this._onDataChange(this, movie, clonedeep(
+          Object.assign({}, movie, {
             userDetails: {
-              isWatchlist: card.userDetails.isWatchlist,
-              isWatched: card.userDetails.isWatched,
-              isFavorite: !card.userDetails.isFavorite,
+              isWatchlist: movie.userDetails.isWatchlist,
+              isWatched: movie.userDetails.isWatched,
+              isFavorite: !movie.userDetails.isFavorite,
             }
           }))
       );
     });
-
 
     if (oldCardFilmComponent && oldFilmPopupComponent) {
 
@@ -143,11 +147,13 @@ export default class MovieController {
   }
 
   _switchPopupToCard() {
+    // Сброс неотправленных комментариев, эмодзи при закрытии попапа
+    this._filmPopupComponent.resetEmoji();
+
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
+
     removePopup(this._filmPopupComponent);
     this._mode = Mode.DEFAULT;
-
-    // Сброс неотправленных комментариев, эмодзи при закрытии попапа
-    // this._filmPopupComponent.resetEmoji();
   }
 
   _switchCardToPopup() {
@@ -158,14 +164,12 @@ export default class MovieController {
   }
 
   _onEscKeyDown(evt) {
-
     const isEscDown = evt.key === KeyDown.ESCAPE || evt.key === KeyDown.ESC;
 
     if (isEscDown) {
       this._switchPopupToCard();
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
-
   }
 }
+
 

@@ -1,7 +1,6 @@
 import AbstractSmartComponent from './smart-component.js';
 import {ZERO, ONE} from '../const.js';
 import {getRandomNumber, getTimeFilm, formatReleaseDate, formatCommentDate, getRandomDate} from '../utils/common.js';
-import {removePopup} from '../utils/render.js';
 
 
 const COMMENT_MAX = 7;
@@ -314,7 +313,7 @@ export default class ProfileRating extends AbstractSmartComponent {
 
     this._isEmoji = null;
     this._emojiImage = null;
-
+    this._submitHandler = null;
 
     this._subscribeOnEvents();
   }
@@ -330,11 +329,8 @@ export default class ProfileRating extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
+    this.setOnClickCloseButtonPopup(this._submitHandler);
     this._subscribeOnEvents();
-  }
-
-  rerender() {
-    super.rerender();
   }
 
   // Сброс неотправленных комментариев-эмодзи при закрытии попапа
@@ -344,6 +340,17 @@ export default class ProfileRating extends AbstractSmartComponent {
     this._emojiImage = null;
 
     this.rerender();
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
+  setOnClickCloseButtonPopup(handler) {
+    this.getElement().querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, handler);
+
+    this._submitHandler = handler;
   }
 
   _subscribeOnEvents() {
@@ -365,11 +372,6 @@ export default class ProfileRating extends AbstractSmartComponent {
         }
 
         this.rerender();
-      });
-
-    element.querySelector(`.film-details__close-btn`)
-      .addEventListener(`click`, () => {
-        removePopup(this);
       });
 
     element.querySelector(`.film-details__emoji-list`)
@@ -402,7 +404,3 @@ export default class ProfileRating extends AbstractSmartComponent {
 }
 
 
-// setOnClickCloseButtonPopup(handler) {
-//   this.getElement().querySelector(`.film-details__close-btn`)
-//     .addEventListener(`click`, handler);
-// }
