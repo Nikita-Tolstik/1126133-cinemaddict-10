@@ -26,7 +26,6 @@ export default class PageController {
     this._SHOWING_CARDS_COUNT_ON_START = 5;
     this._SHOWING_CARDS_COUNT_BY_BUTTON = 5;
     this._TWO = 2;
-    this._NO_ELEMENT = -1;
 
 
     this._showedMovieControllers = [];
