@@ -3,6 +3,10 @@ import {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, MINUTE_MIN, MINUTE_MAX, COMMENT_MA
 
 const SENTENCES_MAX = 3;
 const NUMBER_TIME = 2999547470716;
+const NUMBER_FOR_ID = 36;
+const RANGE_NUMBER_MIN = 2;
+const RANGE_NUMBER_MAX = 9;
+
 
 const AGES = [
   `0`,
@@ -61,6 +65,7 @@ export const generateFilmCard = () => {
 
   return {
     filmInfo: {
+      id: (`_` + Math.random().toString(NUMBER_FOR_ID).substr(RANGE_NUMBER_MIN, RANGE_NUMBER_MAX)),
       title: filmTitle,
       originalTitle: filmTitle,
       image: POSTERS[getRandomNumber(ZERO, POSTERS.length - ONE)],
