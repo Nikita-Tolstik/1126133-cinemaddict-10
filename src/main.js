@@ -1,5 +1,5 @@
 import ProfileRatingComponent from './components/profile-rating.js';
-import SiteMenuComponent from './components/site-menu.js';
+import FilterController from './controller/filter-controller.js';
 import PageController from './controller/page-controller.js';
 import {generateFilmCards} from './mock/card-film.js';
 import {render, RenderPosition} from './utils/render.js';
@@ -12,12 +12,13 @@ export const cards = generateFilmCards(COUNT_MAIN_CARDS);
 const siteHeaderElement = document.querySelector(`.header`);
 render(siteHeaderElement, new ProfileRatingComponent(), RenderPosition.BEFOREEND);
 
-const siteMainElement = document.querySelector(`.main`);
-render(siteMainElement, new SiteMenuComponent(), RenderPosition.BEFOREEND);
-
 
 const moviesModel = new MoviesModel();
 moviesModel.setMovies(cards);
+
+const siteMainElement = document.querySelector(`.main`);
+const filterController = new FilterController(siteMainElement, moviesModel);
+filterController.render();
 
 const pageController = new PageController(siteMainElement, moviesModel);
 
