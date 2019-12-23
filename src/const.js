@@ -72,18 +72,14 @@ export const SENTENCES = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
-export const MONTH_NAMES = [
-  `January`,
-  `February`,
-  `March`,
-  `April`,
-  `May`,
-  `June`,
-  `July`,
-  `August`,
-  `September`,
-  `October`,
-  `November`,
-  `December`,
-];
+
+export const FilterType = {
+  ALL: `all`,
+  WATCHLIST: `watchlist`,
+  WATCHED: `watched`,
+  FAVORITE: `favorite`,
+  STATS: `stats`
+};
+
+export const TAG_A = `A`;
 
