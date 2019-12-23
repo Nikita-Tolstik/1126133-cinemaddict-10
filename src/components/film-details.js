@@ -313,7 +313,11 @@ export default class ProfileRating extends AbstractSmartComponent {
 
     this._isEmoji = null;
     this._emojiImage = null;
-    this._submitHandler = null;
+
+    this._closeHandler = null;
+    this._watchlistHandler = null;
+    this._watchedHandler = null;
+    this._favoriteHandler = null;
 
     this._subscribeOnEvents();
   }
@@ -329,18 +333,14 @@ export default class ProfileRating extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this.setOnClickCloseButtonPopup(this._submitHandler);
+    this.setOnClickCloseButtonPopup(this._closeHandler);
+    this.setOnWatchlistInputClick(this._watchlistHandler);
+    this.setOnWatchedInputClick(this._watchedHandler);
+    this.setOnFavoriteInputClick(this._favoriteHandler);
+
     this._subscribeOnEvents();
   }
 
-  // Сброс неотправленных комментариев-эмодзи при закрытии попапа
-  resetEmoji() {
-
-    this._isEmoji = null;
-    this._emojiImage = null;
-
-    this.rerender();
-  }
 
   rerender() {
     super.rerender();
@@ -350,29 +350,35 @@ export default class ProfileRating extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
 
-    this._submitHandler = handler;
+    this._closeHandler = handler;
   }
+
+
+  setOnWatchlistInputClick(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+    .addEventListener(`click`, handler);
+
+    this._watchlistHandler = handler;
+  }
+
+  setOnWatchedInputClick(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+    .addEventListener(`click`, handler);
+
+    this._watchedHandler = handler;
+  }
+
+  setOnFavoriteInputClick(handler) {
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
+    .addEventListener(`click`, handler);
+
+    this._favoriteHandler = handler;
+  }
+
 
   _subscribeOnEvents() {
     const element = this.getElement();
 
-    element.querySelector(`.film-details__controls`)
-      .addEventListener(`input`, (evt) => {
-
-        switch (evt.target.id) {
-          case `watchlist`:
-            this._isWatchlist = !this._isWatchlist;
-            break;
-          case `watched`:
-            this._isWatched = !this._isWatched;
-            break;
-          case `favorite`:
-            this._isFavorite = !this._isFavorite;
-            break;
-        }
-
-        this.rerender();
-      });
 
     element.querySelector(`.film-details__emoji-list`)
       .addEventListener(`change`, (evt) => {
@@ -404,3 +410,30 @@ export default class ProfileRating extends AbstractSmartComponent {
 }
 
 
+// Сброс неотправленных комментариев-эмодзи при закрытии попапа
+// resetEmoji() {
+
+//   this._isEmoji = null;
+//   this._emojiImage = null;
+
+//   this.rerender();
+// }
+
+
+// element.querySelector(`.film-details__controls`)
+//   .addEventListener(`input`, (evt) => {
+
+//     switch (evt.target.id) {
+//       case `watchlist`:
+//         this._isWatchlist = !this._isWatchlist;
+//         break;
+//       case `watched`:
+//         this._isWatched = !this._isWatched;
+//         break;
+//       case `favorite`:
+//         this._isFavorite = !this._isFavorite;
+//         break;
+//     }
+
+//     this.rerender();
+//   });
