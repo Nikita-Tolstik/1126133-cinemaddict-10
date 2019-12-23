@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
+import {TAG_A} from '../const.js';
 
-const SORT_TAG_NAME = `A`;
 
 export const SortType = {
   DEFAULT: `default`,
@@ -8,12 +8,23 @@ export const SortType = {
   RATING: `rating`
 };
 
-const createSortMenuTemplate = () =>
-  `<ul class="sort">
+const toggleClassSortType = (blockElement, element) => {
+  blockElement.querySelector(`.sort__button--active`).classList.remove(`sort__button--active`);
+
+  element.classList.add(`sort__button--active`);
+};
+
+const createSortMenuTemplate = () => {
+
+  return (
+    `<ul class="sort">
      <li><a href="#" data-sort-type="${SortType.DEFAULT}" class="sort__button sort__button--active">Sort by default</a></li>
      <li><a href="#" data-sort-type="${SortType.DATE}" class="sort__button">Sort by date</a></li>
      <li><a href="#" data-sort-type="${SortType.RATING}" class="sort__button">Sort by rating</a></li>
-   </ul>`;
+   </ul>`
+  );
+};
+
 
 export default class SortMenu extends AbstractComponent {
   constructor() {
@@ -26,12 +37,12 @@ export default class SortMenu extends AbstractComponent {
     return createSortMenuTemplate();
   }
 
-  onSetSortTypeChange(handler) {
+  setOnSortTypeChange(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
 
       evt.preventDefault();
 
-      if (evt.target.tagName !== SORT_TAG_NAME) {
+      if (evt.target.tagName !== TAG_A) {
         return;
       }
 
@@ -41,14 +52,17 @@ export default class SortMenu extends AbstractComponent {
         return;
       }
 
-      this.getElement().querySelector(`.sort__button--active`).classList.remove(`sort__button--active`);
-
-      evt.target.classList.add(`sort__button--active`);
+      toggleClassSortType(this.getElement(), evt.target);
 
       this._currentSortType = sortType;
 
       handler(this._currentSortType);
 
     });
+  }
+
+  resetSortType(blockElement, element) {
+    toggleClassSortType(blockElement, element);
+    this._currentSortType = SortType.DEFAULT;
   }
 }
