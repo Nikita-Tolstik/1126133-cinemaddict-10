@@ -1,7 +1,7 @@
 import AbstractComponent from './abstract-component.js';
 import {FilterType} from '../const.js';
 import {getWatchlistMovies, getWatchedMovies, getFavoriteMovies} from '../utils/filter.js';
-import {TAG_A} from '../const.js';
+import {TagName} from '../const.js';
 
 const createSiteMenuTemplate = (movies, activeFilter) => {
 
@@ -41,7 +41,7 @@ export default class Filter extends AbstractComponent {
     this.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
 
-      if (evt.target.tagName !== TAG_A || evt.target.dataset.filterType === FilterType.STATS) {
+      if (evt.target.tagName !== TagName.A || evt.target.dataset.filterType === FilterType.STATS) {
         return;
       }
 

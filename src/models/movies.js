@@ -44,6 +44,15 @@ export default class Movies {
     return true;
   }
 
+  deleteComment(id) {
+
+    this._movies.map((it) => {
+      if (it.filmInfo.id === id) {
+        it.filmInfo.commentUsers.splice(Number(document.querySelector(`.delete`).id), 1);
+      }
+    });
+  }
+
   // установка обработчика изменения активного фильта
   setOnFilterChange(handler) {
     this._filterChangeHandlers.push(handler);

@@ -1,5 +1,5 @@
 import AbstractSmartComponent from './smart-component.js';
-import {ONE, FilterType} from '../const.js';
+import {ONE, FilterType, TagName} from '../const.js';
 import {getTimeFilm, formatReleaseDate} from '../utils/common.js';
 
 
@@ -136,7 +136,6 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
   const isOneGenre = genres.length === ONE;
 
 
-  const commentTemplate = commentUsers.map((it, i) => generateCommentTemplate(it, i)).join(`\n`);
   const commentCount = commentUsers.length;
   const dateFilm = formatReleaseDate(date);
 
@@ -148,6 +147,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
   const personalRatingMarkup = createPersonalRatingMarkup(isWatched);
 
   const emojiComment = createAddEmojiMarkup(isEmoji, emojiImage);
+  const commentTemplate = commentUsers.map((it, i) => generateCommentTemplate(it, i)).join(`\n`);
 
 
   return (
@@ -286,10 +286,11 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isEmoji = null;
     this._emojiImage = null;
 
-    this._closeHandler = null;
-    this._watchlistHandler = null;
-    this._watchedHandler = null;
-    this._favoriteHandler = null;
+    this._onCloseButton = null;
+    this._onWatchlist = null;
+    this._onWatched = null;
+    this._onFavorite = null;
+    this._onDeleteCommentButton = null;
 
     this._subscribeOnEvents();
   }
@@ -305,10 +306,11 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this.setOnClickCloseButtonPopup(this._closeHandler);
-    this.setOnWatchlistInputClick(this._watchlistHandler);
-    this.setOnWatchedInputClick(this._watchedHandler);
-    this.setOnFavoriteInputClick(this._favoriteHandler);
+    this.setOnClickCloseButtonPopup(this._onCloseButton);
+    this.setOnWatchlistInputClick(this._onWatchlist);
+    this.setOnWatchedInputClick(this._onWatched);
+    this.setOnFavoriteInputClick(this._onFavorite);
+    this.setOnClickDeleteCommentButton(this._onDeleteCommentButton);
 
     this._subscribeOnEvents();
   }
@@ -321,28 +323,59 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
 
-    this._closeHandler = handler;
+    this._onCloseButton = handler;
   }
 
   setOnWatchlistInputClick(handler) {
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
     .addEventListener(`click`, handler);
 
-    this._watchlistHandler = handler;
+    this._onWatchlist = handler;
   }
 
   setOnWatchedInputClick(handler) {
     this.getElement().querySelector(`.film-details__control-label--watched`)
     .addEventListener(`click`, handler);
 
-    this._watchedHandler = handler;
+    this._onWatched = handler;
   }
 
   setOnFavoriteInputClick(handler) {
     this.getElement().querySelector(`.film-details__control-label--favorite`)
     .addEventListener(`click`, handler);
 
-    this._favoriteHandler = handler;
+    this._onFavorite = handler;
+  }
+
+  setOnClickDeleteCommentButton(handler) {
+    this.getElement().querySelector(`.film-details__comments-list`)
+    .addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+
+      if (evt.target.tagName !== TagName.BUTTON) {
+        return;
+      }
+
+      const elem = evt.target.closest(TagName.LI);
+      elem.classList.add(`delete`);
+
+      handler();
+      this.rerender();
+    });
+
+    this._onDeleteCommentButton = handler;
+  }
+
+  setOnFormSubmit(handler) {
+    this.getElement().querySelector(`form`)
+  .addEventListener(`keydown`, (evt) => {
+
+    if (evt.ctrlKey && (evt.key === `Enter` || evt.key === `Ent`)) {
+      handler();
+      // this.getElement().querySelector(`form`).submit();
+    }
+
+  });
   }
 
   _subscribeOnEvents() {

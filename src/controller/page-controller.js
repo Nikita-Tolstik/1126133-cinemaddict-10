@@ -91,12 +91,16 @@ export default class PageController {
 
   // Реагирует на изменения Данных пользователем, отрисовывает новый компонент
   _onDataChange(movieController, oldData, newData) {
-    const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, newData);
 
-    if (isSuccess) {
-      movieController.render(newData);
+    if (newData === null) {
+      this._moviesModel.deleteComment(oldData.filmInfo.id);
+    } else {
+      const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, newData);
+
+      if (isSuccess) {
+        movieController.render(newData);
+      }
     }
-
     this._updateMoviesList();
   }
 
@@ -142,10 +146,24 @@ export default class PageController {
 
     if (cards.length > ONE) {
 
-      const sortCards = cards.slice().sort((a, b) => b.filmInfo[feature] - a.filmInfo[feature]);
-      const isSame = sortCards.every((card) => sortCards[ZERO].filmInfo[feature] === card.filmInfo[feature]);
+      let sortCards = null;
+      let isSame = null;
+      let isAllZero = null;
 
-      if (isSame && sortCards[ZERO].filmInfo[feature] === ZERO) {
+      if (Array.isArray(cards[ZERO].filmInfo[feature])) {
+
+        sortCards = cards.slice().sort((a, b) => b.filmInfo[feature].length - a.filmInfo[feature].length);
+        isSame = sortCards.every((card) => sortCards[ZERO].filmInfo[feature].length === card.filmInfo[feature].length);
+        isAllZero = sortCards[ZERO].filmInfo[feature].length === ZERO;
+
+      } else {
+
+        sortCards = cards.slice().sort((a, b) => b.filmInfo[feature] - a.filmInfo[feature]);
+        isSame = sortCards.every((card) => sortCards[ZERO].filmInfo[feature] === card.filmInfo[feature]);
+        isAllZero = sortCards[ZERO].filmInfo[feature] === ZERO;
+      }
+
+      if (isSame && isAllZero) {
         extraElement.remove();
       } else if (isSame) {
         let sameCards = [];

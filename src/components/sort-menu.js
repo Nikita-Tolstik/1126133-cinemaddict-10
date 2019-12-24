@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {TAG_A} from '../const.js';
+import {TagName} from '../const.js';
 
 
 export const SortType = {
@@ -42,7 +42,7 @@ export default class SortMenu extends AbstractComponent {
 
       evt.preventDefault();
 
-      if (evt.target.tagName !== TAG_A) {
+      if (evt.target.tagName !== TagName.A) {
         return;
       }
 

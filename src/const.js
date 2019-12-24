@@ -11,7 +11,7 @@ export const KeyDown = {
 };
 
 export const Feature = {
-  comment: `comment`,
+  comment: `commentUsers`,
   rating: `rating`
 };
 
@@ -71,7 +71,6 @@ export const SENTENCES = [
   `In rutrum ac purus sit amet tempus.`
 ];
 
-
 export const FilterType = {
   ALL: `all`,
   WATCHLIST: `watchlist`,
@@ -80,5 +79,8 @@ export const FilterType = {
   STATS: `stats`
 };
 
-export const TAG_A = `A`;
-
+export const TagName = {
+  A: `A`,
+  BUTTON: `BUTTON`,
+  LI: `li`
+};

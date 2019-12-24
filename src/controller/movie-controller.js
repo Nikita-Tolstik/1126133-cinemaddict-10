@@ -34,7 +34,6 @@ export default class MovieController {
     this._cardFilmComponent = new CardFilmComponent(movie);
     this._filmPopupComponent = new FilmDetailsPopupComponent(movie);
 
-
     // Метод карточки - обработчик события кликов на элементы карточки
     this._cardFilmComponent.setOnClickCardElements(() => {
       this._switchCardToPopup();
@@ -130,6 +129,15 @@ export default class MovieController {
             }
           }))
       );
+    });
+
+    this._filmPopupComponent.setOnClickDeleteCommentButton(() => {
+      this._onDataChange(this, movie, null);
+    });
+
+
+    this._filmPopupComponent.setOnFormSubmit(() => {
+      console.log(1);
     });
 
 
