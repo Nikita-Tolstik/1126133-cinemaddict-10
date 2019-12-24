@@ -4,7 +4,6 @@ export const RANDOM_NUMBER = 0.5;
 export const MAX_RATING = 9;
 export const MINUTE_MIN = 60;
 export const MINUTE_MAX = 140;
-export const COMMENT_MAX = 200;
 
 export const KeyDown = {
   ESC: `Esc`,
@@ -49,13 +48,13 @@ export const FILMS = [
 ];
 
 export const POSTERS = [
-  `made-for-each-other.png`,
-  `popeye-meets-sinbad.png`,
-  `sagebrush-trail.jpg`,
-  `santa-claus-conquers-the-martians.jpg`,
-  `the-dance-of-life.jpg`,
-  `the-great-flamarion.jpg`,
-  `the-man-with-the-golden-arm.jpg`
+  `images/posters/made-for-each-other.png`,
+  `images/posters/popeye-meets-sinbad.png`,
+  `images/posters/sagebrush-trail.jpg`,
+  `images/posters/santa-claus-conquers-the-martians.jpg`,
+  `images/posters/the-dance-of-life.jpg`,
+  `images/posters/the-great-flamarion.jpg`,
+  `images/posters/the-man-with-the-golden-arm.jpg`
 ];
 
 export const SENTENCES = [

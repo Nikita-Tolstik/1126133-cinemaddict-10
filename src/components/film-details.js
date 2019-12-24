@@ -1,10 +1,6 @@
 import AbstractSmartComponent from './smart-component.js';
-import {ZERO, ONE} from '../const.js';
-import {getRandomNumber, getTimeFilm, formatReleaseDate, formatCommentDate, getRandomDate} from '../utils/common.js';
-
-
-const COMMENT_MAX = 7;
-const NUMBER_COMMENT_DATE_MAX = 100000000000;
+import {ONE, FilterType} from '../const.js';
+import {getTimeFilm, formatReleaseDate} from '../utils/common.js';
 
 
 const FacesEmoji = {
@@ -14,33 +10,11 @@ const FacesEmoji = {
   ANGRY: `angry.png`
 };
 
-const FACES = [
-  `angry.png`,
-  `puke.png`,
-  `sleeping.png`,
-  `smile.png`
-];
-
-const COMMENTS = [
-  `Interesting setting and a good cast`,
-  `Booooooooooring`,
-  `Very very old. Meh`,
-  `Almost two hours? Seriously?`,
-  `Very very interesting movie`,
-  `I liked the actors and the genre of the film`,
-  `Cool special effects and shooting`
-];
-
-const COMMENT_AUTHORS = [
-  `Jeff Bridges`,
-  `Sidney Poitier`,
-  `Gene Hackman`,
-  `Charles Chaplin`,
-  `Ben Kingsley`,
-  `Russell Crowe`,
-  `Ralph Fiennes`
-];
-
+const ButtonName = {
+  WATCHLIST: `Add to watchlist`,
+  WATCHED: `Already watched`,
+  FAVORITE: `Add to favorites`
+};
 
 const generateGenreTemplate = (allGenres) => {
 
@@ -52,23 +26,21 @@ const generateGenreTemplate = (allGenres) => {
 
 };
 
-const generateCommentTemplate = () => {
+const generateCommentTemplate = (commentUser, idComment) => {
 
-  const emoji = FACES[getRandomNumber(ZERO, FACES.length - ONE)];
-  const comment = COMMENTS[getRandomNumber(ZERO, COMMENTS.length - ONE)];
-  const author = COMMENT_AUTHORS[getRandomNumber(ZERO, COMMENT_AUTHORS.length - ONE)];
-  const time = formatCommentDate(getRandomDate(NUMBER_COMMENT_DATE_MAX));
+  const {author, comment, date, emotion} = commentUser;
+  const id = `id=${idComment}`;
 
   return (
-    `<li class="film-details__comment">
+    `<li class="film-details__comment" ${id}>
           <span class="film-details__comment-emoji">
-            <img src="./images/emoji/${emoji}" width="55" height="55" alt="emoji">
+            <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji">
           </span>
           <div>
             <p class="film-details__comment-text">${comment}</p>
             <p class="film-details__comment-info">
               <span class="film-details__comment-author">${author}</span>
-              <span class="film-details__comment-day">${time}</span>
+              <span class="film-details__comment-day">${date}</span>
               <button class="film-details__comment-delete">Delete</button>
             </p>
           </div>
@@ -97,7 +69,7 @@ const createRatingBlockMarkup = (isWatched, image, title) => {
 
       <div class="film-details__user-score">
         <div class="film-details__user-rating-poster">
-          <img src="./images/posters/${image}" alt="film-poster" class="film-details__user-rating-img">
+          <img src="./${image}" alt="film-poster" class="film-details__user-rating-img">
         </div>
 
         <section class="film-details__user-rating-inner">
@@ -155,7 +127,7 @@ const createAddEmojiMarkup = (isEmoji, emojiImage) => {
 
 const createFilmDetailsPopupTemplate = (card, options = {}) => {
 
-  const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, date, genres} = card.filmInfo;
+  const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, date, genres, commentUsers} = card.filmInfo;
 
   const {isWatchlist, isWatched, isFavorite, isEmoji, emojiImage} = options;
 
@@ -163,14 +135,14 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
   const genreTemplate = generateGenreTemplate(genres);
   const isOneGenre = genres.length === ONE;
 
-  const randomNumber = getRandomNumber(ONE, COMMENT_MAX);
-  const countComment = new Array(randomNumber).fill(``);
-  const commentTemplate = countComment.map(() => generateCommentTemplate()).join(`\n`);
+
+  const commentTemplate = commentUsers.map((it, i) => generateCommentTemplate(it, i)).join(`\n`);
+  const commentCount = commentUsers.length;
   const dateFilm = formatReleaseDate(date);
 
-  const watchlistButton = createButtonMarkup(`watchlist`, `Add to watchlist`, isWatchlist);
-  const watchedButton = createButtonMarkup(`watched`, `Already watched`, isWatched);
-  const favoriteButton = createButtonMarkup(`favorite`, `Add to favorites`, isFavorite);
+  const watchlistButton = createButtonMarkup(FilterType.WATCHLIST, ButtonName.WATCHLIST, isWatchlist);
+  const watchedButton = createButtonMarkup(FilterType.WATCHED, ButtonName.WATCHED, isWatched);
+  const favoriteButton = createButtonMarkup(FilterType.FAVORITE, ButtonName.FAVORITE, isFavorite);
 
   const ratingMarkup = createRatingBlockMarkup(isWatched, image, title);
   const personalRatingMarkup = createPersonalRatingMarkup(isWatched);
@@ -187,7 +159,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
     </div>
     <div class="film-details__info-wrap">
       <div class="film-details__poster">
-        <img class="film-details__poster-img" src="./images/posters/${image}" alt="">
+        <img class="film-details__poster-img" src="./${image}" alt="${title}">
 
         <p class="film-details__age">${age}+</p>
       </div>
@@ -257,7 +229,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
 
   <div class="form-details__bottom-container">
     <section class="film-details__comments-wrap">
-      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${countComment.length}</span></h3>
+      <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentCount}</span></h3>
 
       <ul class="film-details__comments-list">
         ${commentTemplate}
@@ -341,7 +313,6 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._subscribeOnEvents();
   }
 
-
   rerender() {
     super.rerender();
   }
@@ -352,7 +323,6 @@ export default class FilmDetails extends AbstractSmartComponent {
 
     this._closeHandler = handler;
   }
-
 
   setOnWatchlistInputClick(handler) {
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
@@ -374,7 +344,6 @@ export default class FilmDetails extends AbstractSmartComponent {
 
     this._favoriteHandler = handler;
   }
-
 
   _subscribeOnEvents() {
     const element = this.getElement();
@@ -409,31 +378,3 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 }
 
-
-// Сброс неотправленных комментариев-эмодзи при закрытии попапа
-// resetEmoji() {
-
-//   this._isEmoji = null;
-//   this._emojiImage = null;
-
-//   this.rerender();
-// }
-
-
-// element.querySelector(`.film-details__controls`)
-//   .addEventListener(`input`, (evt) => {
-
-//     switch (evt.target.id) {
-//       case `watchlist`:
-//         this._isWatchlist = !this._isWatchlist;
-//         break;
-//       case `watched`:
-//         this._isWatched = !this._isWatched;
-//         break;
-//       case `favorite`:
-//         this._isFavorite = !this._isFavorite;
-//         break;
-//     }
-
-//     this.rerender();
-//   });

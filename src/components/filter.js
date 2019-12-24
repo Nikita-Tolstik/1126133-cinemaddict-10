@@ -3,23 +3,22 @@ import {FilterType} from '../const.js';
 import {getWatchlistMovies, getWatchedMovies, getFavoriteMovies} from '../utils/filter.js';
 import {TAG_A} from '../const.js';
 
-const createSiteMenuTemplate = (movies) => {
+const createSiteMenuTemplate = (movies, activeFilter) => {
 
 
   const watchlistMoviesCount = getWatchlistMovies(movies).length;
   const watchedMoviesCount = getWatchedMovies(movies).length;
   const favoriteMoviesCount = getFavoriteMovies(movies).length;
 
-
   return (
     `<nav class="main-navigation">
-      <a href="#all" data-filter-type="${FilterType.ALL}" class="main-navigation__item main-navigation__item--active">All movies</a>
+      <a href="#all" data-filter-type="${FilterType.ALL}" class="main-navigation__item ${activeFilter === FilterType.ALL ? `main-navigation__item--active` : ``}">All movies</a>
 
-      <a href="#watchlist" data-filter-type="${FilterType.WATCHLIST}" class="main-navigation__item">Watchlist <span class="main-navigation__item-count">${watchlistMoviesCount}</span></a>
+      <a href="#watchlist" data-filter-type="${FilterType.WATCHLIST}" class="main-navigation__item ${activeFilter === FilterType.WATCHLIST ? `main-navigation__item--active` : ``}">Watchlist <span class="main-navigation__item-count">${watchlistMoviesCount}</span></a>
 
-      <a href="#history" data-filter-type="${FilterType.WATCHED}" class="main-navigation__item">History <span class="main-navigation__item-count">${watchedMoviesCount}</span></a>
+      <a href="#history" data-filter-type="${FilterType.WATCHED}" class="main-navigation__item ${activeFilter === FilterType.WATCHED ? `main-navigation__item--active` : ``}">History <span class="main-navigation__item-count">${watchedMoviesCount}</span></a>
 
-      <a href="#favorites" data-filter-type="${FilterType.FAVORITE}" class="main-navigation__item">Favorites <span class="main-navigation__item-count">${favoriteMoviesCount}</span></a>
+      <a href="#favorites" data-filter-type="${FilterType.FAVORITE}" class="main-navigation__item ${activeFilter === FilterType.FAVORITE ? `main-navigation__item--active` : ``}">Favorites <span class="main-navigation__item-count">${favoriteMoviesCount}</span></a>
 
       <a href="#stats" data-filter-type="${FilterType.STATS}" class="main-navigation__item main-navigation__item--additional">Stats</a>
     </nav>`
@@ -27,15 +26,15 @@ const createSiteMenuTemplate = (movies) => {
 };
 
 export default class Filter extends AbstractComponent {
-  constructor(movies) {
+  constructor(movies, currentFilterType) {
     super();
 
     this._movies = movies;
-    this._currentFilterType = FilterType.ALL;
+    this._currentFilterType = currentFilterType;
   }
 
   getTemplate() {
-    return createSiteMenuTemplate(this._movies);
+    return createSiteMenuTemplate(this._movies, this._currentFilterType);
   }
 
   setOnFilterChange(handler) {

@@ -1,5 +1,6 @@
 import FilterComponent from '../components/filter.js';
 import {render, RenderPosition, replace} from '../utils/render.js';
+import {FilterType} from '../const.js';
 
 export default class FilterController {
   constructor(container, moviesModel) {
@@ -12,6 +13,8 @@ export default class FilterController {
     this._onDataChange = this._onDataChange.bind(this);
 
     this._moviesModel.setOnDataChange(this._onDataChange);
+
+    this._activeFilter = FilterType.ALL;
   }
 
   render() {
@@ -20,7 +23,11 @@ export default class FilterController {
 
     const oldComponent = this._filterComponent;
 
-    this._filterComponent = new FilterComponent(allMovies);
+    if (oldComponent) {
+      this._activeFilter = oldComponent.getElement().querySelector(`.main-navigation__item--active`).dataset.filterType;
+    }
+
+    this._filterComponent = new FilterComponent(allMovies, this._activeFilter);
     this._filterComponent.setOnFilterChange(this._onFilterChange);
 
     if (oldComponent) {

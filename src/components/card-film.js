@@ -23,11 +23,12 @@ const createButtonMarkup = (nameClass, nameButton, isActive = true) => {
 
 const createCardFilmTemplate = (card) => {
 
-  const {title, image, description, rating, date, time, genres, comment} = card.filmInfo;
+  const {title, image, description, rating, date, time, genres, commentUsers} = card.filmInfo;
 
   const timeFilm = getTimeFilm(time);
   const filmYear = getYear(date);
   const mainGenre = genres[ZERO];
+  const commentCount = commentUsers.length;
 
   const watchlistButton = createButtonMarkup(`add-to-watchlist`, `Add to watchlist`, card.userDetails.isWatchlist);
   const watchedButton = createButtonMarkup(`mark-as-watched`, `Mark as watched`, card.userDetails.isWatched);
@@ -42,9 +43,9 @@ const createCardFilmTemplate = (card) => {
       <span class="film-card__duration">${timeFilm}</span>
       <span class="film-card__genre">${mainGenre}</span>
     </p>
-    <img src="./images/posters/${image}" alt="" class="film-card__poster">
+    <img src="./${image}" alt="${title}" class="film-card__poster">
     <p class="film-card__description">${description}</p>
-    <a class="film-card__comments">${comment} comments</a>
+    <a class="film-card__comments">${commentCount} comments</a>
     <form class="film-card__controls">
 
      ${watchlistButton}

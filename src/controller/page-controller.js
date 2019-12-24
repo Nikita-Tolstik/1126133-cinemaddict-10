@@ -96,6 +96,23 @@ export default class PageController {
     if (isSuccess) {
       movieController.render(newData);
     }
+
+    this._updateMoviesList();
+  }
+
+  // Моментальное Обновление списка фильмов после отметки фильма Watched, Watchlist, Favorite.
+  // А также обновление карточек фильмов в Блоках Top Rated и Most commented
+  _updateMoviesList() {
+    this._removeMovies();
+    this._onSortTypeChange(this._sortMenuComponent.getElement().querySelector(`.sort__button--active`).dataset.sortType);
+
+    const blockFilmElements = document.querySelectorAll(`.films-list__container`);
+    blockFilmElements[this._TWO].innerHTML = ``;
+    blockFilmElements[ONE].innerHTML = ``;
+
+    // Отсортировка фильмов в блоки самые комментированные и рейтинговые
+    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.rating, this._onDataChange, this._onViewChange);
+    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.comment, this._onDataChange, this._onViewChange);
   }
 
   // Закрывает уже открытый Попап, если открывают ещё один
