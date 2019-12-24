@@ -301,7 +301,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
   );
 };
 
-export default class ProfileRating extends AbstractSmartComponent {
+export default class FilmDetails extends AbstractSmartComponent {
   constructor(card) {
     super();
 
