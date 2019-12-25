@@ -1,4 +1,4 @@
-import {getRandomNumber, getRatingNumber, getDescription, getRandomDate, formatCommentDate} from '../utils/common.js';
+import {getRandomNumber, getRatingNumber, getDescription, getRandomDate} from '../utils/common.js';
 import {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, MINUTE_MIN, MINUTE_MAX, SENTENCES, POSTERS, FILMS, GENRES} from '../const.js';
 
 const SENTENCES_MAX = 3;
@@ -87,7 +87,7 @@ const generateComment = (idv, number) => {
 
     const authorv = COMMENT_AUTHORS[getRandomNumber(ZERO, COMMENT_AUTHORS.length - ONE)];
     const commentv = COMMENTS[getRandomNumber(ZERO, COMMENTS.length - ONE)];
-    const time = formatCommentDate(getRandomDate(NUMBER_COMMENT_DATE_MAX));
+    const time = getRandomDate(NUMBER_COMMENT_DATE_MAX);
     const emoji = FACES[getRandomNumber(ZERO, FACES.length - ONE)];
 
     return {

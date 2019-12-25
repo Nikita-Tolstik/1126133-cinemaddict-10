@@ -1,13 +1,13 @@
 import AbstractSmartComponent from './smart-component.js';
-import {ONE, FilterType, TagName} from '../const.js';
-import {getTimeFilm, formatReleaseDate} from '../utils/common.js';
+import {ONE, FilterType, TagName, ZERO} from '../const.js';
+import {getTimeFilm, formatReleaseDate, formatCommentDate} from '../utils/common.js';
 
 
 const FacesEmoji = {
-  SMILE: `smile.png`,
-  SLEEPING: `sleeping.png`,
-  PUKE: `puke.png`,
-  ANGRY: `angry.png`
+  SMILE: `smile`,
+  SLEEPING: `sleeping`,
+  PUKE: `puke`,
+  ANGRY: `angry`
 };
 
 const ButtonName = {
@@ -30,6 +30,7 @@ const generateCommentTemplate = (commentUser, idComment) => {
 
   const {author, comment, date, emotion} = commentUser;
   const id = `id=${idComment}`;
+  const formatDate = formatCommentDate(date);
 
   return (
     `<li class="film-details__comment" ${id}>
@@ -40,7 +41,7 @@ const generateCommentTemplate = (commentUser, idComment) => {
             <p class="film-details__comment-text">${comment}</p>
             <p class="film-details__comment-info">
               <span class="film-details__comment-author">${author}</span>
-              <span class="film-details__comment-day">${date}</span>
+              <span class="film-details__comment-day">${formatDate}</span>
               <button class="film-details__comment-delete">Delete</button>
             </p>
           </div>
@@ -118,10 +119,22 @@ const createPersonalRatingMarkup = (isWatched) => {
 
 };
 
+
+const parseFormData = (formData) => {
+  const dateComment = new Date().toISOString();
+  const emoji = document.querySelector(`.film-details__emoji-list input:checked`).value;
+
+  return {
+    comment: formData.get(`comment`),
+    date: dateComment,
+    emotion: emoji
+  };
+};
+
 const createAddEmojiMarkup = (isEmoji, emojiImage) => {
 
   return (
-    isEmoji ? `<img src="./images/emoji/${emojiImage}" width="55" height="55" alt="emoji">` : ``
+    isEmoji ? `<img src="./images/emoji/${emojiImage}.png" width="55" height="55" alt="emoji">` : ``
   );
 };
 
@@ -245,22 +258,22 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
         </label>
 
         <div class="film-details__emoji-list">
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="sleeping">
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emojiImage === FacesEmoji.SMILE ? `checked` : ``}>
           <label class="film-details__emoji-label" for="emoji-smile">
             <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="neutral-face">
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emojiImage === FacesEmoji.SLEEPING ? `checked` : ``}>
           <label class="film-details__emoji-label" for="emoji-sleeping">
             <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="grinning">
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="puke" ${emojiImage === FacesEmoji.PUKE ? `checked` : ``}>
           <label class="film-details__emoji-label" for="emoji-gpuke">
             <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="grinning">
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emojiImage === FacesEmoji.ANGRY ? `checked` : ``}>
           <label class="film-details__emoji-label" for="emoji-angry">
             <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
           </label>
@@ -291,6 +304,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._onWatched = null;
     this._onFavorite = null;
     this._onDeleteCommentButton = null;
+    this._onSubmitForm = null;
 
     this._subscribeOnEvents();
   }
@@ -311,6 +325,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.setOnWatchedInputClick(this._onWatched);
     this.setOnFavoriteInputClick(this._onFavorite);
     this.setOnClickDeleteCommentButton(this._onDeleteCommentButton);
+    this.setOnFormSubmit(this._onSubmitForm);
 
     this._subscribeOnEvents();
   }
@@ -366,38 +381,48 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._onDeleteCommentButton = handler;
   }
 
+  getFormData() {
+    const form = this.getElement().querySelector(`form`);
+    const formData = new FormData(form);
+
+    return parseFormData(formData);
+  }
+
   setOnFormSubmit(handler) {
-    this.getElement().querySelector(`form`)
-  .addEventListener(`keydown`, (evt) => {
+    this.getElement().querySelector(`.film-details__new-comment`)
+    .addEventListener(`keydown`, (evt) => {
 
-    if (evt.ctrlKey && (evt.key === `Enter` || evt.key === `Ent`)) {
-      handler();
-      // this.getElement().querySelector(`form`).submit();
-    }
+      if (this.getElement().querySelector(`.film-details__add-emoji-label`).children.length !== ZERO && evt.target.value.length !== ZERO) {
 
-  });
+
+        if (evt.ctrlKey && (evt.key === `Enter` || evt.key === `Ent`)) {
+          handler();
+          // this.getElement().querySelector(`form`).submit();
+        }
+      }
+    });
+
+    this._onSubmitForm = handler;
   }
 
   _subscribeOnEvents() {
     const element = this.getElement();
 
-
     element.querySelector(`.film-details__emoji-list`)
       .addEventListener(`change`, (evt) => {
-        evt.stopPropagation();
+        evt.preventDefault();
 
-
-        switch (evt.target.id) {
-          case `emoji-smile`:
+        switch (evt.target.value) {
+          case FacesEmoji.SMILE:
             this._emojiImage = FacesEmoji.SMILE;
             break;
-          case `emoji-sleeping`:
+          case FacesEmoji.SLEEPING:
             this._emojiImage = FacesEmoji.SLEEPING;
             break;
-          case `emoji-gpuke`:
+          case FacesEmoji.PUKE:
             this._emojiImage = FacesEmoji.PUKE;
             break;
-          case `emoji-angry`:
+          case FacesEmoji.ANGRY:
             this._emojiImage = FacesEmoji.ANGRY;
             break;
         }

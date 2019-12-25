@@ -2,6 +2,9 @@ import AbstractComponent from './abstract-component.js';
 import {getTimeFilm} from '../utils/common.js';
 import {ZERO} from '../const.js';
 
+const DESCRIPTION_LENGTH = 140;
+const DESCRIPTION_LENGTH_FORMAT = 139;
+
 const getYear = (date) => {
 
   const time = new Date(date);
@@ -9,7 +12,6 @@ const getYear = (date) => {
   return time.getFullYear();
 
 };
-
 
 const createButtonMarkup = (nameClass, nameButton, isActive = true) => {
 
@@ -20,7 +22,23 @@ const createButtonMarkup = (nameClass, nameButton, isActive = true) => {
 
 };
 
+// const checkDescriptionLength = (description) => {
 
+//   let formatDescription = null;
+
+//   if (description.length > DESCRIPTION_LENGTH) {
+//     description.length = DESCRIPTION_LENGTH_FORMAT;
+
+//     formatDescription = `${description}&hellip;`;
+//   } else {
+//     formatDescription = description;
+//   }
+
+//   return formatDescription;
+// };
+// const ff = `dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd`;
+// ff.length = 50;
+// console.log(ff);
 const createCardFilmTemplate = (card) => {
 
   const {title, image, description, rating, date, time, genres, commentUsers} = card.filmInfo;
@@ -29,6 +47,8 @@ const createCardFilmTemplate = (card) => {
   const filmYear = getYear(date);
   const mainGenre = genres[ZERO];
   const commentCount = commentUsers.length;
+
+  // const formatedDescription = checkDescriptionLength(description);
 
   const watchlistButton = createButtonMarkup(`add-to-watchlist`, `Add to watchlist`, card.userDetails.isWatchlist);
   const watchedButton = createButtonMarkup(`mark-as-watched`, `Mark as watched`, card.userDetails.isWatched);

@@ -53,6 +53,21 @@ export default class Movies {
     });
   }
 
+  addComment(id, movie) {
+
+    const index = this._movies.findIndex((it) => it.filmInfo.id === id);
+
+    if (index === this._NO_ELEMENT) {
+      return false;
+    }
+
+    this._movies = [].concat(this._movies.slice(ZERO, index), movie, this._movies.slice(index + ONE));
+    this._dataChangeHandlers.forEach((handler) => handler());
+
+    return true;
+
+  }
+
   // установка обработчика изменения активного фильта
   setOnFilterChange(handler) {
     this._filterChangeHandlers.push(handler);

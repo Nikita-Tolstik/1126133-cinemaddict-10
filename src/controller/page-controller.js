@@ -92,11 +92,17 @@ export default class PageController {
   // Реагирует на изменения Данных пользователем, отрисовывает новый компонент
   _onDataChange(movieController, oldData, newData) {
 
-    if (newData === null) {
+    if (newData === null) { // Удаление комментария
       this._moviesModel.deleteComment(oldData.filmInfo.id);
-    } else {
-      const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, newData);
 
+    } else if (oldData === null) { // Добавление комментария
+      const isSuccess = this._moviesModel.addComment(newData.filmInfo.id, newData);
+      if (isSuccess) {
+        movieController.render(newData);
+      }
+
+    } else { // Просто обновление данных фильма
+      const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, newData);
       if (isSuccess) {
         movieController.render(newData);
       }

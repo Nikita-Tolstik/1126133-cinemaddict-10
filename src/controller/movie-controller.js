@@ -131,13 +131,29 @@ export default class MovieController {
       );
     });
 
+    // Удаление комментария
     this._filmPopupComponent.setOnClickDeleteCommentButton(() => {
       this._onDataChange(this, movie, null);
     });
 
 
+    // Добавление нового комментрария
     this._filmPopupComponent.setOnFormSubmit(() => {
-      console.log(1);
+      const newComment = this._filmPopupComponent.getFormData();
+      const cloneMovie = clonedeep(movie);
+
+      const id = {
+        id: cloneMovie.filmInfo.id,
+        author: `Nikita`,
+      };
+
+      const newComments = [Object.assign({}, id, newComment)];
+      const oldComments = cloneMovie.filmInfo.commentUsers;
+      const concatNewComments = [].concat(newComments, oldComments);
+
+      cloneMovie.filmInfo.commentUsers = concatNewComments;
+
+      this._onDataChange(this, null, clonedeep(cloneMovie));
     });
 
 
