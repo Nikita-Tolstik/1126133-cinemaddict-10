@@ -22,23 +22,19 @@ const createButtonMarkup = (nameClass, nameButton, isActive = true) => {
 
 };
 
-// const checkDescriptionLength = (description) => {
+const parseDescriptionLength = (description) => {
+  let formatDescription = null;
 
-//   let formatDescription = null;
+  if (description.length > DESCRIPTION_LENGTH) {
+    formatDescription = `${description.slice(ZERO, DESCRIPTION_LENGTH_FORMAT)}`;
 
-//   if (description.length > DESCRIPTION_LENGTH) {
-//     description.length = DESCRIPTION_LENGTH_FORMAT;
+  } else {
+    formatDescription = description;
+  }
 
-//     formatDescription = `${description}&hellip;`;
-//   } else {
-//     formatDescription = description;
-//   }
+  return formatDescription;
+};
 
-//   return formatDescription;
-// };
-// const ff = `dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd`;
-// ff.length = 50;
-// console.log(ff);
 const createCardFilmTemplate = (card) => {
 
   const {title, image, description, rating, date, time, genres, commentUsers} = card.filmInfo;
@@ -48,7 +44,7 @@ const createCardFilmTemplate = (card) => {
   const mainGenre = genres[ZERO];
   const commentCount = commentUsers.length;
 
-  // const formatedDescription = checkDescriptionLength(description);
+  const formatDescription = parseDescriptionLength(description);
 
   const watchlistButton = createButtonMarkup(`add-to-watchlist`, `Add to watchlist`, card.userDetails.isWatchlist);
   const watchedButton = createButtonMarkup(`mark-as-watched`, `Mark as watched`, card.userDetails.isWatched);
@@ -64,7 +60,7 @@ const createCardFilmTemplate = (card) => {
       <span class="film-card__genre">${mainGenre}</span>
     </p>
     <img src="./${image}" alt="${title}" class="film-card__poster">
-    <p class="film-card__description">${description}</p>
+    <p class="film-card__description">${description.length > DESCRIPTION_LENGTH ? formatDescription + `&hellip;` : formatDescription}</p>
     <a class="film-card__comments">${commentCount} comments</a>
     <form class="film-card__controls">
 
