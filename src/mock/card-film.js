@@ -1,8 +1,14 @@
 import {getRandomNumber, getRatingNumber, getDescription, getRandomDate} from '../utils/common.js';
-import {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, MINUTE_MIN, MINUTE_MAX, COMMENT_MAX, SENTENCES, POSTERS, FILMS, GENRES} from '../const.js';
+import {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, MINUTE_MIN, MINUTE_MAX, SENTENCES, POSTERS, FILMS, GENRES} from '../const.js';
 
 const SENTENCES_MAX = 3;
 const NUMBER_TIME = 2999547470716;
+const NUMBER_FOR_ID = 36;
+const RANGE_NUMBER_MIN = 2;
+const RANGE_NUMBER_MAX = 9;
+const NUMBER_COMMENT_DATE_MAX = 100000000000;
+const COMMENT_USER = 5;
+
 
 const AGES = [
   `0`,
@@ -47,6 +53,55 @@ const COUNTRYS = [
   `Sweden`
 ];
 
+const FACES = [
+  `angry`,
+  `puke`,
+  `sleeping`,
+  `smile`
+];
+
+const COMMENTS = [
+  `Interesting setting and a good cast`,
+  `Booooooooooring`,
+  `Very very old. Meh`,
+  `Almost two hours? Seriously?`,
+  `Very very interesting movie`,
+  `I liked the actors and the genre of the film`,
+  `Cool special effects and shooting`
+];
+
+const COMMENT_AUTHORS = [
+  `Jeff Bridges`,
+  `Sidney Poitier`,
+  `Gene Hackman`,
+  `Charles Chaplin`,
+  `Ben Kingsley`,
+  `Russell Crowe`,
+  `Ralph Fiennes`
+];
+
+const generateComment = (idv, number) => {
+
+
+  return new Array(number).fill(``).map(() => {
+
+    const authorv = COMMENT_AUTHORS[getRandomNumber(ZERO, COMMENT_AUTHORS.length - ONE)];
+    const commentv = COMMENTS[getRandomNumber(ZERO, COMMENTS.length - ONE)];
+    const time = getRandomDate(NUMBER_COMMENT_DATE_MAX);
+    const emoji = FACES[getRandomNumber(ZERO, FACES.length - ONE)];
+
+    return {
+      id: idv,
+      author: authorv,
+      comment: commentv,
+      date: time,
+      emotion: emoji
+    };
+  });
+
+
+};
+
 const getRandomGenres = (genres) => {
 
   const randomGenres = genres.filter(() => Math.random() > RANDOM_NUMBER);
@@ -57,10 +112,12 @@ const getRandomGenres = (genres) => {
 export const generateFilmCard = () => {
 
   const filmTitle = FILMS[getRandomNumber(ZERO, FILMS.length - ONE)];
-
+  const idMovie = (`_` + Math.random().toString(NUMBER_FOR_ID).substr(RANGE_NUMBER_MIN, RANGE_NUMBER_MAX));
+  const commentUsersAll = generateComment(idMovie, getRandomNumber(ZERO, COMMENT_USER));
 
   return {
     filmInfo: {
+      id: idMovie,
       title: filmTitle,
       originalTitle: filmTitle,
       image: POSTERS[getRandomNumber(ZERO, POSTERS.length - ONE)],
@@ -69,7 +126,7 @@ export const generateFilmCard = () => {
       date: getRandomDate(NUMBER_TIME),
       time: getRandomNumber(MINUTE_MIN, MINUTE_MAX),
       genres: getRandomGenres(GENRES),
-      comment: getRandomNumber(ZERO, COMMENT_MAX),
+      commentUsers: commentUsersAll,
       age: AGES[getRandomNumber(ZERO, AGES.length - ONE)],
       actor: ACTORS[getRandomNumber(ZERO, ACTORS.length - ONE)],
       director: DIRECTORS[getRandomNumber(ZERO, DIRECTORS.length - ONE)],
@@ -90,5 +147,3 @@ export const generateFilmCards = (count) => {
     .fill(``)
     .map(generateFilmCard);
 };
-
-

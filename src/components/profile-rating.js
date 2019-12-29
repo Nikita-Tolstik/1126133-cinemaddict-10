@@ -2,6 +2,11 @@ import AbstractComponent from './abstract-component.js';
 import {getRandomNumber} from '../utils/common.js';
 import {ZERO} from '../const.js';
 
+const ProfileLevel = {
+  NOVICE: `Novice`,
+  FAN: `Fan`,
+  MOVIE_BUFF: `Movie Buff`
+};
 
 const COUNT_MAX = 30;
 
@@ -12,13 +17,13 @@ const getRating = (number) => {
       level = ``;
       break;
     case (number >= 1 && number <= 10):
-      level = `Novice`;
+      level = ProfileLevel.NOVICE;
       break;
     case (number >= 11 && number <= 20):
-      level = `Fan`;
+      level = ProfileLevel.FAN;
       break;
     default:
-      level = `Movie Buff`;
+      level = ProfileLevel.MOVIE_BUFF;
   }
   return level;
 };
