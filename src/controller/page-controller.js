@@ -249,6 +249,7 @@ export default class PageController {
     this._renderMovies(this._moviesModel.getMovies().slice(ZERO, this._SHOWING_CARDS_COUNT_ON_START));
     this._renderLoadMoreButton();
 
+    // При переключении фильтра - идёт сброс типа сортировки на дефолтное
     this._sortMenuComponent.resetSortType(this._sortMenuComponent.getElement(), this._sortMenuComponent.getElement().querySelector(`a`));
     this._onSortTypeChange(SortType.DEFAULT);
   }

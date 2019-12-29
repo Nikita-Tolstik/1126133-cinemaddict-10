@@ -119,7 +119,6 @@ const createPersonalRatingMarkup = (isWatched) => {
 
 };
 
-
 const parseFormData = (formData) => {
   const dateComment = new Date().toISOString();
   const emoji = document.querySelector(`.film-details__emoji-list input:checked`).value;
