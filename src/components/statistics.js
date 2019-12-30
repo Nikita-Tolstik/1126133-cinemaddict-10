@@ -1,4 +1,6 @@
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './smart-component.js';
+// import Chart from 'chart.js';
+// import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 const createStatisticsTemplate = () => {
 
@@ -6,7 +8,7 @@ const createStatisticsTemplate = () => {
     `<section class="statistic">
     <p class="statistic__rank">
       Your rank
-      <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+      <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="51" height="51">
       <span class="statistic__rank-label">Sci-Fighter</span>
     </p>
 
@@ -52,7 +54,8 @@ const createStatisticsTemplate = () => {
   );
 };
 
-export default class Statistics extends AbstractComponent {
+
+export default class Statistics extends AbstractSmartComponent {
 
   getTemplate() {
     return createStatisticsTemplate();

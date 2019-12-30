@@ -7,6 +7,9 @@ import {render, RenderPosition} from './utils/render.js';
 import MoviesModel from './models/movies.js';
 import {FilterType, TagName} from './const.js';
 
+import Chart from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
 const COUNT_MAIN_CARDS = 20;
 const cards = generateFilmCards(COUNT_MAIN_CARDS);
 
@@ -29,8 +32,8 @@ render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
 
 
 const pageController = new PageController(siteMainElement, moviesModel);
-statisticsComponent.hide();
-pageController.render();
+// statisticsComponent.hide();
+// pageController.render();
 
 // Переключение между экранами Статистики и Фильмов
 filterController.setOnScreenChange((activeFilter) => {
@@ -46,4 +49,71 @@ filterController.setOnScreenChange((activeFilter) => {
       break;
   }
 });
+
+
+const element = document.querySelector(`.statistic__chart`);
+
+
+const renderColorsChart = (colorsCtx) => {
+
+
+  return new Chart(colorsCtx, {
+
+    type: `horizontalBar`,
+    data: {
+      labels: [`Action`, `Drama`, `Comedy`, `Thriller`, `TVSeries`],
+      datasets: [{
+        data: [15, 2, 7, 5, 9],
+        backgroundColor: `yellow`
+      }]
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+    showTooltips: false,
+    plugins: [ChartDataLabels],
+
+    options: {
+      plugins: {
+        datalabels: {
+          color: `white`,
+          anchor: `start`,
+          align: `left`,
+          offset: 50,
+          font: {
+            size: 30
+          }
+        },
+      },
+      scales: {
+        xAxes: [{
+          display: false,
+          ticks: {
+            suggestedMin: 0,
+            suggestedMax: 15,
+          }
+        }],
+        yAxes: [{
+          gridLines: {
+            display: false,
+            drawBorder: false,
+
+          },
+          ticks: {
+            fontColor: `yellow`,
+            fontSize: 30,
+            padding: 100,
+          }
+        }]
+      },
+      tooltips: {
+        enabled: false
+      },
+      legend: {
+        display: false
+      },
+    }
+  });
+};
+renderColorsChart(element);
+
 
