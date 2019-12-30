@@ -1,6 +1,8 @@
 import FilterComponent from '../components/filter.js';
 import {render, RenderPosition, replace} from '../utils/render.js';
-import {FilterType} from '../const.js';
+import {FilterType, TagName, ZERO} from '../const.js';
+
+const ACTIVE_FILTER_CLASS = `main-navigation__item--active`;
 
 export default class FilterController {
   constructor(container, moviesModel) {
@@ -24,7 +26,7 @@ export default class FilterController {
     const oldComponent = this._filterComponent;
 
     if (oldComponent) {
-      this._activeFilter = oldComponent.getElement().querySelector(`.main-navigation__item--active`).dataset.filterType;
+      this._activeFilter = oldComponent.getElement().querySelector(`.${ACTIVE_FILTER_CLASS}`).dataset.filterType;
     }
 
     this._filterComponent = new FilterComponent(allMovies, this._activeFilter);
@@ -38,10 +40,38 @@ export default class FilterController {
   }
 
   _onFilterChange(filterType) {
+
+    if (this._moviesModel.getAllMovies().length === ZERO) {
+      return;
+    }
+
     this._moviesModel.setFilter(filterType);
   }
 
   _onDataChange() {
     this.render();
+  }
+
+  // Переключение между экранами Статистики и Фильмов
+  setOnScreenChange(handler) {
+    this._filterComponent.getElement().addEventListener(`click`, (evt) => {
+
+      if (evt.target.tagName !== TagName.A) {
+        return;
+      }
+
+      const filterName = evt.target.dataset.filterType;
+
+      if (this._activeFilter === filterName) {
+        return;
+      }
+
+      this._activeFilter = filterName;
+
+      this._filterComponent.getElement().querySelector(`.${ACTIVE_FILTER_CLASS}`).classList.remove(ACTIVE_FILTER_CLASS);
+      evt.target.classList.add(ACTIVE_FILTER_CLASS);
+
+      handler(this._activeFilter);
+    });
   }
 }

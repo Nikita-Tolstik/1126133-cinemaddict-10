@@ -3,7 +3,7 @@ import FilmsListComponent from '../components/films-list.js';
 import LoadMoreButtonComponent from '../components/load-more-button.js';
 import SortMenuComponent, {SortType} from '../components/sort-menu.js';
 import MovieController from './movie-controller.js';
-import {ZERO, ONE, Feature} from '../const.js';
+import {ZERO, ONE, Feature, TagName} from '../const.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 
 
@@ -48,8 +48,20 @@ export default class PageController {
     // Обработчик смены фильтра и активации методов перерисовки
     this._moviesModel.setOnFilterChange(this._onFilterChange);
 
-    this._bodyElement = document.querySelector(`body`);
+    this._bodyElement = document.querySelector(TagName.BODY);
     this._filmsListElements = null;
+  }
+
+  // Отображение списка фильмов и меню сортировки
+  show() {
+    this._filmsListComponent.show();
+    this._sortMenuComponent.show();
+  }
+
+  // Скрытие списка фильмов и меню сортировки
+  hide() {
+    this._filmsListComponent.hide();
+    this._sortMenuComponent.hide();
   }
 
   render() {
@@ -76,7 +88,6 @@ export default class PageController {
     this._renderExtraFilmBlock(movies, Feature.rating, this._onDataChange, this._onViewChange);
     this._renderExtraFilmBlock(movies, Feature.comment, this._onDataChange, this._onViewChange);
   }
-
 
   _removeMovies() {
     this._filmsListElements[ZERO].innerHTML = ``;
@@ -250,7 +261,7 @@ export default class PageController {
     this._renderLoadMoreButton();
 
     // При переключении фильтра - идёт сброс типа сортировки на дефолтное
-    this._sortMenuComponent.resetSortType(this._sortMenuComponent.getElement(), this._sortMenuComponent.getElement().querySelector(`a`));
+    this._sortMenuComponent.resetSortType(this._sortMenuComponent.getElement(), this._sortMenuComponent.getElement().querySelector(TagName.A_SMALL));
     this._onSortTypeChange(SortType.DEFAULT);
   }
 }

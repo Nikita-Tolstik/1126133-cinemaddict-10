@@ -81,6 +81,10 @@ export const FilterType = {
 
 export const TagName = {
   A: `A`,
+  A_SMALL: `a`,
   BUTTON: `BUTTON`,
-  LI: `li`
+  LI: `li`,
+  BODY: `body`,
+  MAIN: `main`,
+  HEADER: `header`
 };

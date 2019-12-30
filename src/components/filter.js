@@ -3,6 +3,8 @@ import {FilterType} from '../const.js';
 import {getWatchlistMovies, getWatchedMovies, getFavoriteMovies} from '../utils/filter.js';
 import {TagName} from '../const.js';
 
+// const ACTIVE_FILTER_CLASS = `main-navigation__item--active`;
+
 const createSiteMenuTemplate = (movies, activeFilter) => {
 
 
@@ -41,7 +43,7 @@ export default class Filter extends AbstractComponent {
     this.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
 
-      if (evt.target.tagName !== TagName.A || evt.target.dataset.filterType === FilterType.STATS) {
+      if (evt.target.tagName !== TagName.A) {
         return;
       }
 
@@ -50,9 +52,6 @@ export default class Filter extends AbstractComponent {
       if (this._currentFilterType === filterName) {
         return;
       }
-
-      this.getElement().querySelector(`.main-navigation__item--active`).classList.remove(`main-navigation__item--active`);
-      evt.target.classList.add(`main-navigation__item--active`);
 
       this._currentFilterType = filterName;
 
