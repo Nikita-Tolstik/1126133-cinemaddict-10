@@ -1,3 +1,4 @@
+import ProfileRatingComponent from '../components/profile-rating.js';
 import NoMoviesComponent from '../components/no-movies.js';
 import FilmsListComponent from '../components/films-list.js';
 import LoadMoreButtonComponent from '../components/load-more-button.js';
@@ -30,6 +31,7 @@ export default class PageController {
     this._showedMovieControllers = [];
     this._showingMovieCount = this._SHOWING_CARDS_COUNT_ON_START;
 
+    this._profileRatingComponent = new ProfileRatingComponent(this._moviesModel);
     this._noMoviesComponent = new NoMoviesComponent();
     this._filmsListComponent = new FilmsListComponent();
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
@@ -68,10 +70,14 @@ export default class PageController {
     const movies = this._moviesModel.getMovies();
     const isNoMovies = this._moviesModel.getMovies().length === ZERO;
 
+    const siteHeaderElement = document.querySelector(`.${TagName.HEADER}`);
+    render(siteHeaderElement, this._profileRatingComponent, RenderPosition.BEFOREEND);
+
     if (isNoMovies) {
       render(this._container, this._noMoviesComponent, RenderPosition.BEFOREEND);
       return;
     }
+
 
     render(this._container, this._sortMenuComponent, RenderPosition.BEFOREEND);
     render(this._container, this._filmsListComponent, RenderPosition.BEFOREEND);
@@ -134,6 +140,8 @@ export default class PageController {
     // Отсортировка фильмов в блоки самые комментированные и рейтинговые
     this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.rating, this._onDataChange, this._onViewChange);
     this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.comment, this._onDataChange, this._onViewChange);
+
+    this._profileRatingComponent.rerender();
   }
 
   // Закрывает уже открытый Попап, если открывают ещё один
