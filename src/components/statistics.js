@@ -1,15 +1,42 @@
 import AbstractSmartComponent from './smart-component.js';
+import {getGeneralTimeMovies, getTimeFilm} from '../utils/common.js';
+import {ZERO, SymbolName} from '../const.js';
+
+
 // import Chart from 'chart.js';
 // import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const createStatisticsTemplate = () => {
+const createStatisticsTemplate = (quantity, time, genre, rank) => {
+
+  let quantityMovies = null;
+  let timeMovies = null;
+  let topGenre = null;
+
+  if (quantity > ZERO) {
+
+    quantityMovies = quantity;
+    timeMovies = getGeneralTimeMovies(getTimeFilm(time));
+    topGenre = genre;
+
+  } else {
+
+    quantityMovies = ZERO;
+
+    timeMovies = {
+      hours: ZERO,
+      minutes: ZERO
+    };
+
+    topGenre = SymbolName.LONG_DASH;
+
+  }
 
   return (
     `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="51" height="51">
-      <span class="statistic__rank-label">Sci-Fighter</span>
+      <span class="statistic__rank-label">${rank}</span>
     </p>
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -34,15 +61,15 @@ const createStatisticsTemplate = () => {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">22 <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${quantityMovies} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${timeMovies.hours} <span class="statistic__item-description">h</span>${timeMovies.minutes} <span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">Sci-Fi</p>
+        <p class="statistic__item-text">${topGenre}</p>
       </li>
     </ul>
 
@@ -58,6 +85,6 @@ const createStatisticsTemplate = () => {
 export default class Statistics extends AbstractSmartComponent {
 
   getTemplate() {
-    return createStatisticsTemplate();
+    return createStatisticsTemplate(27, 11343, `Comedy`, `Fan`);
   }
 }

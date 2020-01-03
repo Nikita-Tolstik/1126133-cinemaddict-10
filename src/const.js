@@ -88,3 +88,10 @@ export const TagName = {
   MAIN: `main`,
   HEADER: `header`
 };
+
+export const SymbolName = {
+  HOUR: `h`,
+  MINUTE: `m`,
+  LONG_DASH: `&mdash;`,
+  THREE_DOTS: `&hellip;`
+};
