@@ -10,13 +10,14 @@ export default class FilterController {
     this._moviesModel = moviesModel;
 
     this._filterComponent = null;
+    this._handler = null;
+    this._activeFilter = FilterType.ALL;
+
 
     this._onFilterChange = this._onFilterChange.bind(this);
     this._onDataChange = this._onDataChange.bind(this);
 
     this._moviesModel.setOnDataChange(this._onDataChange);
-
-    this._activeFilter = FilterType.ALL;
   }
 
   render() {
@@ -36,6 +37,11 @@ export default class FilterController {
       replace(this._filterComponent, oldComponent);
     } else {
       render(container, this._filterComponent, RenderPosition.BEFOREEND);
+    }
+
+    // Восстановление обработчика переключения между экранами карточек и статистики
+    if (this._handler) {
+      this.setOnScreenChange(this._handler);
     }
   }
 
@@ -73,5 +79,7 @@ export default class FilterController {
 
       handler(this._activeFilter);
     });
+
+    this._handler = handler;
   }
 }

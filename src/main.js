@@ -32,7 +32,6 @@ pageController.render();
 
 // Переключение между экранами Статистики и Фильмов
 filterController.setOnScreenChange((activeFilter) => {
-
   switch (activeFilter) {
     case FilterType.STATS:
       pageController.hide();

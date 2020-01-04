@@ -131,7 +131,7 @@ export default class PageController {
   // А также обновление карточек фильмов в Блоках Top Rated и Most commented
   _updateMoviesList() {
     this._removeMovies();
-    this._onSortTypeChange(this._sortMenuComponent.getElement().querySelector(`.sort__button--active`).dataset.sortType);
+    this._onSortTypeChange(this._sortMenuComponent.getElement().querySelector(`.sort__button--active`).dataset.sortType, true);
 
     const blockFilmElements = document.querySelectorAll(`.films-list__container`);
     blockFilmElements[this._TWO].innerHTML = ``;
@@ -221,10 +221,18 @@ export default class PageController {
   }
 
   // Сортировка фильмов в зависимости от выбранного типа
-  _onSortTypeChange(sortType) {
+  _onSortTypeChange(sortType, isUpdate) {
 
     let sortedFilms = [];
     const movies = this._moviesModel.getMovies();
+
+    let quantity = null;
+
+    if (isUpdate) {
+      quantity = this._showingMovieCount;
+    } else {
+      quantity = this._SHOWING_CARDS_COUNT_ON_START;
+    }
 
     switch (sortType) {
       case SortType.DATE:
@@ -234,7 +242,7 @@ export default class PageController {
         sortedFilms = movies.slice().sort((a, b) => b.filmInfo.rating - a.filmInfo.rating);
         break;
       case SortType.DEFAULT:
-        sortedFilms = movies.slice(ZERO, this._SHOWING_CARDS_COUNT_ON_START);
+        sortedFilms = movies.slice(ZERO, quantity);
         break;
     }
 
