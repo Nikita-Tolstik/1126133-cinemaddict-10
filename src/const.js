@@ -17,15 +17,9 @@ export const Feature = {
 
 export const GENRES = [
   `Action`,
-  `Adventure`,
   `Animation`,
-  `Biography`,
   `Comedy`,
-  `Crime`,
-  `Drama`,
-  `Family`,
   `Fantasy`,
-  `Western`,
   `Thriller`
 ];
 

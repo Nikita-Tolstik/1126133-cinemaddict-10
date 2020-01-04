@@ -58,12 +58,20 @@ export default class PageController {
   show() {
     this._filmsListComponent.show();
     this._sortMenuComponent.show();
+
+    if (this._moviesModel.getMovies().length === ZERO) {
+      this._noMoviesComponent.show();
+    }
   }
 
   // Скрытие списка фильмов и меню сортировки
   hide() {
     this._filmsListComponent.hide();
     this._sortMenuComponent.hide();
+
+    if (this._moviesModel.getMovies().length === ZERO) {
+      this._noMoviesComponent.hide();
+    }
   }
 
   render() {

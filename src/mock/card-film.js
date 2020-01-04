@@ -2,7 +2,7 @@ import {getRandomNumber, getRatingNumber, getDescription, getRandomDate} from '.
 import {ZERO, ONE, RANDOM_NUMBER, MAX_RATING, MINUTE_MIN, MINUTE_MAX, SENTENCES, POSTERS, FILMS, GENRES} from '../const.js';
 
 const SENTENCES_MAX = 3;
-const NUMBER_TIME = 2999547470716;
+const NUMBER_DATE = 2999547470716;
 const NUMBER_FOR_ID = 36;
 const RANGE_NUMBER_MIN = 2;
 const RANGE_NUMBER_MAX = 9;
@@ -104,7 +104,11 @@ const generateComment = (idv, number) => {
 
 const getRandomGenres = (genres) => {
 
-  const randomGenres = genres.filter(() => Math.random() > RANDOM_NUMBER);
+  let randomGenres = genres.filter(() => Math.random() > RANDOM_NUMBER);
+
+  if (randomGenres.length === ZERO) {
+    randomGenres = genres.filter(() => Math.random() > RANDOM_NUMBER);
+  }
 
   return randomGenres;
 };
@@ -123,7 +127,7 @@ export const generateFilmCard = () => {
       image: POSTERS[getRandomNumber(ZERO, POSTERS.length - ONE)],
       description: getDescription(SENTENCES, SENTENCES_MAX),
       rating: getRatingNumber(ONE, MAX_RATING),
-      date: getRandomDate(NUMBER_TIME),
+      date: getRandomDate(NUMBER_DATE),
       time: getRandomNumber(MINUTE_MIN, MINUTE_MAX),
       genres: getRandomGenres(GENRES),
       commentUsers: commentUsersAll,
@@ -136,8 +140,9 @@ export const generateFilmCard = () => {
 
     userDetails: {
       isWatchlist: Math.random() > RANDOM_NUMBER,
-      isWatched: Math.random() > RANDOM_NUMBER,
-      isFavorite: Math.random() > RANDOM_NUMBER
+      isWatched: true,
+      isFavorite: Math.random() > RANDOM_NUMBER,
+      watchedDate: new Date(getRandomDate(100000000000)).toISOString(),
     }
   };
 };

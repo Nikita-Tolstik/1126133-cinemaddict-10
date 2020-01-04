@@ -1,37 +1,7 @@
 import AbstractSmartComponent from './smart-component.js';
 import {getWatchedMovies} from '../utils/filter.js';
+import {getRating} from '../utils/common.js';
 
-const NumberRating = {
-  ZERO: 0,
-  ONE: 1,
-  TEN: 10,
-  ELEVEN: 11,
-  TWENTY: 20
-};
-
-const ProfileLevel = {
-  NOVICE: `Novice`,
-  FAN: `Fan`,
-  MOVIE_BUFF: `Movie Buff`
-};
-
-const getRating = (number) => {
-  let level;
-  switch (true) {
-    case (number === NumberRating.ZERO):
-      level = ``;
-      break;
-    case (number >= NumberRating.ONE && number <= NumberRating.TEN):
-      level = ProfileLevel.NOVICE;
-      break;
-    case (number >= NumberRating.ELEVEN && number <= NumberRating.TWENTY):
-      level = ProfileLevel.FAN;
-      break;
-    default:
-      level = ProfileLevel.MOVIE_BUFF;
-  }
-  return level;
-};
 
 const createProfileRatingTemplate = (movies) => {
 
