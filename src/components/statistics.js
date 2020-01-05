@@ -186,7 +186,7 @@ const createStatisticsTemplate = (allMovies, sortedMovies, activeFilter) => {
   let quantityMovies;
   let timeMovies;
   let topGenre;
-  const rank = getRating(allMovies.length);
+  const rank = getRating(getWatchedMovies(allMovies).length);
 
   if (quantity > ZERO) {
 
