@@ -140,9 +140,9 @@ export const generateFilmCard = () => {
 
     userDetails: {
       isWatchlist: Math.random() > RANDOM_NUMBER,
-      isWatched: true,
+      isWatched: Math.random() > RANDOM_NUMBER,
       isFavorite: Math.random() > RANDOM_NUMBER,
-      watchedDate: new Date(getRandomDate(100000000000)).toISOString(),
+      watchedDate: new Date(getRandomDate(4000000000)).toISOString(),
     }
   };
 };

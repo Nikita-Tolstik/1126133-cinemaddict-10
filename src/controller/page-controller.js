@@ -149,6 +149,7 @@ export default class PageController {
     this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.rating, this._onDataChange, this._onViewChange);
     this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.comment, this._onDataChange, this._onViewChange);
 
+    // обновление звания пользователя при изменении списка просмотренных фильмов
     this._profileRatingComponent.rerender();
   }
 

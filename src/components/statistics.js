@@ -109,7 +109,7 @@ const renderGenresChart = (statisticCtx, movies) => {
   });
 };
 
-// Данные для чарт
+// Данные для чарт: кол-во фильмов
 const getQuantityForChart = (movies) => {
   let values = [];
 
@@ -120,7 +120,7 @@ const getQuantityForChart = (movies) => {
   return values;
 };
 
-// Данные для чарт
+// Данные для чарт: кол-во жанров
 const getGenresForChart = (movies) => {
   let values = [];
 

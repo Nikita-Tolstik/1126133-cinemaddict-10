@@ -8,10 +8,12 @@ export const SortType = {
   RATING: `rating`
 };
 
-const toggleClassSortType = (blockElement, element) => {
-  blockElement.querySelector(`.sort__button--active`).classList.remove(`sort__button--active`);
+const ACTIVE_BUTTON_CLASS = `sort__button--active`;
 
-  element.classList.add(`sort__button--active`);
+const toggleClassSortType = (blockElement, element) => {
+  blockElement.querySelector(`.${ACTIVE_BUTTON_CLASS}`).classList.remove(ACTIVE_BUTTON_CLASS);
+
+  element.classList.add(ACTIVE_BUTTON_CLASS);
 };
 
 const createSortMenuTemplate = () => {

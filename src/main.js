@@ -7,7 +7,7 @@ import MoviesModel from './models/movies.js';
 import {FilterType, TagName} from './const.js';
 
 
-const COUNT_MAIN_CARDS = 1000;
+const COUNT_MAIN_CARDS = 100;
 const cards = generateFilmCards(COUNT_MAIN_CARDS);
 
 
