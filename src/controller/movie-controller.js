@@ -1,6 +1,6 @@
 import CardFilmComponent from '../components/card-film.js';
 import FilmDetailsPopupComponent from '../components/film-details.js';
-import {KeyDown} from '../const.js';
+import {KeyDown, TagName} from '../const.js';
 import {render, RenderPosition, removePopup, replace} from '../utils/render.js';
 import clonedeep from 'lodash.clonedeep';
 
@@ -23,7 +23,7 @@ export default class MovieController {
     this._filmPopupComponent = null;
     this._mode = Mode.DEFAULT;
 
-    this._bodyElement = document.querySelector(`body`);
+    this._bodyElement = document.querySelector(TagName.BODY);
   }
 
   render(movie) {
@@ -55,6 +55,7 @@ export default class MovieController {
               isWatchlist: !movie.userDetails.isWatchlist,
               isWatched: movie.userDetails.isWatched,
               isFavorite: movie.userDetails.isFavorite,
+              watchedDate: movie.userDetails.watchedDate
             }
           }))
       );
@@ -62,12 +63,16 @@ export default class MovieController {
 
     // Метод попапа - обработчик события клика на Watched
     this._filmPopupComponent.setOnWatchedInputClick(() => {
+
+      const isWatchedMovie = movie.userDetails.isWatched;
+
       this._onDataChange(this, movie, clonedeep(
           Object.assign({}, movie, {
             userDetails: {
               isWatchlist: movie.userDetails.isWatchlist,
               isWatched: !movie.userDetails.isWatched,
               isFavorite: movie.userDetails.isFavorite,
+              watchedDate: isWatchedMovie ? null : new Date().toISOString()
             }
           }))
       );
@@ -81,6 +86,7 @@ export default class MovieController {
               isWatchlist: movie.userDetails.isWatchlist,
               isWatched: movie.userDetails.isWatched,
               isFavorite: !movie.userDetails.isFavorite,
+              watchedDate: movie.userDetails.watchedDate
             }
           }))
       );
@@ -96,26 +102,29 @@ export default class MovieController {
               isWatchlist: !movie.userDetails.isWatchlist,
               isWatched: movie.userDetails.isWatched,
               isFavorite: movie.userDetails.isFavorite,
+              watchedDate: movie.userDetails.watchedDate
             }
           }))
       );
     });
 
-
     // Метод карточки - обработчик события клика Watched
     this._cardFilmComponent.setOnWatchedButtonClick((evt) => {
       evt.preventDefault();
+
+      const isWatchedMovie = movie.userDetails.isWatched;
+
       this._onDataChange(this, movie, clonedeep(
           Object.assign({}, movie, {
             userDetails: {
               isWatchlist: movie.userDetails.isWatchlist,
               isWatched: !movie.userDetails.isWatched,
               isFavorite: movie.userDetails.isFavorite,
+              watchedDate: isWatchedMovie ? null : new Date().toISOString()
             }
           }))
       );
     });
-
 
     // Метод карточки - обработчик события клика Favorite
     this._cardFilmComponent.setOnFavoriteButtonClick((evt) => {
@@ -126,6 +135,7 @@ export default class MovieController {
               isWatchlist: movie.userDetails.isWatchlist,
               isWatched: movie.userDetails.isWatched,
               isFavorite: !movie.userDetails.isFavorite,
+              watchedDate: movie.userDetails.watchedDate
             }
           }))
       );

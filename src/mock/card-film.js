@@ -119,6 +119,8 @@ export const generateFilmCard = () => {
   const idMovie = (`_` + Math.random().toString(NUMBER_FOR_ID).substr(RANGE_NUMBER_MIN, RANGE_NUMBER_MAX));
   const commentUsersAll = generateComment(idMovie, getRandomNumber(ZERO, COMMENT_USER));
 
+  const isWatchedMovie = true;
+
   return {
     filmInfo: {
       id: idMovie,
@@ -140,9 +142,9 @@ export const generateFilmCard = () => {
 
     userDetails: {
       isWatchlist: Math.random() > RANDOM_NUMBER,
-      isWatched: Math.random() > RANDOM_NUMBER,
+      isWatched: isWatchedMovie,
       isFavorite: Math.random() > RANDOM_NUMBER,
-      watchedDate: new Date(getRandomDate(4000000000)).toISOString(),
+      watchedDate: isWatchedMovie ? new Date(getRandomDate(4000000000)).toISOString() : null,
     }
   };
 };
