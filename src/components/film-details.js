@@ -1,6 +1,7 @@
 import AbstractSmartComponent from './smart-component.js';
 import {ONE, FilterType, TagName, ZERO} from '../const.js';
 import {getTimeFilm, formatReleaseDate, formatCommentDate} from '../utils/common.js';
+import he from 'he';
 
 
 const FacesEmoji = {
@@ -31,6 +32,7 @@ const generateCommentTemplate = (commentUser, idComment) => {
   const {author, comment, date, emotion} = commentUser;
   const id = `id=${idComment}`;
   const formatDate = formatCommentDate(date);
+  const commentEncode = he.encode(comment);
 
   return (
     `<li class="film-details__comment" ${id}>
@@ -38,7 +40,7 @@ const generateCommentTemplate = (commentUser, idComment) => {
             <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji">
           </span>
           <div>
-            <p class="film-details__comment-text">${comment}</p>
+            <p class="film-details__comment-text">${commentEncode}</p>
             <p class="film-details__comment-info">
               <span class="film-details__comment-author">${author}</span>
               <span class="film-details__comment-day">${formatDate}</span>
