@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import {getTimeFilm} from '../utils/common.js';
-import {ZERO} from '../const.js';
+import {ZERO, SymbolName} from '../const.js';
 
 const DESCRIPTION_LENGTH = 140;
 const DESCRIPTION_LENGTH_FORMAT = 139;
@@ -60,7 +60,7 @@ const createCardFilmTemplate = (card) => {
       <span class="film-card__genre">${mainGenre}</span>
     </p>
     <img src="./${image}" alt="${title}" class="film-card__poster">
-    <p class="film-card__description">${description.length > DESCRIPTION_LENGTH ? formatDescription + `&hellip;` : formatDescription}</p>
+    <p class="film-card__description">${description.length > DESCRIPTION_LENGTH ? (formatDescription + SymbolName.THREE_DOTS) : formatDescription}</p>
     <a class="film-card__comments">${commentCount} comments</a>
     <form class="film-card__controls">
 

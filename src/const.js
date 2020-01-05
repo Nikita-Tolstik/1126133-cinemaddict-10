@@ -17,15 +17,9 @@ export const Feature = {
 
 export const GENRES = [
   `Action`,
-  `Adventure`,
   `Animation`,
-  `Biography`,
   `Comedy`,
-  `Crime`,
-  `Drama`,
-  `Family`,
   `Fantasy`,
-  `Western`,
   `Thriller`
 ];
 
@@ -81,6 +75,17 @@ export const FilterType = {
 
 export const TagName = {
   A: `A`,
+  A_SMALL: `a`,
   BUTTON: `BUTTON`,
-  LI: `li`
+  LI: `li`,
+  BODY: `body`,
+  MAIN: `main`,
+  HEADER: `header`
+};
+
+export const SymbolName = {
+  HOUR: `h`,
+  MINUTE: `m`,
+  LONG_DASH: `&mdash;`,
+  THREE_DOTS: `&hellip;`
 };

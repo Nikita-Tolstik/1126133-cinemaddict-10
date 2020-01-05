@@ -50,7 +50,7 @@ export default class Movies {
 
     this._movies.map((it) => {
       if (it.filmInfo.id === id) {
-        it.filmInfo.commentUsers.splice(Number(document.querySelector(`.delete`).id), 1);
+        it.filmInfo.commentUsers.splice(Number(document.querySelector(`.delete`).id), ONE);
       }
     });
   }

@@ -1,37 +1,13 @@
-import AbstractComponent from './abstract-component.js';
-import {getRandomNumber} from '../utils/common.js';
-import {ZERO} from '../const.js';
-
-const ProfileLevel = {
-  NOVICE: `Novice`,
-  FAN: `Fan`,
-  MOVIE_BUFF: `Movie Buff`
-};
-
-const COUNT_MAX = 30;
-
-const getRating = (number) => {
-  let level;
-  switch (true) {
-    case (number === 0):
-      level = ``;
-      break;
-    case (number >= 1 && number <= 10):
-      level = ProfileLevel.NOVICE;
-      break;
-    case (number >= 11 && number <= 20):
-      level = ProfileLevel.FAN;
-      break;
-    default:
-      level = ProfileLevel.MOVIE_BUFF;
-  }
-  return level;
-};
+import AbstractSmartComponent from './smart-component.js';
+import {getWatchedMovies} from '../utils/filter.js';
+import {getRating} from '../utils/common.js';
 
 
-const createProfileRatingTemplate = () => {
+const createProfileRatingTemplate = (movies) => {
 
-  const userRating = getRating(getRandomNumber(ZERO, COUNT_MAX));
+  const quantityWatchedMovies = getWatchedMovies(movies).length;
+
+  const userRating = getRating(quantityWatchedMovies);
 
   return (
     `<section class="header__profile profile">
@@ -40,9 +16,20 @@ const createProfileRatingTemplate = () => {
     </section>`);
 };
 
-export default class ProfileRating extends AbstractComponent {
+export default class ProfileRating extends AbstractSmartComponent {
+  constructor(moviesModel) {
+    super();
+
+    this._moviesModel = moviesModel;
+  }
 
   getTemplate() {
-    return createProfileRatingTemplate();
+    return createProfileRatingTemplate(this._moviesModel.getAllMovies());
   }
+
+  rerender() {
+    super.rerender();
+  }
+
+  recoveryListeners() {}
 }

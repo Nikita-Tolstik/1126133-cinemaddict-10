@@ -1,9 +1,10 @@
+import ProfileRatingComponent from '../components/profile-rating.js';
 import NoMoviesComponent from '../components/no-movies.js';
 import FilmsListComponent from '../components/films-list.js';
 import LoadMoreButtonComponent from '../components/load-more-button.js';
 import SortMenuComponent, {SortType} from '../components/sort-menu.js';
 import MovieController from './movie-controller.js';
-import {ZERO, ONE, Feature} from '../const.js';
+import {ZERO, ONE, Feature, TagName} from '../const.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 
 
@@ -30,6 +31,7 @@ export default class PageController {
     this._showedMovieControllers = [];
     this._showingMovieCount = this._SHOWING_CARDS_COUNT_ON_START;
 
+    this._profileRatingComponent = new ProfileRatingComponent(this._moviesModel);
     this._noMoviesComponent = new NoMoviesComponent();
     this._filmsListComponent = new FilmsListComponent();
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
@@ -48,18 +50,42 @@ export default class PageController {
     // Обработчик смены фильтра и активации методов перерисовки
     this._moviesModel.setOnFilterChange(this._onFilterChange);
 
-    this._bodyElement = document.querySelector(`body`);
+    this._bodyElement = document.querySelector(TagName.BODY);
     this._filmsListElements = null;
+  }
+
+  // Отображение списка фильмов и меню сортировки
+  show() {
+    this._filmsListComponent.show();
+    this._sortMenuComponent.show();
+
+    if (this._moviesModel.getMovies().length === ZERO) {
+      this._noMoviesComponent.show();
+    }
+  }
+
+  // Скрытие списка фильмов и меню сортировки
+  hide() {
+    this._filmsListComponent.hide();
+    this._sortMenuComponent.hide();
+
+    if (this._moviesModel.getMovies().length === ZERO) {
+      this._noMoviesComponent.hide();
+    }
   }
 
   render() {
     const movies = this._moviesModel.getMovies();
     const isNoMovies = this._moviesModel.getMovies().length === ZERO;
 
+    const siteHeaderElement = document.querySelector(`.${TagName.HEADER}`);
+    render(siteHeaderElement, this._profileRatingComponent, RenderPosition.BEFOREEND);
+
     if (isNoMovies) {
       render(this._container, this._noMoviesComponent, RenderPosition.BEFOREEND);
       return;
     }
+
 
     render(this._container, this._sortMenuComponent, RenderPosition.BEFOREEND);
     render(this._container, this._filmsListComponent, RenderPosition.BEFOREEND);
@@ -76,7 +102,6 @@ export default class PageController {
     this._renderExtraFilmBlock(movies, Feature.rating, this._onDataChange, this._onViewChange);
     this._renderExtraFilmBlock(movies, Feature.comment, this._onDataChange, this._onViewChange);
   }
-
 
   _removeMovies() {
     this._filmsListElements[ZERO].innerHTML = ``;
@@ -114,7 +139,7 @@ export default class PageController {
   // А также обновление карточек фильмов в Блоках Top Rated и Most commented
   _updateMoviesList() {
     this._removeMovies();
-    this._onSortTypeChange(this._sortMenuComponent.getElement().querySelector(`.sort__button--active`).dataset.sortType);
+    this._onSortTypeChange(this._sortMenuComponent.getElement().querySelector(`.sort__button--active`).dataset.sortType, true);
 
     const blockFilmElements = document.querySelectorAll(`.films-list__container`);
     blockFilmElements[this._TWO].innerHTML = ``;
@@ -123,6 +148,9 @@ export default class PageController {
     // Отсортировка фильмов в блоки самые комментированные и рейтинговые
     this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.rating, this._onDataChange, this._onViewChange);
     this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.comment, this._onDataChange, this._onViewChange);
+
+    // обновление звания пользователя при изменении списка просмотренных фильмов
+    this._profileRatingComponent.rerender();
   }
 
   // Закрывает уже открытый Попап, если открывают ещё один
@@ -202,10 +230,18 @@ export default class PageController {
   }
 
   // Сортировка фильмов в зависимости от выбранного типа
-  _onSortTypeChange(sortType) {
+  _onSortTypeChange(sortType, isUpdate) {
 
     let sortedFilms = [];
     const movies = this._moviesModel.getMovies();
+
+    let quantity = null;
+
+    if (isUpdate) {
+      quantity = this._showingMovieCount;
+    } else {
+      quantity = this._SHOWING_CARDS_COUNT_ON_START;
+    }
 
     switch (sortType) {
       case SortType.DATE:
@@ -215,7 +251,7 @@ export default class PageController {
         sortedFilms = movies.slice().sort((a, b) => b.filmInfo.rating - a.filmInfo.rating);
         break;
       case SortType.DEFAULT:
-        sortedFilms = movies.slice(ZERO, this._SHOWING_CARDS_COUNT_ON_START);
+        sortedFilms = movies.slice(ZERO, quantity);
         break;
     }
 
@@ -250,7 +286,7 @@ export default class PageController {
     this._renderLoadMoreButton();
 
     // При переключении фильтра - идёт сброс типа сортировки на дефолтное
-    this._sortMenuComponent.resetSortType(this._sortMenuComponent.getElement(), this._sortMenuComponent.getElement().querySelector(`a`));
+    this._sortMenuComponent.resetSortType(this._sortMenuComponent.getElement(), this._sortMenuComponent.getElement().querySelector(TagName.A_SMALL));
     this._onSortTypeChange(SortType.DEFAULT);
   }
 }
