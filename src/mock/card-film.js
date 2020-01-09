@@ -80,7 +80,7 @@ const COMMENT_AUTHORS = [
   `Ralph Fiennes`
 ];
 
-const generateComment = (idv, number) => {
+export const generateComment = (idv, number) => {
 
 
   return new Array(number).fill(``).map(() => {
@@ -134,9 +134,9 @@ export const generateFilmCard = () => {
       genres: getRandomGenres(GENRES),
       commentUsers: commentUsersAll,
       age: AGES[getRandomNumber(ZERO, AGES.length - ONE)],
-      actor: ACTORS[getRandomNumber(ZERO, ACTORS.length - ONE)],
+      actors: ACTORS[getRandomNumber(ZERO, ACTORS.length - ONE)],
       director: DIRECTORS[getRandomNumber(ZERO, DIRECTORS.length - ONE)],
-      writer: WRITERS[getRandomNumber(ZERO, WRITERS.length - ONE)],
+      writers: WRITERS[getRandomNumber(ZERO, WRITERS.length - ONE)],
       country: COUNTRYS[getRandomNumber(ZERO, COUNTRYS.length - ONE)],
     },
 

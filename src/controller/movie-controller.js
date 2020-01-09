@@ -43,7 +43,6 @@ export default class MovieController {
     this._filmPopupComponent.setOnClickCloseButtonPopup(() => {
 
       this._switchPopupToCard();
-      this._onDataChange(this, movie, clonedeep(movie));
     });
 
 

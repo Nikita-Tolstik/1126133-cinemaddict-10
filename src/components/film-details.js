@@ -141,13 +141,13 @@ const createAddEmojiMarkup = (isEmoji, emojiImage) => {
 
 const createFilmDetailsPopupTemplate = (card, options = {}) => {
 
-  const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, date, genres, commentUsers} = card.filmInfo;
+  const {title, originalTitle, image, age, rating, director, actors, writers, time, country, description, date, genres, commentUsers} = card.filmInfo;
 
   const {isWatchlist, isWatched, isFavorite, isEmoji, emojiImage} = options;
 
   const timeFilm = getTimeFilm(time);
-  const genreTemplate = generateGenreTemplate(genres);
-  const isOneGenre = genres.length === ONE;
+  const genreTemplate = genres.length === ZERO ? `` : generateGenreTemplate(genres);
+  const isOneGenre = genres.length < ONE;
 
 
   const commentCount = commentUsers.length;
@@ -200,11 +200,11 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Writers</td>
-            <td class="film-details__cell">${writer}</td>
+            <td class="film-details__cell">${writers}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Actors</td>
-            <td class="film-details__cell">${actor}</td>
+            <td class="film-details__cell">${actors}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>

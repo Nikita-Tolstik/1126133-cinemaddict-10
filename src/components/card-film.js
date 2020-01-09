@@ -41,7 +41,7 @@ const createCardFilmTemplate = (card) => {
 
   const timeFilm = getTimeFilm(time);
   const filmYear = getYear(date);
-  const mainGenre = genres[ZERO];
+  const mainGenre = genres.length === ZERO ? `` : genres[ZERO];
   const commentCount = commentUsers.length;
 
   const formatDescription = parseDescriptionLength(description);
