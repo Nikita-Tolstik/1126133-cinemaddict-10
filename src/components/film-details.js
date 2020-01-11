@@ -60,7 +60,7 @@ const createButtonMarkup = (name, nameButton, isActive) => {
 
 };
 
-const createRatingBlockMarkup = (isWatched, image, title) => {
+const createRatingBlockMarkup = (isWatched, image, title, rating) => {
 
 
   return (isWatched ?
@@ -81,31 +81,31 @@ const createRatingBlockMarkup = (isWatched, image, title) => {
           <p class="film-details__user-rating-feelings">How you feel it?</p>
 
           <div class="film-details__user-rating-score">
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${rating === 1 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-1">1</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${rating === 2 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-2">2</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3" ${rating === 3 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-3">3</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4" ${rating === 4 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-4">4</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${rating === 5 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-5">5</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6" ${rating === 6 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-6">6</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7" ${rating === 7 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-7">7</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8" ${rating === 8 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-8">8</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" checked>
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" ${rating === 9 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-9">9</label>
 
           </div>
@@ -115,9 +115,9 @@ const createRatingBlockMarkup = (isWatched, image, title) => {
   </div>` : ``);
 };
 
-const createPersonalRatingMarkup = (isWatched) => {
+const createPersonalRatingMarkup = (isWatched, rating) => {
 
-  return (isWatched ? `<p class="film-details__user-rating">Your rate 9</p>` : ``);
+  return (isWatched ? `<p class="film-details__user-rating">Your rate ${rating}</p>` : ``);
 
 };
 
@@ -142,6 +142,7 @@ const createAddEmojiMarkup = (isEmoji, emojiImage) => {
 const createFilmDetailsPopupTemplate = (card, options = {}) => {
 
   const {title, originalTitle, image, age, rating, director, actors, writers, time, country, description, date, genres, commentUsers} = card.filmInfo;
+  const {personalRating} = card.userDetails;
 
   const {isWatchlist, isWatched, isFavorite, isEmoji, emojiImage} = options;
 
@@ -157,8 +158,8 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
   const watchedButton = createButtonMarkup(FilterType.WATCHED, ButtonName.WATCHED, isWatched);
   const favoriteButton = createButtonMarkup(FilterType.FAVORITE, ButtonName.FAVORITE, isFavorite);
 
-  const ratingMarkup = createRatingBlockMarkup(isWatched, image, title);
-  const personalRatingMarkup = createPersonalRatingMarkup(isWatched);
+  const ratingMarkup = createRatingBlockMarkup(isWatched, image, title, personalRating);
+  const personalRatingMarkup = createPersonalRatingMarkup(isWatched, personalRating);
 
   const emojiComment = createAddEmojiMarkup(isEmoji, emojiImage);
   const commentTemplate = commentUsers.map((it, i) => generateCommentTemplate(it, i)).join(`\n`);
