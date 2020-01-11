@@ -117,7 +117,7 @@ const createRatingBlockMarkup = (isWatched, image, title, rating) => {
 
 const createPersonalRatingMarkup = (isWatched, rating) => {
 
-  return (isWatched ? `<p class="film-details__user-rating">Your rate ${rating}</p>` : ``);
+  return (isWatched && rating ? `<p class="film-details__user-rating">Your rate ${rating}</p>` : ``);
 
 };
 
