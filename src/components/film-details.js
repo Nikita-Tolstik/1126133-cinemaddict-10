@@ -335,6 +335,13 @@ export default class FilmDetails extends AbstractSmartComponent {
     super.rerender();
   }
 
+  resetSmile() {
+    this._isEmoji = null;
+    this._emojiImage = null;
+
+    this.rerender();
+  }
+
   setOnClickCloseButtonPopup(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);

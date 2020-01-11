@@ -185,6 +185,8 @@ export default class MovieController {
 
     document.removeEventListener(`keydown`, this._onEscKeyDown);
 
+    this._filmPopupComponent.resetSmile();
+
     removePopup(this._filmPopupComponent);
     this._mode = Mode.DEFAULT;
   }
