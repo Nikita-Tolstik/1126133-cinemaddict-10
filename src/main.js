@@ -22,7 +22,7 @@ const statisticsComponent = new StatisticsComponent(moviesModel, moviesModel.get
 render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
 
 
-const pageController = new PageController(siteMainElement, moviesModel);
+const pageController = new PageController(siteMainElement, moviesModel, api);
 statisticsComponent.hide();
 
 // Переключение между экранами Статистики и Фильмов

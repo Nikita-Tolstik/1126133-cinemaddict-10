@@ -19,9 +19,10 @@ const renderCards = (container, cards, onDataChange, onViewChange) => {
 };
 
 export default class PageController {
-  constructor(container, moviesModel) {
+  constructor(container, moviesModel, api) {
     this._container = container;
     this._moviesModel = moviesModel;
+    this._api = api;
 
     this._SHOWING_CARDS_COUNT_ON_START = 5;
     this._SHOWING_CARDS_COUNT_BY_BUTTON = 5;
@@ -127,10 +128,21 @@ export default class PageController {
       }
 
     } else { // Просто обновление данных фильма
-      const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, newData);
-      if (isSuccess) {
-        movieController.render(newData);
-      }
+
+      this._api.updateMovie(oldData.filmInfo.id, newData)
+        .then((movieModel) => {
+          movieModel.filmInfo.commentUsers = oldData.filmInfo.commentUsers;
+          const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, movieModel);
+
+          if (isSuccess) {
+            movieController.render(movieModel);
+          }
+        });
+
+    //   const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, newData);
+    //   if (isSuccess) {
+    //     movieController.render(newData);
+    //   }
     }
     this._updateMoviesList();
   }

@@ -1,12 +1,25 @@
 import CardFilmComponent from '../components/card-film.js';
 import FilmDetailsPopupComponent from '../components/film-details.js';
-import {KeyDown, TagName} from '../const.js';
+import MovieModel from '../models/movie.js';
+import {KeyDown, TagName, ZERO} from '../const.js';
 import {render, RenderPosition, removePopup, replace} from '../utils/render.js';
 import clonedeep from 'lodash.clonedeep';
+
 
 const Mode = {
   DEFAULT: `default`,
   POPUP: `popup`,
+};
+
+const parseFormData = (formData) => {
+  const dateComment = new Date().toISOString();
+  const emoji = document.querySelector(`.film-details__emoji-list input:checked`).value;
+
+  return {
+    'comment': formData.get(`comment`),
+    'date': dateComment,
+    'emotion': emoji
+  };
 };
 
 
@@ -41,70 +54,48 @@ export default class MovieController {
     });
 
     this._filmPopupComponent.setOnClickCloseButtonPopup(() => {
-
       this._switchPopupToCard();
     });
 
 
     // Метод попапа - обработчик события клика на Watchlist
     this._filmPopupComponent.setOnWatchlistInputClick(() => {
-      this._onDataChange(this, movie, clonedeep(
-          Object.assign({}, movie, {
-            userDetails: {
-              isWatchlist: !movie.userDetails.isWatchlist,
-              isWatched: movie.userDetails.isWatched,
-              isFavorite: movie.userDetails.isFavorite,
-              watchedDate: movie.userDetails.watchedDate
-            }
-          }))
-      );
+
+      const newMovie = MovieModel.clone(movie);
+      newMovie.userDetails.isWatchlist = !newMovie.userDetails.isWatchlist;
+
+      this._onDataChange(this, movie, newMovie);
     });
 
     // Метод попапа - обработчик события клика на Watched
     this._filmPopupComponent.setOnWatchedInputClick(() => {
-
       const isWatchedMovie = movie.userDetails.isWatched;
 
-      this._onDataChange(this, movie, clonedeep(
-          Object.assign({}, movie, {
-            userDetails: {
-              isWatchlist: movie.userDetails.isWatchlist,
-              isWatched: !movie.userDetails.isWatched,
-              isFavorite: movie.userDetails.isFavorite,
-              watchedDate: isWatchedMovie ? null : new Date().toISOString()
-            }
-          }))
-      );
+      const newMovie = MovieModel.clone(movie);
+      newMovie.userDetails.isWatched = !newMovie.userDetails.isWatched;
+      newMovie.userDetails.watchedDate = isWatchedMovie ? ZERO : new Date().toISOString();
+
+      this._onDataChange(this, movie, newMovie);
     });
 
     // Метод попапа - обработчик события клика на Favorite
     this._filmPopupComponent.setOnFavoriteInputClick(() => {
-      this._onDataChange(this, movie, clonedeep(
-          Object.assign({}, movie, {
-            userDetails: {
-              isWatchlist: movie.userDetails.isWatchlist,
-              isWatched: movie.userDetails.isWatched,
-              isFavorite: !movie.userDetails.isFavorite,
-              watchedDate: movie.userDetails.watchedDate
-            }
-          }))
-      );
+
+      const newMovie = MovieModel.clone(movie);
+      newMovie.userDetails.isFavorite = !newMovie.userDetails.isFavorite;
+
+      this._onDataChange(this, movie, newMovie);
     });
 
 
     // Метод карточки - обработчик события клика на Watchlist
     this._cardFilmComponent.setOnWatchlistButtonClick((evt) => {
       evt.preventDefault();
-      this._onDataChange(this, movie, clonedeep(
-          Object.assign({}, movie, {
-            userDetails: {
-              isWatchlist: !movie.userDetails.isWatchlist,
-              isWatched: movie.userDetails.isWatched,
-              isFavorite: movie.userDetails.isFavorite,
-              watchedDate: movie.userDetails.watchedDate
-            }
-          }))
-      );
+
+      const newMovie = MovieModel.clone(movie);
+      newMovie.userDetails.isWatchlist = !newMovie.userDetails.isWatchlist;
+
+      this._onDataChange(this, movie, newMovie);
     });
 
     // Метод карточки - обработчик события клика Watched
@@ -113,31 +104,21 @@ export default class MovieController {
 
       const isWatchedMovie = movie.userDetails.isWatched;
 
-      this._onDataChange(this, movie, clonedeep(
-          Object.assign({}, movie, {
-            userDetails: {
-              isWatchlist: movie.userDetails.isWatchlist,
-              isWatched: !movie.userDetails.isWatched,
-              isFavorite: movie.userDetails.isFavorite,
-              watchedDate: isWatchedMovie ? null : new Date().toISOString()
-            }
-          }))
-      );
+      const newMovie = MovieModel.clone(movie);
+      newMovie.userDetails.isWatched = !newMovie.userDetails.isWatched;
+      newMovie.userDetails.watchedDate = isWatchedMovie ? ZERO : new Date().toISOString();
+
+      this._onDataChange(this, movie, newMovie);
     });
 
     // Метод карточки - обработчик события клика Favorite
     this._cardFilmComponent.setOnFavoriteButtonClick((evt) => {
       evt.preventDefault();
-      this._onDataChange(this, movie, clonedeep(
-          Object.assign({}, movie, {
-            userDetails: {
-              isWatchlist: movie.userDetails.isWatchlist,
-              isWatched: movie.userDetails.isWatched,
-              isFavorite: !movie.userDetails.isFavorite,
-              watchedDate: movie.userDetails.watchedDate
-            }
-          }))
-      );
+
+      const newMovie = MovieModel.clone(movie);
+      newMovie.userDetails.isFavorite = !newMovie.userDetails.isFavorite;
+
+      this._onDataChange(this, movie, newMovie);
     });
 
     // Удаление комментария
@@ -145,10 +126,11 @@ export default class MovieController {
       this._onDataChange(this, movie, null);
     });
 
-
     // Добавление нового комментрария
     this._filmPopupComponent.setOnFormSubmit(() => {
-      const newComment = this._filmPopupComponent.getFormData();
+
+      const formData = this._filmPopupComponent.getFormData();
+      const newComment = parseFormData(formData);
       const cloneMovie = clonedeep(movie);
 
       const id = {

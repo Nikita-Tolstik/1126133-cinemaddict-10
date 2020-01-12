@@ -31,13 +31,21 @@ export default class API {
   getComments(id) {
     return this._load({url: `/comments/${id}`})
       .then((response) => response.json());
-
   }
 
   createMovie(movie) {
   }
 
   updateMovie(id, data) {
+    console.log(data.toRAW(data));
+    return this._load({
+      url: `movies/${id}`,
+      method: Method.PUT,
+      body: JSON.stringify(data.toRAW(data)),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+        .then((response) => response.json())
+        .then(Movie.parseMovie);
   }
 
   deleteMovie(id) {

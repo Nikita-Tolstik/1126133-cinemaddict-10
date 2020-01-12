@@ -121,17 +121,6 @@ const createPersonalRatingMarkup = (isWatched, rating) => {
 
 };
 
-const parseFormData = (formData) => {
-  const dateComment = new Date().toISOString();
-  const emoji = document.querySelector(`.film-details__emoji-list input:checked`).value;
-
-  return {
-    comment: formData.get(`comment`),
-    date: dateComment,
-    emotion: emoji
-  };
-};
-
 const createAddEmojiMarkup = (isEmoji, emojiImage) => {
 
   return (
@@ -392,9 +381,8 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   getFormData() {
     const form = this.getElement().querySelector(`form`);
-    const formData = new FormData(form);
 
-    return parseFormData(formData);
+    return new FormData(form);
   }
 
   setOnFormSubmit(handler) {

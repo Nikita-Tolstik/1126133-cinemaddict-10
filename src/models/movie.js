@@ -1,6 +1,3 @@
-// import {generateComment} from '../mock/card-film.js';
-// import {getRandomNumber} from '../utils/common.js';
-
 export default class Movie {
   constructor(data) {
     this.filmInfo = {
@@ -13,7 +10,7 @@ export default class Movie {
       date: new Date(data[`film_info`][`release`][`date`]).getTime(),
       time: data[`film_info`][`runtime`],
       genres: data[`film_info`][`genre`],
-      commentUsers: [],
+      commentUsers: Array.isArray(data[`comments`]) ? data[`comments`] : [],
       age: data[`film_info`][`age_rating`],
       actors: data[`film_info`][`actors`],
       director: data[`film_info`][`director`],
@@ -30,10 +27,13 @@ export default class Movie {
     };
   }
 
-  toRAW() {
+  // Комментарии проверить, возможно не получиться отправить на сервер
+  toRAW(data) {
     return {
       'id': this.filmInfo.id,
-      'comments': [],
+      'comments': data.filmInfo.commentUsers.map((com) => {
+        return com.id ? com.id : com;
+      }),
       'film_info': {
         'title': this.filmInfo.title,
         'alternative_title': this.filmInfo.originalTitle,
@@ -44,7 +44,7 @@ export default class Movie {
         'writers': this.filmInfo.writers,
         'actors': this.filmInfo.actors,
         'release': {
-          'date': this.filmInfo.date,
+          'date': this.filmInfo.date ? new Date(this.filmInfo.date).toISOString() : new Date(0).toISOString(),
           'release_country': this.filmInfo.country
         },
         'runtime': this.filmInfo.time,
@@ -70,8 +70,6 @@ export default class Movie {
   }
 
   static clone(data) {
-    return new Movie(data.toRAW());
+    return new Movie(data.toRAW(data));
   }
 }
-
-// generateComment(data[`id`], getRandomNumber(0, 6))
