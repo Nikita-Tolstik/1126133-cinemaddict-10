@@ -120,31 +120,28 @@ export default class PageController {
 
     if (newData === null) { // Удаление комментария
       this._moviesModel.deleteComment(oldData.filmInfo.id);
+      this._updateMoviesList();
 
     } else if (oldData === null) { // Добавление комментария
       const isSuccess = this._moviesModel.addComment(newData.filmInfo.id, newData);
       if (isSuccess) {
         movieController.render(newData);
+        this._updateMoviesList();
       }
 
     } else { // Просто обновление данных фильма
 
       this._api.updateMovie(oldData.filmInfo.id, newData)
-        .then((movieModel) => {
-          movieModel.filmInfo.commentUsers = oldData.filmInfo.commentUsers;
-          const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, movieModel);
+        .then((newMovieModel) => {
+          newMovieModel.filmInfo.commentUsers = oldData.filmInfo.commentUsers;
+          const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, newMovieModel);
 
           if (isSuccess) {
-            movieController.render(movieModel);
+            movieController.render(newMovieModel);
+            this._updateMoviesList();
           }
         });
-
-    //   const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, newData);
-    //   if (isSuccess) {
-    //     movieController.render(newData);
-    //   }
     }
-    this._updateMoviesList();
   }
 
   // Моментальное Обновление списка фильмов после отметки фильма Watched, Watchlist, Favorite.

@@ -296,6 +296,8 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._onFavorite = null;
     this._onDeleteCommentButton = null;
     this._onSubmitForm = null;
+    this._onRating = null;
+    this._onUndoButton = null;
 
     this._subscribeOnEvents();
   }
@@ -317,6 +319,8 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.setOnFavoriteInputClick(this._onFavorite);
     this.setOnClickDeleteCommentButton(this._onDeleteCommentButton);
     this.setOnFormSubmit(this._onSubmitForm);
+    this.setOnClickRatingInput(this._onRating);
+    this.setOnClickUndoButton(this._onUndoButton);
 
     this._subscribeOnEvents();
   }
@@ -400,6 +404,34 @@ export default class FilmDetails extends AbstractSmartComponent {
     });
 
     this._onSubmitForm = handler;
+  }
+
+  setOnClickRatingInput(handler) {
+    if (this.getElement().querySelector(`.film-details__user-rating-score`)) {
+
+      this.getElement().querySelector(`.film-details__user-rating-score`)
+        .addEventListener(`change`, (evt) => {
+          evt.stopPropagation();
+
+          const rating = this.getElement().querySelector(`.film-details__user-rating-score input:checked`).value;
+
+          handler(rating);
+        });
+    }
+    this._onRating = handler;
+  }
+
+  setOnClickUndoButton(handler) {
+    if (this.getElement().querySelector(`.form-details__middle-container`)) {
+
+      this.getElement().querySelector(`.film-details__watched-reset`).addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        handler();
+      });
+    }
+
+    this._onUndoButton = handler;
   }
 
   _subscribeOnEvents() {

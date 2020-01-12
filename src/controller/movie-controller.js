@@ -72,8 +72,9 @@ export default class MovieController {
       const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
+      newMovie.userDetails.personalRating = isWatchedMovie ? 0 : 0;
       newMovie.userDetails.isWatched = !newMovie.userDetails.isWatched;
-      newMovie.userDetails.watchedDate = isWatchedMovie ? ZERO : new Date().toISOString();
+      newMovie.userDetails.watchedDate = isWatchedMovie ? new Date().toISOString(ZERO) : new Date().toISOString();
 
       this._onDataChange(this, movie, newMovie);
     });
@@ -105,8 +106,9 @@ export default class MovieController {
       const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
+      newMovie.userDetails.personalRating = isWatchedMovie ? 0 : 0;
       newMovie.userDetails.isWatched = !newMovie.userDetails.isWatched;
-      newMovie.userDetails.watchedDate = isWatchedMovie ? ZERO : new Date().toISOString();
+      newMovie.userDetails.watchedDate = isWatchedMovie ? new Date().toISOString(ZERO) : new Date().toISOString();
 
       this._onDataChange(this, movie, newMovie);
     });
@@ -147,6 +149,35 @@ export default class MovieController {
       this._onDataChange(this, null, clonedeep(cloneMovie));
     });
 
+    // Выбор рейтинга
+    this._filmPopupComponent.setOnClickRatingInput((rating) => {
+      if (movie.userDetails.personalRating !== ZERO) {
+
+        [...document.querySelectorAll(`.film-details__user-rating-score input`)].forEach((input) => {
+          input.classList.add(`disabled`);
+        });
+
+        return;
+      }
+
+      const newMovie = MovieModel.clone(movie);
+      newMovie.userDetails.personalRating = Number(rating);
+
+      this._onDataChange(this, movie, newMovie);
+    });
+
+    // Сброс рейтинга на кнопку Undo
+    this._filmPopupComponent.setOnClickUndoButton(() => {
+
+      if (movie.userDetails.personalRating === ZERO) {
+        return;
+      }
+
+      const newMovie = MovieModel.clone(movie);
+
+      newMovie.userDetails.personalRating = ZERO;
+      this._onDataChange(this, movie, newMovie);
+    });
 
     if (oldCardFilmComponent && oldFilmPopupComponent) {
 
