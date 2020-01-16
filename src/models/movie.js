@@ -1,37 +1,37 @@
 export default class Movie {
-  constructor(data) {
+  constructor(movieData) {
     this.filmInfo = {
-      id: data[`id`],
-      title: data[`film_info`][`title`],
-      originalTitle: data[`film_info`][`alternative_title`],
-      image: data[`film_info`][`poster`],
-      description: data[`film_info`][`description`],
-      rating: data[`film_info`][`total_rating`],
-      date: new Date(data[`film_info`][`release`][`date`]).getTime(),
-      time: data[`film_info`][`runtime`],
-      genres: data[`film_info`][`genre`],
-      commentUsers: Array.isArray(data[`comments`]) ? data[`comments`] : [],
-      age: data[`film_info`][`age_rating`],
-      actors: data[`film_info`][`actors`],
-      director: data[`film_info`][`director`],
-      writers: data[`film_info`][`writers`],
-      country: data[`film_info`][`release`][`release_country`],
+      id: movieData[`id`],
+      title: movieData[`film_info`][`title`],
+      originalTitle: movieData[`film_info`][`alternative_title`],
+      image: movieData[`film_info`][`poster`],
+      description: movieData[`film_info`][`description`],
+      rating: movieData[`film_info`][`total_rating`],
+      date: new Date(movieData[`film_info`][`release`][`date`]).getTime(),
+      time: movieData[`film_info`][`runtime`],
+      genres: movieData[`film_info`][`genre`],
+      commentUsers: Array.isArray(movieData[`comments`]) ? movieData[`comments`] : [],
+      age: movieData[`film_info`][`age_rating`],
+      actors: movieData[`film_info`][`actors`],
+      director: movieData[`film_info`][`director`],
+      writers: movieData[`film_info`][`writers`],
+      country: movieData[`film_info`][`release`][`release_country`],
     };
 
     this.userDetails = {
-      personalRating: data[`user_details`][`personal_rating`],
-      isWatchlist: data[`user_details`][`watchlist`],
-      isWatched: data[`user_details`][`already_watched`],
-      isFavorite: data[`user_details`][`favorite`],
-      watchedDate: data[`user_details`][`watching_date`] || null,
+      personalRating: movieData[`user_details`][`personal_rating`],
+      isWatchlist: movieData[`user_details`][`watchlist`],
+      isWatched: movieData[`user_details`][`already_watched`],
+      isFavorite: movieData[`user_details`][`favorite`],
+      watchedDate: movieData[`user_details`][`watching_date`] || null,
     };
   }
 
   // Комментарии проверить, возможно не получиться отправить на сервер
-  toRAW(data) {
+  toRAW(movie) {
     return {
       'id': this.filmInfo.id,
-      'comments': data.filmInfo.commentUsers.map((com) => {
+      'comments': movie.filmInfo.commentUsers.map((com) => {
         return com.id ? com.id : com;
       }),
       'film_info': {
@@ -61,15 +61,15 @@ export default class Movie {
     };
   }
 
-  static parseMovie(data) {
-    return new Movie(data);
+  static parseMovie(movie) {
+    return new Movie(movie);
   }
 
-  static parseMovies(data) {
-    return data.map(Movie.parseMovie);
+  static parseMovies(movies) {
+    return movies.map(Movie.parseMovie);
   }
 
-  static clone(data) {
-    return new Movie(data.toRAW(data));
+  static clone(movie) {
+    return new Movie(movie.toRAW(movie));
   }
 }

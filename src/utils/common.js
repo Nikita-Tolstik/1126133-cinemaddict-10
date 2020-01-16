@@ -2,6 +2,7 @@ import {ZERO, ONE, SymbolName} from '../const.js';
 import moment from 'moment';
 
 const MINUTE = 60;
+const MINUS_ONE = -1;
 
 const NumberRating = {
   ZERO: 0,
@@ -25,7 +26,7 @@ const FormatDate = {
 
 export const getTimeFilm = (time) => {
 
-  return time < MINUTE ? `${time + SymbolName.MINUTE}` : `${Math.floor(time / MINUTE) + SymbolName.HOUR} ${time % MINUTE + SymbolName.MINUTE}`;
+  return time < MINUTE ? `${time}${SymbolName.MINUTE}` : `${Math.floor(time / MINUTE)}${SymbolName.HOUR} ${time % MINUTE}${SymbolName.MINUTE}`;
 
 };
 
@@ -57,11 +58,11 @@ export const getGeneralTimeMovies = (generalTime) => {
 
 export const valuesComparator = (left, right) => {
   if (left > right) {
-    return 1;
+    return ONE;
   } else if (left < right) {
-    return -1;
+    return MINUS_ONE;
   } else {
-    return 0;
+    return ZERO;
   }
 };
 

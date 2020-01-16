@@ -26,7 +26,8 @@ export const TagName = {
   LI: `li`,
   BODY: `body`,
   MAIN: `main`,
-  HEADER: `header`
+  HEADER: `header`,
+  DIV: `div`
 };
 
 export const SymbolName = {
