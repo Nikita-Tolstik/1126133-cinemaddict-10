@@ -9,9 +9,9 @@ import {render, RenderPosition, remove} from '../utils/render.js';
 
 
 // Отрисовка карточек
-const renderCards = (container, cards, onDataChange, onViewChange) => {
+const renderCards = (container, cards, dataChangeHandler, viewChangeHandler) => {
   return cards.map((card) => {
-    const movieController = new MovieController(container, onDataChange, onViewChange);
+    const movieController = new MovieController(container, dataChangeHandler, viewChangeHandler);
     movieController.render(card);
 
     return movieController;
@@ -38,18 +38,18 @@ export default class PageController {
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
     this._sortMenuComponent = new SortMenuComponent();
 
-    this._onDataChange = this._onDataChange.bind(this);
-    this._onViewChange = this._onViewChange.bind(this);
-    this._onSortTypeChange = this._onSortTypeChange.bind(this);
-    this._onFilterChange = this._onFilterChange.bind(this);
-    this._onLoadMoreButtonClick = this._onLoadMoreButtonClick.bind(this);
+    this._dataChangeHandler = this._dataChangeHandler.bind(this);
+    this._viewChangeHandler = this._viewChangeHandler.bind(this);
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
+    this._filterChangeHandler = this._filterChangeHandler.bind(this);
+    this._loadMoreButtonClickHandler = this._loadMoreButtonClickHandler.bind(this);
 
 
     // Обработчик события на сортировку
-    this._sortMenuComponent.setOnSortTypeChange(this._onSortTypeChange);
+    this._sortMenuComponent.setSortTypeChangeHandler(this._sortTypeChangeHandler);
 
     // Обработчик смены фильтра и активации методов перерисовки
-    this._moviesModel.setOnFilterChange(this._onFilterChange);
+    this._moviesModel.setFilterChangeHandler(this._filterChangeHandler);
 
     this._bodyElement = document.querySelector(TagName.BODY);
     this._filmsListElements = null;
@@ -100,8 +100,8 @@ export default class PageController {
     footerStatisticsElement.textContent = `${movies.length} movies inside`;
 
     // Отсортировка фильмов в блоки самые комментированные и рейтинговые
-    this._renderExtraFilmBlock(movies, Feature.rating, this._onDataChange, this._onViewChange);
-    this._renderExtraFilmBlock(movies, Feature.comment, this._onDataChange, this._onViewChange);
+    this._renderExtraFilmBlock(movies, Feature.rating, this._dataChangeHandler, this._viewChangeHandler);
+    this._renderExtraFilmBlock(movies, Feature.comment, this._dataChangeHandler, this._viewChangeHandler);
   }
 
   _removeMovies() {
@@ -110,13 +110,13 @@ export default class PageController {
   }
 
   _renderMovies(movies) {
-    const newCards = renderCards(this._filmsListElements[ZERO], movies, this._onDataChange, this._onViewChange);
+    const newCards = renderCards(this._filmsListElements[ZERO], movies, this._dataChangeHandler, this._viewChangeHandler);
     this._showedMovieControllers = this._showedMovieControllers.concat(newCards);
     this._showingMovieCount = this._showedMovieControllers.length;
   }
 
   // Реагирует на изменения Данных пользователем, отрисовывает новый компонент
-  _onDataChange(movieController, oldData, newData) {
+  _dataChangeHandler(movieController, oldData, newData) {
 
     if (newData === null) { // Удаление комментария
       this._moviesModel.deleteComment(oldData.filmInfo.id);
@@ -148,27 +148,27 @@ export default class PageController {
   // А также обновление карточек фильмов в Блоках Top Rated и Most commented
   _updateMoviesList() {
     this._removeMovies();
-    this._onSortTypeChange(this._sortMenuComponent.getElement().querySelector(`.sort__button--active`).dataset.sortType, true);
+    this._sortTypeChangeHandler(this._sortMenuComponent.getElement().querySelector(`.sort__button--active`).dataset.sortType, true);
 
     const blockFilmElements = document.querySelectorAll(`.films-list__container`);
     blockFilmElements[this._TWO].innerHTML = ``;
     blockFilmElements[ONE].innerHTML = ``;
 
     // Отсортировка фильмов в блоки самые комментированные и рейтинговые
-    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.rating, this._onDataChange, this._onViewChange);
-    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.comment, this._onDataChange, this._onViewChange);
+    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.rating, this._dataChangeHandler, this._viewChangeHandler);
+    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.comment, this._dataChangeHandler, this._viewChangeHandler);
 
     // обновление звания пользователя при изменении списка просмотренных фильмов
     this._profileRatingComponent.rerender();
   }
 
   // Закрывает уже открытый Попап, если открывают ещё один
-  _onViewChange() {
+  _viewChangeHandler() {
     this._showedMovieControllers.forEach((it) => it.setDefaultView());
   }
 
   // Отсортировка фильмов в блоки самые комментированные и рейтинговые
-  _renderExtraFilmBlock(cards, feature, onDataChange, onViewChange) {
+  _renderExtraFilmBlock(cards, feature, dataChangeHandler, viewChangeHandler) {
 
     // Отсортировка фильмов в блоки самые комментированные и рейтинговые
     const blockFilmElements = document.querySelectorAll(`.films-list__container`);
@@ -213,9 +213,9 @@ export default class PageController {
         sameCards.push(cards.slice().shift());
         sameCards.push(cards.slice().pop());
 
-        renderCards(blockElement, sameCards, onDataChange, onViewChange);
+        renderCards(blockElement, sameCards, dataChangeHandler, viewChangeHandler);
       } else {
-        renderCards(blockElement, sortCards.slice(ZERO, this._TWO), onDataChange, onViewChange);
+        renderCards(blockElement, sortCards.slice(ZERO, this._TWO), dataChangeHandler, viewChangeHandler);
       }
 
     } else {
@@ -235,11 +235,11 @@ export default class PageController {
     render(this._filmsListElements[ZERO], this._loadMoreButtonComponent, RenderPosition.AFTER);
 
     // Обработчик на кнопке показать еще
-    this._loadMoreButtonComponent.setOnClickLoadMoreButton(this._onLoadMoreButtonClick);
+    this._loadMoreButtonComponent.setClickLoadMoreButtonHandler(this._loadMoreButtonClickHandler);
   }
 
   // Сортировка фильмов в зависимости от выбранного типа
-  _onSortTypeChange(sortType, isUpdate) {
+  _sortTypeChangeHandler(sortType, isUpdate) {
 
     let sortedFilms = [];
     const movies = this._moviesModel.getMovies();
@@ -274,7 +274,7 @@ export default class PageController {
     }
   }
 
-  _onLoadMoreButtonClick() {
+  _loadMoreButtonClickHandler() {
     const movies = this._moviesModel.getMovies();
     const prevMovieCount = this._showingMovieCount;
 
@@ -289,13 +289,13 @@ export default class PageController {
   }
 
   // активации методов при смене фильтра
-  _onFilterChange() {
+  _filterChangeHandler() {
     this._removeMovies();
     this._renderMovies(this._moviesModel.getMovies().slice(ZERO, this._SHOWING_CARDS_COUNT_ON_START));
     this._renderLoadMoreButton();
 
     // При переключении фильтра - идёт сброс типа сортировки на дефолтное
     this._sortMenuComponent.resetSortType(this._sortMenuComponent.getElement(), this._sortMenuComponent.getElement().querySelector(TagName.A_SMALL));
-    this._onSortTypeChange(SortType.DEFAULT);
+    this._sortTypeChangeHandler(SortType.DEFAULT);
   }
 }

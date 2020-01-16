@@ -14,10 +14,10 @@ export default class FilterController {
     this._activeFilter = FilterType.ALL;
 
 
-    this._onFilterChange = this._onFilterChange.bind(this);
-    this._onDataChange = this._onDataChange.bind(this);
+    this._filterChangeHandler = this._filterChangeHandler.bind(this);
+    this._dataChangeHandler = this._dataChangeHandler.bind(this);
 
-    this._moviesModel.setOnDataChange(this._onDataChange);
+    this._moviesModel.setDataChangeHandler(this._dataChangeHandler);
   }
 
   render() {
@@ -31,7 +31,7 @@ export default class FilterController {
     }
 
     this._filterComponent = new FilterComponent(allMovies, this._activeFilter);
-    this._filterComponent.setOnFilterChange(this._onFilterChange);
+    this._filterComponent.setFilterChangeHandler(this._filterChangeHandler);
 
     if (oldComponent) {
       replace(this._filterComponent, oldComponent);
@@ -41,11 +41,11 @@ export default class FilterController {
 
     // Восстановление обработчика переключения между экранами карточек и статистики
     if (this._handler) {
-      this.setOnScreenChange(this._handler);
+      this.setScreenChangeHandler(this._handler);
     }
   }
 
-  _onFilterChange(filterType) {
+  _filterChangeHandler(filterType) {
 
     if (this._moviesModel.getAllMovies().length === ZERO) {
       return;
@@ -54,12 +54,12 @@ export default class FilterController {
     this._moviesModel.setFilter(filterType);
   }
 
-  _onDataChange() {
+  _dataChangeHandler() {
     this.render();
   }
 
   // Переключение между экранами Статистики и Фильмов
-  setOnScreenChange(handler) {
+  setScreenChangeHandler(handler) {
     this._filterComponent.getElement().addEventListener(`click`, (evt) => {
 
       if (evt.target.tagName !== TagName.A) {

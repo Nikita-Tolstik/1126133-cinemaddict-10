@@ -26,7 +26,7 @@ const pageController = new PageController(siteMainElement, moviesModel, api);
 statisticsComponent.hide();
 
 // Переключение между экранами Статистики и Фильмов
-filterController.setOnScreenChange((activeFilter) => {
+filterController.setScreenChangeHandler((activeFilter) => {
   switch (activeFilter) {
     case FilterType.STATS:
       pageController.hide();

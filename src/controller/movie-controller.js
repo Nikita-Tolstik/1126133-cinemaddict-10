@@ -24,13 +24,13 @@ const parseFormData = (formData) => {
 
 
 export default class MovieController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, dataChangeHandler, viewChangeHandler) {
 
     this._container = container;
-    this._onDataChange = onDataChange;
-    this._onViewChange = onViewChange;
+    this._dataChangeHandler = dataChangeHandler;
+    this._viewChangeHandler = viewChangeHandler;
 
-    this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
 
     this._cardFilmComponent = null;
     this._filmPopupComponent = null;
@@ -48,27 +48,27 @@ export default class MovieController {
     this._filmPopupComponent = new FilmDetailsPopupComponent(movie);
 
     // Метод карточки - обработчик события кликов на элементы карточки
-    this._cardFilmComponent.setOnClickCardElements(() => {
+    this._cardFilmComponent.setClickCardElementsHandler(() => {
       this._switchCardToPopup();
-      document.addEventListener(`keydown`, this._onEscKeyDown);
+      document.addEventListener(`keydown`, this._escKeyDownHandler);
     });
 
-    this._filmPopupComponent.setOnClickCloseButtonPopup(() => {
+    this._filmPopupComponent.setClickCloseButtonPopupHandler(() => {
       this._switchPopupToCard();
     });
 
 
     // Метод попапа - обработчик события клика на Watchlist
-    this._filmPopupComponent.setOnWatchlistInputClick(() => {
+    this._filmPopupComponent.setWatchlistInputClickHandler(() => {
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isWatchlist = !newMovie.userDetails.isWatchlist;
 
-      this._onDataChange(this, movie, newMovie);
+      this._dataChangeHandler(this, movie, newMovie);
     });
 
     // Метод попапа - обработчик события клика на Watched
-    this._filmPopupComponent.setOnWatchedInputClick(() => {
+    this._filmPopupComponent.setWatchedInputClickHandler(() => {
       const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
@@ -76,31 +76,31 @@ export default class MovieController {
       newMovie.userDetails.isWatched = !newMovie.userDetails.isWatched;
       newMovie.userDetails.watchedDate = isWatchedMovie ? new Date().toISOString(ZERO) : new Date().toISOString();
 
-      this._onDataChange(this, movie, newMovie);
+      this._dataChangeHandler(this, movie, newMovie);
     });
 
     // Метод попапа - обработчик события клика на Favorite
-    this._filmPopupComponent.setOnFavoriteInputClick(() => {
+    this._filmPopupComponent.setFavoriteInputClickHandler(() => {
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isFavorite = !newMovie.userDetails.isFavorite;
 
-      this._onDataChange(this, movie, newMovie);
+      this._dataChangeHandler(this, movie, newMovie);
     });
 
 
     // Метод карточки - обработчик события клика на Watchlist
-    this._cardFilmComponent.setOnWatchlistButtonClick((evt) => {
+    this._cardFilmComponent.setWatchlistButtonClickHandler((evt) => {
       evt.preventDefault();
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isWatchlist = !newMovie.userDetails.isWatchlist;
 
-      this._onDataChange(this, movie, newMovie);
+      this._dataChangeHandler(this, movie, newMovie);
     });
 
     // Метод карточки - обработчик события клика Watched
-    this._cardFilmComponent.setOnWatchedButtonClick((evt) => {
+    this._cardFilmComponent.setWatchedButtonClickHandler((evt) => {
       evt.preventDefault();
 
       const isWatchedMovie = movie.userDetails.isWatched;
@@ -110,26 +110,26 @@ export default class MovieController {
       newMovie.userDetails.isWatched = !newMovie.userDetails.isWatched;
       newMovie.userDetails.watchedDate = isWatchedMovie ? new Date().toISOString(ZERO) : new Date().toISOString();
 
-      this._onDataChange(this, movie, newMovie);
+      this._dataChangeHandler(this, movie, newMovie);
     });
 
     // Метод карточки - обработчик события клика Favorite
-    this._cardFilmComponent.setOnFavoriteButtonClick((evt) => {
+    this._cardFilmComponent.setFavoriteButtonClickHandler((evt) => {
       evt.preventDefault();
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isFavorite = !newMovie.userDetails.isFavorite;
 
-      this._onDataChange(this, movie, newMovie);
+      this._dataChangeHandler(this, movie, newMovie);
     });
 
     // Удаление комментария
-    this._filmPopupComponent.setOnClickDeleteCommentButton(() => {
-      this._onDataChange(this, movie, null);
+    this._filmPopupComponent.setClickDeleteCommentButtonHandler(() => {
+      this._dataChangeHandler(this, movie, null);
     });
 
     // Добавление нового комментрария
-    this._filmPopupComponent.setOnFormSubmit(() => {
+    this._filmPopupComponent.setFormSubmitHandler(() => {
 
       const formData = this._filmPopupComponent.getFormData();
       const newComment = parseFormData(formData);
@@ -146,11 +146,11 @@ export default class MovieController {
 
       cloneMovie.filmInfo.commentUsers = concatNewComments;
 
-      this._onDataChange(this, null, clonedeep(cloneMovie));
+      this._dataChangeHandler(this, null, clonedeep(cloneMovie));
     });
 
     // Выбор рейтинга
-    this._filmPopupComponent.setOnClickRatingInput((rating) => {
+    this._filmPopupComponent.setClickRatingInputHandler((rating) => {
       if (movie.userDetails.personalRating !== ZERO) {
 
         [...document.querySelectorAll(`.film-details__user-rating-score input`)].forEach((input) => {
@@ -163,11 +163,11 @@ export default class MovieController {
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.personalRating = Number(rating);
 
-      this._onDataChange(this, movie, newMovie);
+      this._dataChangeHandler(this, movie, newMovie);
     });
 
     // Сброс рейтинга на кнопку Undo
-    this._filmPopupComponent.setOnClickUndoButton(() => {
+    this._filmPopupComponent.setClickUndoButtonHandler(() => {
 
       if (movie.userDetails.personalRating === ZERO) {
         return;
@@ -176,7 +176,7 @@ export default class MovieController {
       const newMovie = MovieModel.clone(movie);
 
       newMovie.userDetails.personalRating = ZERO;
-      this._onDataChange(this, movie, newMovie);
+      this._dataChangeHandler(this, movie, newMovie);
     });
 
     if (oldCardFilmComponent && oldFilmPopupComponent) {
@@ -196,7 +196,7 @@ export default class MovieController {
 
   _switchPopupToCard() {
 
-    document.removeEventListener(`keydown`, this._onEscKeyDown);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
 
     this._filmPopupComponent.resetSmile();
 
@@ -205,13 +205,13 @@ export default class MovieController {
   }
 
   _switchCardToPopup() {
-    this._onViewChange();
+    this._viewChangeHandler();
 
     render(this._bodyElement, this._filmPopupComponent, RenderPosition.BEFOREEND);
     this._mode = Mode.POPUP;
   }
 
-  _onEscKeyDown(evt) {
+  _escKeyDownHandler(evt) {
     const isEscDown = evt.key === KeyDown.ESCAPE || evt.key === KeyDown.ESC;
 
     if (isEscDown) {

@@ -290,14 +290,14 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isEmoji = null;
     this._emojiImage = null;
 
-    this._onCloseButton = null;
-    this._onWatchlist = null;
-    this._onWatched = null;
-    this._onFavorite = null;
-    this._onDeleteCommentButton = null;
-    this._onSubmitForm = null;
-    this._onRating = null;
-    this._onUndoButton = null;
+    this._closeButtonHandler = null;
+    this._watchlistHandler = null;
+    this._watchedHandler = null;
+    this._favoriteHandler = null;
+    this._deleteCommentButtonHandler = null;
+    this._submitFormHandler = null;
+    this._ratingHandler = null;
+    this._undoButtonHandler = null;
 
     this._subscribeOnEvents();
   }
@@ -313,14 +313,14 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this.setOnClickCloseButtonPopup(this._onCloseButton);
-    this.setOnWatchlistInputClick(this._onWatchlist);
-    this.setOnWatchedInputClick(this._onWatched);
-    this.setOnFavoriteInputClick(this._onFavorite);
-    this.setOnClickDeleteCommentButton(this._onDeleteCommentButton);
-    this.setOnFormSubmit(this._onSubmitForm);
-    this.setOnClickRatingInput(this._onRating);
-    this.setOnClickUndoButton(this._onUndoButton);
+    this.setClickCloseButtonPopupHandler(this._closeButtonHandler);
+    this.setWatchlistInputClickHandler(this._watchlistHandler);
+    this.setWatchedInputClickHandler(this._watchedHandler);
+    this.setFavoriteInputClickHandler(this._favoriteHandler);
+    this.setClickDeleteCommentButtonHandler(this._deleteCommentButtonHandler);
+    this.setFormSubmitHandler(this._submitFormHandler);
+    this.setClickRatingInputHandler(this._ratingHandler);
+    this.setClickUndoButtonHandler(this._undoButtonHandler);
 
     this._subscribeOnEvents();
   }
@@ -336,35 +336,35 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.rerender();
   }
 
-  setOnClickCloseButtonPopup(handler) {
+  setClickCloseButtonPopupHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
 
-    this._onCloseButton = handler;
+    this._closeButtonHandler = handler;
   }
 
-  setOnWatchlistInputClick(handler) {
+  setWatchlistInputClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
     .addEventListener(`click`, handler);
 
-    this._onWatchlist = handler;
+    this._watchlistHandler = handler;
   }
 
-  setOnWatchedInputClick(handler) {
+  setWatchedInputClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watched`)
     .addEventListener(`click`, handler);
 
-    this._onWatched = handler;
+    this._watchedHandler = handler;
   }
 
-  setOnFavoriteInputClick(handler) {
+  setFavoriteInputClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--favorite`)
     .addEventListener(`click`, handler);
 
-    this._onFavorite = handler;
+    this._favoriteHandler = handler;
   }
 
-  setOnClickDeleteCommentButton(handler) {
+  setClickDeleteCommentButtonHandler(handler) {
     this.getElement().querySelector(`.film-details__comments-list`)
     .addEventListener(`click`, (evt) => {
       evt.preventDefault();
@@ -380,7 +380,7 @@ export default class FilmDetails extends AbstractSmartComponent {
       this.rerender();
     });
 
-    this._onDeleteCommentButton = handler;
+    this._deleteCommentButtonHandler = handler;
   }
 
   getFormData() {
@@ -389,7 +389,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     return new FormData(form);
   }
 
-  setOnFormSubmit(handler) {
+  setFormSubmitHandler(handler) {
     this.getElement().querySelector(`.film-details__new-comment`)
     .addEventListener(`keydown`, (evt) => {
 
@@ -403,10 +403,10 @@ export default class FilmDetails extends AbstractSmartComponent {
       }
     });
 
-    this._onSubmitForm = handler;
+    this._submitFormHandler = handler;
   }
 
-  setOnClickRatingInput(handler) {
+  setClickRatingInputHandler(handler) {
     if (this.getElement().querySelector(`.film-details__user-rating-score`)) {
 
       this.getElement().querySelector(`.film-details__user-rating-score`)
@@ -418,10 +418,10 @@ export default class FilmDetails extends AbstractSmartComponent {
           handler(rating);
         });
     }
-    this._onRating = handler;
+    this._ratingHandler = handler;
   }
 
-  setOnClickUndoButton(handler) {
+  setClickUndoButtonHandler(handler) {
     if (this.getElement().querySelector(`.form-details__middle-container`)) {
 
       this.getElement().querySelector(`.film-details__watched-reset`).addEventListener(`click`, (evt) => {
@@ -431,7 +431,7 @@ export default class FilmDetails extends AbstractSmartComponent {
       });
     }
 
-    this._onUndoButton = handler;
+    this._undoButtonHandler = handler;
   }
 
   _subscribeOnEvents() {
