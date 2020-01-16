@@ -60,7 +60,7 @@ const createButtonMarkup = (name, nameButton, isActive) => {
 
 };
 
-const createRatingBlockMarkup = (isWatched, image, title) => {
+const createRatingBlockMarkup = (isWatched, image, title, rating) => {
 
 
   return (isWatched ?
@@ -81,31 +81,31 @@ const createRatingBlockMarkup = (isWatched, image, title) => {
           <p class="film-details__user-rating-feelings">How you feel it?</p>
 
           <div class="film-details__user-rating-score">
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${rating === 1 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-1">1</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${rating === 2 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-2">2</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3" ${rating === 3 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-3">3</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4" ${rating === 4 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-4">4</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${rating === 5 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-5">5</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6" ${rating === 6 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-6">6</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7" ${rating === 7 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-7">7</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8">
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8" ${rating === 8 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-8">8</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" checked>
+            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" ${rating === 9 ? `checked` : ``}>
             <label class="film-details__user-rating-label" for="rating-9">9</label>
 
           </div>
@@ -115,21 +115,10 @@ const createRatingBlockMarkup = (isWatched, image, title) => {
   </div>` : ``);
 };
 
-const createPersonalRatingMarkup = (isWatched) => {
+const createPersonalRatingMarkup = (isWatched, rating) => {
 
-  return (isWatched ? `<p class="film-details__user-rating">Your rate 9</p>` : ``);
+  return (isWatched && rating ? `<p class="film-details__user-rating">Your rate ${rating}</p>` : ``);
 
-};
-
-const parseFormData = (formData) => {
-  const dateComment = new Date().toISOString();
-  const emoji = document.querySelector(`.film-details__emoji-list input:checked`).value;
-
-  return {
-    comment: formData.get(`comment`),
-    date: dateComment,
-    emotion: emoji
-  };
 };
 
 const createAddEmojiMarkup = (isEmoji, emojiImage) => {
@@ -141,13 +130,14 @@ const createAddEmojiMarkup = (isEmoji, emojiImage) => {
 
 const createFilmDetailsPopupTemplate = (card, options = {}) => {
 
-  const {title, originalTitle, image, age, rating, director, actor, writer, time, country, description, date, genres, commentUsers} = card.filmInfo;
+  const {title, originalTitle, image, age, rating, director, actors, writers, time, country, description, date, genres, commentUsers} = card.filmInfo;
+  const {personalRating} = card.userDetails;
 
   const {isWatchlist, isWatched, isFavorite, isEmoji, emojiImage} = options;
 
   const timeFilm = getTimeFilm(time);
-  const genreTemplate = generateGenreTemplate(genres);
-  const isOneGenre = genres.length === ONE;
+  const genreTemplate = genres.length === ZERO ? `` : generateGenreTemplate(genres);
+  const isOneGenre = genres.length < ONE;
 
 
   const commentCount = commentUsers.length;
@@ -157,8 +147,8 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
   const watchedButton = createButtonMarkup(FilterType.WATCHED, ButtonName.WATCHED, isWatched);
   const favoriteButton = createButtonMarkup(FilterType.FAVORITE, ButtonName.FAVORITE, isFavorite);
 
-  const ratingMarkup = createRatingBlockMarkup(isWatched, image, title);
-  const personalRatingMarkup = createPersonalRatingMarkup(isWatched);
+  const ratingMarkup = createRatingBlockMarkup(isWatched, image, title, personalRating);
+  const personalRatingMarkup = createPersonalRatingMarkup(isWatched, personalRating);
 
   const emojiComment = createAddEmojiMarkup(isEmoji, emojiImage);
   const commentTemplate = commentUsers.map((it, i) => generateCommentTemplate(it, i)).join(`\n`);
@@ -200,11 +190,11 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Writers</td>
-            <td class="film-details__cell">${writer}</td>
+            <td class="film-details__cell">${writers}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Actors</td>
-            <td class="film-details__cell">${actor}</td>
+            <td class="film-details__cell">${actors}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>
@@ -300,12 +290,14 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._isEmoji = null;
     this._emojiImage = null;
 
-    this._onCloseButton = null;
-    this._onWatchlist = null;
-    this._onWatched = null;
-    this._onFavorite = null;
-    this._onDeleteCommentButton = null;
-    this._onSubmitForm = null;
+    this._closeButtonHandler = null;
+    this._watchlistHandler = null;
+    this._watchedHandler = null;
+    this._favoriteHandler = null;
+    this._deleteCommentButtonHandler = null;
+    this._submitFormHandler = null;
+    this._ratingHandler = null;
+    this._undoButtonHandler = null;
 
     this._subscribeOnEvents();
   }
@@ -321,12 +313,14 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this.setOnClickCloseButtonPopup(this._onCloseButton);
-    this.setOnWatchlistInputClick(this._onWatchlist);
-    this.setOnWatchedInputClick(this._onWatched);
-    this.setOnFavoriteInputClick(this._onFavorite);
-    this.setOnClickDeleteCommentButton(this._onDeleteCommentButton);
-    this.setOnFormSubmit(this._onSubmitForm);
+    this.setClickCloseButtonPopupHandler(this._closeButtonHandler);
+    this.setWatchlistInputClickHandler(this._watchlistHandler);
+    this.setWatchedInputClickHandler(this._watchedHandler);
+    this.setFavoriteInputClickHandler(this._favoriteHandler);
+    this.setClickDeleteCommentButtonHandler(this._deleteCommentButtonHandler);
+    this.setFormSubmitHandler(this._submitFormHandler);
+    this.setClickRatingInputHandler(this._ratingHandler);
+    this.setClickUndoButtonHandler(this._undoButtonHandler);
 
     this._subscribeOnEvents();
   }
@@ -335,35 +329,42 @@ export default class FilmDetails extends AbstractSmartComponent {
     super.rerender();
   }
 
-  setOnClickCloseButtonPopup(handler) {
+  resetSmile() {
+    this._isEmoji = null;
+    this._emojiImage = null;
+
+    this.rerender();
+  }
+
+  setClickCloseButtonPopupHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
 
-    this._onCloseButton = handler;
+    this._closeButtonHandler = handler;
   }
 
-  setOnWatchlistInputClick(handler) {
+  setWatchlistInputClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
     .addEventListener(`click`, handler);
 
-    this._onWatchlist = handler;
+    this._watchlistHandler = handler;
   }
 
-  setOnWatchedInputClick(handler) {
+  setWatchedInputClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watched`)
     .addEventListener(`click`, handler);
 
-    this._onWatched = handler;
+    this._watchedHandler = handler;
   }
 
-  setOnFavoriteInputClick(handler) {
+  setFavoriteInputClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--favorite`)
     .addEventListener(`click`, handler);
 
-    this._onFavorite = handler;
+    this._favoriteHandler = handler;
   }
 
-  setOnClickDeleteCommentButton(handler) {
+  setClickDeleteCommentButtonHandler(handler) {
     this.getElement().querySelector(`.film-details__comments-list`)
     .addEventListener(`click`, (evt) => {
       evt.preventDefault();
@@ -379,17 +380,16 @@ export default class FilmDetails extends AbstractSmartComponent {
       this.rerender();
     });
 
-    this._onDeleteCommentButton = handler;
+    this._deleteCommentButtonHandler = handler;
   }
 
   getFormData() {
     const form = this.getElement().querySelector(`form`);
-    const formData = new FormData(form);
 
-    return parseFormData(formData);
+    return new FormData(form);
   }
 
-  setOnFormSubmit(handler) {
+  setFormSubmitHandler(handler) {
     this.getElement().querySelector(`.film-details__new-comment`)
     .addEventListener(`keydown`, (evt) => {
 
@@ -403,7 +403,35 @@ export default class FilmDetails extends AbstractSmartComponent {
       }
     });
 
-    this._onSubmitForm = handler;
+    this._submitFormHandler = handler;
+  }
+
+  setClickRatingInputHandler(handler) {
+    if (this.getElement().querySelector(`.film-details__user-rating-score`)) {
+
+      this.getElement().querySelector(`.film-details__user-rating-score`)
+        .addEventListener(`change`, (evt) => {
+          evt.stopPropagation();
+
+          const rating = this.getElement().querySelector(`.film-details__user-rating-score input:checked`).value;
+
+          handler(rating);
+        });
+    }
+    this._ratingHandler = handler;
+  }
+
+  setClickUndoButtonHandler(handler) {
+    if (this.getElement().querySelector(`.form-details__middle-container`)) {
+
+      this.getElement().querySelector(`.film-details__watched-reset`).addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        handler();
+      });
+    }
+
+    this._undoButtonHandler = handler;
   }
 
   _subscribeOnEvents() {

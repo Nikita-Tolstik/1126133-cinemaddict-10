@@ -39,7 +39,7 @@ export default class SortMenu extends AbstractComponent {
     return createSortMenuTemplate();
   }
 
-  setOnSortTypeChange(handler) {
+  setSortTypeChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
 
       evt.preventDefault();

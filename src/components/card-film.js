@@ -41,7 +41,7 @@ const createCardFilmTemplate = (card) => {
 
   const timeFilm = getTimeFilm(time);
   const filmYear = getYear(date);
-  const mainGenre = genres[ZERO];
+  const mainGenre = genres.length === ZERO ? `` : genres[ZERO];
   const commentCount = commentUsers.length;
 
   const formatDescription = parseDescriptionLength(description);
@@ -83,7 +83,7 @@ export default class CardFilm extends AbstractComponent {
     return createCardFilmTemplate(this._card);
   }
 
-  setOnClickCardElements(handler) {
+  setClickCardElementsHandler(handler) {
 
     let cardElements = [];
 
@@ -96,17 +96,17 @@ export default class CardFilm extends AbstractComponent {
     });
   }
 
-  setOnWatchlistButtonClick(handler) {
+  setWatchlistButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`)
       .addEventListener(`click`, handler);
   }
 
-  setOnWatchedButtonClick(handler) {
+  setWatchedButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`)
       .addEventListener(`click`, handler);
   }
 
-  setOnFavoriteButtonClick(handler) {
+  setFavoriteButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--favorite`)
       .addEventListener(`click`, handler);
   }

@@ -1,3 +1,5 @@
+import {TagName} from '../const.js';
+
 export const RenderPosition = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
@@ -22,7 +24,7 @@ export const render = (container, component, place) => {
 // Создание елемента из разметки
 export const createElement = (template) => {
 
-  const newElement = document.createElement(`div`);
+  const newElement = document.createElement(TagName.DIV);
   newElement.innerHTML = template;
 
   return newElement.firstChild;

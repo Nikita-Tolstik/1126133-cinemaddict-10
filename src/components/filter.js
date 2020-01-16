@@ -39,7 +39,7 @@ export default class Filter extends AbstractComponent {
     return createSiteMenuTemplate(this._movies, this._currentFilterType);
   }
 
-  setOnFilterChange(handler) {
+  setFilterChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
       evt.preventDefault();
 

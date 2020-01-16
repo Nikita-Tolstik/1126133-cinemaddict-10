@@ -71,11 +71,11 @@ export default class Movies {
   }
 
   // установка обработчика изменения активного фильта
-  setOnFilterChange(handler) {
+  setFilterChangeHandler(handler) {
     this._filterChangeHandlers.push(handler);
   }
 
-  setOnDataChange(handler) {
+  setDataChangeHandler(handler) {
     this._dataChangeHandlers.push(handler);
   }
 
