@@ -3,7 +3,6 @@ import FilmDetailsPopupComponent from '../components/film-details.js';
 import MovieModel from '../models/movie.js';
 import {KeyDown, TagName, ZERO} from '../const.js';
 import {render, RenderPosition, removePopup, replace} from '../utils/render.js';
-import clonedeep from 'lodash.clonedeep';
 
 
 const Mode = {
@@ -133,20 +132,12 @@ export default class MovieController {
 
       const formData = this._filmPopupComponent.getFormData();
       const newComment = parseFormData(formData);
-      const cloneMovie = clonedeep(movie);
 
-      const id = {
-        id: cloneMovie.filmInfo.id,
-        author: `Nikita`,
-      };
 
-      const newComments = [Object.assign({}, id, newComment)];
-      const oldComments = cloneMovie.filmInfo.commentUsers;
-      const concatNewComments = [].concat(newComments, oldComments);
+      const newMovie = MovieModel.clone(movie);
+      newMovie.filmInfo.commentUsers = newComment;
 
-      cloneMovie.filmInfo.commentUsers = concatNewComments;
-
-      this._dataChangeHandler(this, null, clonedeep(cloneMovie));
+      this._dataChangeHandler(this, null, newMovie);
     });
 
     // Выбор рейтинга
@@ -219,3 +210,4 @@ export default class MovieController {
     }
   }
 }
+

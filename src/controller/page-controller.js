@@ -116,25 +116,49 @@ export default class PageController {
   }
 
   // Реагирует на изменения Данных пользователем, отрисовывает новый компонент
-  _dataChangeHandler(movieController, oldData, newData) {
+  _dataChangeHandler(movieController, oldMovie, newMovie) {
 
-    if (newData === null) { // Удаление комментария
-      this._moviesModel.deleteComment(oldData.filmInfo.id);
-      this._updateMoviesList();
+    if (newMovie === null) { // Удаление комментария
+      const idComment = Number(document.querySelector(`.delete`).id);
 
-    } else if (oldData === null) { // Добавление комментария
-      const isSuccess = this._moviesModel.addComment(newData.filmInfo.id, newData);
-      if (isSuccess) {
-        movieController.render(newData);
-        this._updateMoviesList();
+      if (idComment) {
+        this._api.deleteComment(idComment)
+        .then((response) => {
+          if (response.ok) {
+            const isUpdateComment = this._moviesModel.deleteComment(oldMovie.filmInfo.id, idComment);
+
+            if (isUpdateComment) {
+              const isSuccess = this._moviesModel.updateMovies(oldMovie.filmInfo.id, oldMovie);
+
+              if (isSuccess) {
+                movieController.render(oldMovie);
+                this._updateMoviesList();
+              }
+            }
+          }
+        });
       }
+
+    } else if (oldMovie === null) { // Добавление комментария
+
+      this._api.createComment(newMovie.filmInfo.id, newMovie.filmInfo.commentUsers)
+        .then((newMovieModel) => {
+
+          newMovie.filmInfo.commentUsers = newMovieModel.comments;
+          const isSuccess = this._moviesModel.updateMovies(newMovie.filmInfo.id, newMovie);
+
+          if (isSuccess) {
+            movieController.render(newMovie);
+            this._updateMoviesList();
+          }
+        });
 
     } else { // Просто обновление данных фильма
 
-      this._api.updateMovie(oldData.filmInfo.id, newData)
+      this._api.updateMovie(oldMovie.filmInfo.id, newMovie)
         .then((newMovieModel) => {
-          newMovieModel.filmInfo.commentUsers = oldData.filmInfo.commentUsers;
-          const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, newMovieModel);
+          newMovieModel.filmInfo.commentUsers = oldMovie.filmInfo.commentUsers;
+          const isSuccess = this._moviesModel.updateMovies(oldMovie.filmInfo.id, newMovieModel);
 
           if (isSuccess) {
             movieController.render(newMovieModel);

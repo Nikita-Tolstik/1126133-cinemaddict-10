@@ -46,28 +46,21 @@ export default class Movies {
     return true;
   }
 
-  deleteComment(id) {
+  deleteComment(idMovie, idComment) {
+    let isSuccess = false;
 
     this._movies.map((it) => {
-      if (it.filmInfo.id === id) {
-        it.filmInfo.commentUsers.splice(Number(document.querySelector(`.delete`).id), ONE);
+      if (it.filmInfo.id === idMovie) {
+        isSuccess = true;
+        const index = it.filmInfo.commentUsers.findIndex((comment) => {
+          return Number(comment.id) === idComment;
+        });
+
+        it.filmInfo.commentUsers.splice(index, ONE);
       }
     });
-  }
 
-  addComment(id, movie) {
-
-    const index = this._movies.findIndex((it) => it.filmInfo.id === id);
-
-    if (index === this._NO_ELEMENT) {
-      return false;
-    }
-
-    this._movies = [].concat(this._movies.slice(ZERO, index), movie, this._movies.slice(index + ONE));
-    this._activateHandler(this._dataChangeHandlers);
-
-    return true;
-
+    return isSuccess;
   }
 
   // установка обработчика изменения активного фильта

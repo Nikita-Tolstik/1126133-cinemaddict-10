@@ -6,7 +6,7 @@ import {render, RenderPosition} from './utils/render.js';
 import MoviesModel from './models/movies.js';
 import {FilterType, TagName} from './const.js';
 
-const AUTHORIZATION = `Basic djds7395jsdls34ks3gsuf4fhf4s2d=_9fh=`;
+const AUTHORIZATION = `Basic djds7395jsdls34kdhs2d=_9fh=`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
 const api = new API(END_POINT, AUTHORIZATION);

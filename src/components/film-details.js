@@ -151,7 +151,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
   const personalRatingMarkup = createPersonalRatingMarkup(isWatched, personalRating);
 
   const emojiComment = createAddEmojiMarkup(isEmoji, emojiImage);
-  const commentTemplate = commentUsers.map((it, i) => generateCommentTemplate(it, i)).join(`\n`);
+  const commentTemplate = commentUsers.map((it) => generateCommentTemplate(it, it.id)).join(`\n`);
 
 
   return (
@@ -377,7 +377,6 @@ export default class FilmDetails extends AbstractSmartComponent {
       elem.classList.add(`delete`);
 
       handler();
-      this.rerender();
     });
 
     this._deleteCommentButtonHandler = handler;
