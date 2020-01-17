@@ -138,6 +138,10 @@ export default class PageController {
               }
             }
           }
+        })
+        .catch(() => {
+
+          movieController.catchDeleteCommentError();
         });
       }
 
@@ -153,6 +157,11 @@ export default class PageController {
             movieController.render(newMovie);
             this._updateMoviesList();
           }
+        })
+        .catch(() => {
+
+          movieController.catchAddCommentError();
+          movieController.shake();
         });
 
     } else { // Просто обновление данных фильма

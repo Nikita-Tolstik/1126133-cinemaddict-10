@@ -209,5 +209,24 @@ export default class MovieController {
       this._switchPopupToCard();
     }
   }
+
+  catchAddCommentError() {
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).disabled = false;
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).style.border = `3px solid crimson`;
+  }
+
+  catchDeleteCommentError() {
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comments-list .delete button`).textContent = `Delete`;
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comments-list .delete button`).disabled = false;
+  }
+
+  shake() {
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).style.animation = `shake ${600 / 1000}s`;
+    setTimeout(() => {
+      this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).style.animation = ``;
+
+
+    }, 600);
+  }
 }
 

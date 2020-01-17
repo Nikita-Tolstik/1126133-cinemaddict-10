@@ -3,6 +3,7 @@ import {ONE, FilterType, TagName, ZERO} from '../const.js';
 import {getTimeFilm, formatReleaseDate, formatCommentDate} from '../utils/common.js';
 import he from 'he';
 
+const deletingButton = `Deleting…`;
 
 const FacesEmoji = {
   SMILE: `smile`,
@@ -373,6 +374,9 @@ export default class FilmDetails extends AbstractSmartComponent {
         return;
       }
 
+      evt.target.textContent = deletingButton;
+      evt.target.disabled = true;
+
       const elem = evt.target.closest(TagName.LI);
       elem.classList.add(`delete`);
 
@@ -394,10 +398,11 @@ export default class FilmDetails extends AbstractSmartComponent {
 
       if (this.getElement().querySelector(`.film-details__add-emoji-label`).children.length !== ZERO && evt.target.value.length !== ZERO) {
 
-
         if (evt.ctrlKey && (evt.key === `Enter` || evt.key === `Ent`)) {
+          this.getElement().querySelector(`.film-details__comment-input`).style.border = ``;
+
           handler();
-          // this.getElement().querySelector(`form`).submit();
+          this.getElement().querySelector(`.film-details__comment-input`).disabled = true;
         }
       }
     });
