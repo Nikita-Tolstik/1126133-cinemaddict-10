@@ -1,8 +1,10 @@
 import API from './api.js';
 import StatisticsComponent from './components/statistics.js';
+import SortMenuComponent from './components/sort-menu.js';
+import LoadingComponent from './components/loading.js';
 import FilterController from './controller/filter-controller.js';
 import PageController from './controller/page-controller.js';
-import {render, RenderPosition} from './utils/render.js';
+import {render, RenderPosition, remove} from './utils/render.js';
 import MoviesModel from './models/movies.js';
 import {FilterType, TagName} from './const.js';
 
@@ -17,12 +19,17 @@ const siteMainElement = document.querySelector(`.${TagName.MAIN}`);
 const filterController = new FilterController(siteMainElement, moviesModel);
 filterController.render();
 
+const sortMenuComponent = new SortMenuComponent();
+render(siteMainElement, sortMenuComponent, RenderPosition.BEFOREEND);
+
 
 const statisticsComponent = new StatisticsComponent(moviesModel, moviesModel.getAllMovies());
 render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
 
+const loadingComponent = new LoadingComponent();
+render(siteMainElement, loadingComponent, RenderPosition.BEFOREEND);
 
-const pageController = new PageController(siteMainElement, moviesModel, api);
+const pageController = new PageController(siteMainElement, moviesModel, api, sortMenuComponent, loadingComponent);
 statisticsComponent.hide();
 
 // Переключение между экранами Статистики и Фильмов
@@ -31,10 +38,18 @@ filterController.setScreenChangeHandler((activeFilter) => {
     case FilterType.STATS:
       pageController.hide();
       statisticsComponent.show();
+
+      if (moviesModel.getAllMovies().length === 0) {
+        remove(loadingComponent);
+      }
       break;
     default:
       statisticsComponent.hide();
       pageController.show();
+
+      if (moviesModel.getAllMovies().length === 0) {
+        render(siteMainElement, loadingComponent, RenderPosition.BEFOREEND);
+      }
       break;
   }
 });

@@ -2,7 +2,7 @@ import ProfileRatingComponent from '../components/profile-rating.js';
 import NoMoviesComponent from '../components/no-movies.js';
 import FilmsListComponent from '../components/films-list.js';
 import LoadMoreButtonComponent from '../components/load-more-button.js';
-import SortMenuComponent, {SortType} from '../components/sort-menu.js';
+import {SortType} from '../components/sort-menu.js';
 import MovieController from './movie-controller.js';
 import {ZERO, ONE, Feature, TagName} from '../const.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
@@ -19,10 +19,12 @@ const renderCards = (container, cards, dataChangeHandler, viewChangeHandler) => 
 };
 
 export default class PageController {
-  constructor(container, moviesModel, api) {
+  constructor(container, moviesModel, api, sortMenuComponent, loadingComponent) {
     this._container = container;
     this._moviesModel = moviesModel;
     this._api = api;
+    this._sortMenuComponent = sortMenuComponent;
+    this._loadingComponent = loadingComponent;
 
     this._SHOWING_CARDS_COUNT_ON_START = 5;
     this._SHOWING_CARDS_COUNT_BY_BUTTON = 5;
@@ -36,7 +38,6 @@ export default class PageController {
     this._noMoviesComponent = new NoMoviesComponent();
     this._filmsListComponent = new FilmsListComponent();
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
-    this._sortMenuComponent = new SortMenuComponent();
 
     this._dataChangeHandler = this._dataChangeHandler.bind(this);
     this._viewChangeHandler = this._viewChangeHandler.bind(this);
@@ -76,6 +77,8 @@ export default class PageController {
   }
 
   render() {
+    remove(this._loadingComponent);
+
     const movies = this._moviesModel.getMovies();
     const isNoMovies = this._moviesModel.getMovies().length === ZERO;
 
@@ -88,7 +91,6 @@ export default class PageController {
     }
 
 
-    render(this._container, this._sortMenuComponent, RenderPosition.BEFOREEND);
     render(this._container, this._filmsListComponent, RenderPosition.BEFOREEND);
     this._filmsListElements = this._filmsListComponent.getElement().querySelectorAll(`.films-list__container`);
 
@@ -264,6 +266,10 @@ export default class PageController {
 
   // Сортировка фильмов в зависимости от выбранного типа
   _sortTypeChangeHandler(sortType, isUpdate) {
+
+    if (this._moviesModel.getAllMovies().length === ZERO) {
+      return;
+    }
 
     let sortedFilms = [];
     const movies = this._moviesModel.getMovies();
