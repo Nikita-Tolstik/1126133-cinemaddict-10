@@ -142,14 +142,6 @@ export default class MovieController {
 
     // Выбор рейтинга
     this._filmPopupComponent.setClickRatingInputHandler((rating) => {
-      if (movie.userDetails.personalRating !== ZERO) {
-
-        [...document.querySelectorAll(`.film-details__user-rating-score input`)].forEach((input) => {
-          input.classList.add(`disabled`);
-        });
-
-        return;
-      }
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.personalRating = Number(rating);
@@ -227,6 +219,17 @@ export default class MovieController {
 
 
     }, 600);
+  }
+
+
+  rate() {
+
+    [...this._filmPopupComponent.getElement().querySelectorAll(`.film-details__user-rating-score label`)].forEach((element) => {
+      element.style.backgroundColor = `#d8d8d8`;
+    });
+
+    console.log(this._filmPopupComponent.getElement().querySelector(`.film-details__user-rating-score input:checked + label`).style.backgroundColor = `red`);
+    // this._filmPopupComponent.getElement().querySelector(`.film-details__user-rating-score input:checked`).style.backgroundColor = `red`;
   }
 }
 

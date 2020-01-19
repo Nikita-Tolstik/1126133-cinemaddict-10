@@ -175,6 +175,9 @@ export default class PageController {
             movieController.render(newMovieModel);
             this._updateMoviesList();
           }
+        })
+        .catch(() => {
+          movieController.rate();
         });
     }
   }
