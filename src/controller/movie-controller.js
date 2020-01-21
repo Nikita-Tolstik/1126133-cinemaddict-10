@@ -81,7 +81,7 @@ export default class MovieController {
       const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
-      newMovie.userDetails.personalRating = isWatchedMovie ? 0 : 0;
+      newMovie.userDetails.personalRating = ZERO;
       newMovie.userDetails.isWatched = !newMovie.userDetails.isWatched;
       newMovie.userDetails.watchedDate = isWatchedMovie ? new Date().toISOString(ZERO) : new Date().toISOString();
 
@@ -115,7 +115,7 @@ export default class MovieController {
       const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
-      newMovie.userDetails.personalRating = isWatchedMovie ? 0 : 0;
+      newMovie.userDetails.personalRating = ZERO;
       newMovie.userDetails.isWatched = !newMovie.userDetails.isWatched;
       newMovie.userDetails.watchedDate = isWatchedMovie ? new Date().toISOString(ZERO) : new Date().toISOString();
 

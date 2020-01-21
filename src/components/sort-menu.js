@@ -1,14 +1,13 @@
 import AbstractComponent from './abstract-component.js';
 import {TagName} from '../const.js';
 
+const ACTIVE_BUTTON_CLASS = `sort__button--active`;
 
 export const SortType = {
   DEFAULT: `default`,
   DATE: `date`,
   RATING: `rating`
 };
-
-const ACTIVE_BUTTON_CLASS = `sort__button--active`;
 
 const toggleClassSortType = (blockElement, element) => {
   blockElement.querySelector(`.${ACTIVE_BUTTON_CLASS}`).classList.remove(ACTIVE_BUTTON_CLASS);

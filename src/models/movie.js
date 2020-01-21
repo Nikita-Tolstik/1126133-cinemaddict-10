@@ -1,3 +1,5 @@
+import {ZERO} from '../const.js';
+
 export default class Movie {
   constructor(movieData) {
     this.filmInfo = {
@@ -44,7 +46,7 @@ export default class Movie {
         'writers': this.filmInfo.writers,
         'actors': this.filmInfo.actors,
         'release': {
-          'date': this.filmInfo.date ? new Date(this.filmInfo.date).toISOString() : new Date(0).toISOString(),
+          'date': this.filmInfo.date ? new Date(this.filmInfo.date).toISOString() : new Date(ZERO).toISOString(),
           'release_country': this.filmInfo.country
         },
         'runtime': this.filmInfo.time,

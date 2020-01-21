@@ -6,7 +6,7 @@ import FilterController from './controller/filter-controller.js';
 import PageController from './controller/page-controller.js';
 import {render, RenderPosition, remove} from './utils/render.js';
 import MoviesModel from './models/movies.js';
-import {FilterType, TagName} from './const.js';
+import {FilterType, TagName, ZERO} from './const.js';
 
 const AUTHORIZATION = `Basic djds7fsdfsdfsdfkdhs2d=_9fh=`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
@@ -39,7 +39,7 @@ filterController.setScreenChangeHandler((activeFilter) => {
       pageController.hide();
       statisticsComponent.show();
 
-      if (moviesModel.getAllMovies().length === 0) {
+      if (moviesModel.getAllMovies().length === ZERO) {
         remove(loadingComponent);
       }
       break;
@@ -47,7 +47,7 @@ filterController.setScreenChangeHandler((activeFilter) => {
       statisticsComponent.hide();
       pageController.show();
 
-      if (moviesModel.getAllMovies().length === 0) {
+      if (moviesModel.getAllMovies().length === ZERO) {
         render(siteMainElement, loadingComponent, RenderPosition.BEFOREEND);
       }
       break;

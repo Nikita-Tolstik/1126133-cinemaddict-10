@@ -10,8 +10,8 @@ export const KeyDown = {
 };
 
 export const Feature = {
-  comment: `commentUsers`,
-  rating: `rating`
+  COMMENT: `commentUsers`,
+  RATING: `rating`
 };
 
 export const FilterType = {

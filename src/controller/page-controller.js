@@ -7,6 +7,7 @@ import MovieController from './movie-controller.js';
 import {ZERO, ONE, TWO, Feature, TagName, ElementClass} from '../const.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 
+const TEXT_FOOTER = `movies inside`;
 
 // Отрисовка карточек
 const renderCards = (container, cards, dataChangeHandler, viewChangeHandler) => {
@@ -98,11 +99,11 @@ export default class PageController {
 
     // Отображение кол-ва фильмов
     const footerStatisticsElement = this._bodyElement.querySelector(`.footer__statistics p`);
-    footerStatisticsElement.textContent = `${movies.length} movies inside`;
+    footerStatisticsElement.textContent = `${movies.length} ${TEXT_FOOTER}`;
 
     // Отсортировка фильмов в блоки самые комментированные и рейтинговые
-    this._renderExtraFilmBlock(movies, Feature.rating, this._dataChangeHandler, this._viewChangeHandler);
-    this._renderExtraFilmBlock(movies, Feature.comment, this._dataChangeHandler, this._viewChangeHandler);
+    this._renderExtraFilmBlock(movies, Feature.RATING, this._dataChangeHandler, this._viewChangeHandler);
+    this._renderExtraFilmBlock(movies, Feature.COMMENT, this._dataChangeHandler, this._viewChangeHandler);
   }
 
   _removeMovies() {
@@ -193,8 +194,8 @@ export default class PageController {
     blockFilmElements[ONE].innerHTML = ``;
 
     // Отсортировка фильмов в блоки самые комментированные и рейтинговые
-    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.rating, this._dataChangeHandler, this._viewChangeHandler);
-    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.comment, this._dataChangeHandler, this._viewChangeHandler);
+    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.RATING, this._dataChangeHandler, this._viewChangeHandler);
+    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.COMMENT, this._dataChangeHandler, this._viewChangeHandler);
 
     // обновление звания пользователя при изменении списка просмотренных фильмов
     this._profileRatingComponent.rerender();
@@ -216,11 +217,11 @@ export default class PageController {
     let blockElement = null;
 
     switch (feature) {
-      case Feature.comment:
+      case Feature.COMMENT:
         extraElement = extraFilmElement[ONE];
         blockElement = blockFilmElements[TWO];
         break;
-      case Feature.rating:
+      case Feature.RATING:
         extraElement = extraFilmElement[ZERO];
         blockElement = blockFilmElements[ONE];
     }
