@@ -1,9 +1,19 @@
 import CardFilmComponent from '../components/card-film.js';
 import FilmDetailsPopupComponent from '../components/film-details.js';
 import MovieModel from '../models/movie.js';
-import {KeyDown, TagName, ZERO} from '../const.js';
+import {KeyDown, TagName, ZERO, ElementClass} from '../const.js';
 import {render, RenderPosition, removePopup, replace} from '../utils/render.js';
 
+
+const RED_COLOR = `red`;
+const TEXT_DELETE = `Delete`;
+const STYLE_BORDER_COMMENT = `3px solid crimson`;
+const SHAKE_CLASS = `shake`;
+
+const TimeAnimation = {
+  MIN: 600,
+  MAX: 1000
+};
 
 const Mode = {
   DEFAULT: `default`,
@@ -204,32 +214,32 @@ export default class MovieController {
 
   catchAddCommentError() {
     this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).disabled = false;
-    this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).style.border = `3px solid crimson`;
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).style.border = STYLE_BORDER_COMMENT;
   }
 
   catchDeleteCommentError() {
-    this._filmPopupComponent.getElement().querySelector(`.film-details__comments-list .delete button`).textContent = `Delete`;
-    this._filmPopupComponent.getElement().querySelector(`.film-details__comments-list .delete button`).disabled = false;
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comments-list .${ElementClass.DELETE} button`).textContent = TEXT_DELETE;
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comments-list .${ElementClass.DELETE} button`).disabled = false;
   }
 
-  shake() {
-    this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).style.animation = `shake ${600 / 1000}s`;
-    setTimeout(() => {
-      this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).style.animation = ``;
+  catchRatingError() {
+    if (this._filmPopupComponent.getElement().querySelector(`.form-details__middle-container`)) {
 
-
-    }, 600);
+      this._filmPopupComponent.setColorScore(RED_COLOR);
+      this._filmPopupComponent.setDisableScore(false);
+    }
   }
 
+  shake(classElement) {
 
-  rate() {
+    if (this._filmPopupComponent.getElement().querySelector(`.film-details__${classElement}`)) {
 
-    [...this._filmPopupComponent.getElement().querySelectorAll(`.film-details__user-rating-score label`)].forEach((element) => {
-      element.style.backgroundColor = `#d8d8d8`;
-    });
+      this._filmPopupComponent.getElement().querySelector(`.film-details__${classElement}`).style.animation = `${SHAKE_CLASS} ${TimeAnimation.MIN / TimeAnimation.MAX}s`;
 
-    console.log(this._filmPopupComponent.getElement().querySelector(`.film-details__user-rating-score input:checked + label`).style.backgroundColor = ``);
-    //  this._filmPopupComponent.getElement().querySelector(`.film-details__user-rating-score input:checked`).style.backgroundColor = `red`;
+      setTimeout(() => {
+        this._filmPopupComponent.getElement().querySelector(`.film-details__${classElement}`).style.animation = ``;
+      }, TimeAnimation.MIN);
+    }
   }
 }
 

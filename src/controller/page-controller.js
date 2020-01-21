@@ -4,7 +4,7 @@ import FilmsListComponent from '../components/films-list.js';
 import LoadMoreButtonComponent from '../components/load-more-button.js';
 import {SortType} from '../components/sort-menu.js';
 import MovieController from './movie-controller.js';
-import {ZERO, ONE, Feature, TagName} from '../const.js';
+import {ZERO, ONE, TWO, Feature, TagName, ElementClass} from '../const.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 
 
@@ -28,7 +28,6 @@ export default class PageController {
 
     this._SHOWING_CARDS_COUNT_ON_START = 5;
     this._SHOWING_CARDS_COUNT_BY_BUTTON = 5;
-    this._TWO = 2;
 
 
     this._showedMovieControllers = [];
@@ -161,7 +160,7 @@ export default class PageController {
         .catch(() => {
 
           movieController.catchAddCommentError();
-          movieController.shake();
+          movieController.shake(ElementClass.COMMENT);
         });
 
     } else { // Просто обновление данных фильма
@@ -177,7 +176,8 @@ export default class PageController {
           }
         })
         .catch(() => {
-          movieController.rate();
+          movieController.catchRatingError();
+          movieController.shake(ElementClass.RATING);
         });
     }
   }
@@ -189,7 +189,7 @@ export default class PageController {
     this._sortTypeChangeHandler(this._sortMenuComponent.getElement().querySelector(`.sort__button--active`).dataset.sortType, true);
 
     const blockFilmElements = document.querySelectorAll(`.films-list__container`);
-    blockFilmElements[this._TWO].innerHTML = ``;
+    blockFilmElements[TWO].innerHTML = ``;
     blockFilmElements[ONE].innerHTML = ``;
 
     // Отсортировка фильмов в блоки самые комментированные и рейтинговые
@@ -218,7 +218,7 @@ export default class PageController {
     switch (feature) {
       case Feature.comment:
         extraElement = extraFilmElement[ONE];
-        blockElement = blockFilmElements[this._TWO];
+        blockElement = blockFilmElements[TWO];
         break;
       case Feature.rating:
         extraElement = extraFilmElement[ZERO];
@@ -253,7 +253,7 @@ export default class PageController {
 
         renderCards(blockElement, sameCards, dataChangeHandler, viewChangeHandler);
       } else {
-        renderCards(blockElement, sortCards.slice(ZERO, this._TWO), dataChangeHandler, viewChangeHandler);
+        renderCards(blockElement, sortCards.slice(ZERO, TWO), dataChangeHandler, viewChangeHandler);
       }
 
     } else {
