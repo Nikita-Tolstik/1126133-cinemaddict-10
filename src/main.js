@@ -8,7 +8,7 @@ import {render, RenderPosition, remove} from './utils/render.js';
 import MoviesModel from './models/movies.js';
 import {FilterType, TagName} from './const.js';
 
-const AUTHORIZATION = `Basic djds7395jsdls34kdhs2d=_9fh=`;
+const AUTHORIZATION = `Basic djds7fsdfsdfsdfkdhs2d=_9fh=`;
 const END_POINT = `https://htmlacademy-es-10.appspot.com/cinemaddict`;
 
 const api = new API(END_POINT, AUTHORIZATION);
@@ -23,7 +23,7 @@ const sortMenuComponent = new SortMenuComponent();
 render(siteMainElement, sortMenuComponent, RenderPosition.BEFOREEND);
 
 
-const statisticsComponent = new StatisticsComponent(moviesModel, moviesModel.getAllMovies());
+const statisticsComponent = new StatisticsComponent(moviesModel);
 render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
 
 const loadingComponent = new LoadingComponent();
