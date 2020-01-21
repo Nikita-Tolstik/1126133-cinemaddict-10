@@ -228,8 +228,8 @@ export default class MovieController {
       element.style.backgroundColor = `#d8d8d8`;
     });
 
-    console.log(this._filmPopupComponent.getElement().querySelector(`.film-details__user-rating-score input:checked + label`).style.backgroundColor = `red`);
-    // this._filmPopupComponent.getElement().querySelector(`.film-details__user-rating-score input:checked`).style.backgroundColor = `red`;
+    console.log(this._filmPopupComponent.getElement().querySelector(`.film-details__user-rating-score input:checked + label`).style.backgroundColor = ``);
+    //  this._filmPopupComponent.getElement().querySelector(`.film-details__user-rating-score input:checked`).style.backgroundColor = `red`;
   }
 }
 
