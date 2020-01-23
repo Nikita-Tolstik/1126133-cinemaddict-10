@@ -45,3 +45,9 @@ export const ElementClass = {
   COMMENT: `comment-input`,
   RATING: `user-rating-score`
 };
+
+export const SortType = {
+  DEFAULT: `default`,
+  DATE: `date`,
+  RATING: `rating`
+};

@@ -208,31 +208,6 @@ export default class MovieController {
     }
   }
 
-  _switchPopupToCard() {
-
-    document.removeEventListener(`keydown`, this._escKeyDownHandler);
-
-    this._filmPopupComponent.resetSmile();
-
-    removePopup(this._filmPopupComponent);
-    this._mode = Mode.DEFAULT;
-  }
-
-  _switchCardToPopup() {
-    this._viewChangeHandler();
-
-    render(this._bodyElement, this._filmPopupComponent, RenderPosition.BEFOREEND);
-    this._mode = Mode.POPUP;
-  }
-
-  _escKeyDownHandler(evt) {
-    const isEscDown = evt.key === KeyDown.ESCAPE || evt.key === KeyDown.ESC;
-
-    if (isEscDown) {
-      this._switchPopupToCard();
-    }
-  }
-
   catchAddCommentError() {
     this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).disabled = false;
     this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).style.border = STYLE_BORDER_COMMENT;
@@ -260,6 +235,31 @@ export default class MovieController {
       setTimeout(() => {
         this._filmPopupComponent.getElement().querySelector(`.film-details__${classElement}`).style.animation = ``;
       }, TimeAnimation.MIN);
+    }
+  }
+
+  _switchPopupToCard() {
+
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
+
+    this._filmPopupComponent.resetSmile();
+
+    removePopup(this._filmPopupComponent);
+    this._mode = Mode.DEFAULT;
+  }
+
+  _switchCardToPopup() {
+    this._viewChangeHandler();
+
+    render(this._bodyElement, this._filmPopupComponent, RenderPosition.BEFOREEND);
+    this._mode = Mode.POPUP;
+  }
+
+  _escKeyDownHandler(evt) {
+    const isEscDown = evt.key === KeyDown.ESCAPE || evt.key === KeyDown.ESC;
+
+    if (isEscDown) {
+      this._switchPopupToCard();
     }
   }
 }

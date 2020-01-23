@@ -2,9 +2,8 @@ import ProfileRatingComponent from '../components/profile-rating.js';
 import NoMoviesComponent from '../components/no-movies.js';
 import FilmsListComponent from '../components/films-list.js';
 import LoadMoreButtonComponent from '../components/load-more-button.js';
-import {SortType} from '../components/sort-menu.js';
 import MovieController from './movie-controller.js';
-import {ZERO, ONE, TWO, Feature, TagName, ElementClass} from '../const.js';
+import {ZERO, ONE, TWO, Feature, TagName, ElementClass, SortType} from '../const.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 
 const TEXT_FOOTER = `movies inside`;

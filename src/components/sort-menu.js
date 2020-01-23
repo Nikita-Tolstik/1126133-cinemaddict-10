@@ -1,13 +1,7 @@
 import AbstractComponent from './abstract-component.js';
-import {TagName} from '../const.js';
+import {TagName, SortType} from '../const.js';
 
 const ACTIVE_BUTTON_CLASS = `sort__button--active`;
-
-export const SortType = {
-  DEFAULT: `default`,
-  DATE: `date`,
-  RATING: `rating`
-};
 
 const toggleClassSortType = (blockElement, element) => {
   blockElement.querySelector(`.${ACTIVE_BUTTON_CLASS}`).classList.remove(ACTIVE_BUTTON_CLASS);
@@ -26,7 +20,6 @@ const createSortMenuTemplate = () => {
   );
 };
 
-
 export default class SortMenu extends AbstractComponent {
   constructor() {
     super();
@@ -36,6 +29,11 @@ export default class SortMenu extends AbstractComponent {
 
   getTemplate() {
     return createSortMenuTemplate();
+  }
+
+  resetSortType(blockElement, element) {
+    toggleClassSortType(blockElement, element);
+    this._currentSortType = SortType.DEFAULT;
   }
 
   setSortTypeChangeHandler(handler) {
@@ -60,10 +58,5 @@ export default class SortMenu extends AbstractComponent {
       handler(this._currentSortType);
 
     });
-  }
-
-  resetSortType(blockElement, element) {
-    toggleClassSortType(blockElement, element);
-    this._currentSortType = SortType.DEFAULT;
   }
 }

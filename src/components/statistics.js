@@ -1,4 +1,4 @@
-import AbstractSmartComponent from './smart-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {getGeneralTimeMovies, getTimeFilm, valuesComparator, getRating, getDifferenceDate} from '../utils/common.js';
 import {getWatchedMovies} from '../utils/filter.js';
 import {ZERO, ONE, SymbolName} from '../const.js';
@@ -278,6 +278,18 @@ export default class Statistics extends AbstractSmartComponent {
     this.rerender(this._moviesModel.getAllMovies());
   }
 
+  recoveryListeners() {
+    this._subscribeOnEvents();
+  }
+
+  rerender(movies) {
+    this._movies = movies;
+
+    super.rerender();
+
+    this._renderChart();
+  }
+
   _renderChart() {
     const element = this.getElement();
 
@@ -291,18 +303,6 @@ export default class Statistics extends AbstractSmartComponent {
       this._genresChart.destroy();
       this._genresChart = null;
     }
-  }
-
-  rerender(movies) {
-    this._movies = movies;
-
-    super.rerender();
-
-    this._renderChart();
-  }
-
-  recoveryListeners() {
-    this._subscribeOnEvents();
   }
 
   _subscribeOnEvents() {
@@ -338,5 +338,3 @@ export default class Statistics extends AbstractSmartComponent {
     });
   }
 }
-
-

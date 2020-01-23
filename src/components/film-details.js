@@ -1,4 +1,4 @@
-import AbstractSmartComponent from './smart-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {ONE, FilterType, TagName, ZERO, ElementClass, KeyDown} from '../const.js';
 import {getTimeFilm, formatReleaseDate, formatCommentDate} from '../utils/common.js';
 import he from 'he';
@@ -349,6 +349,51 @@ export default class FilmDetails extends AbstractSmartComponent {
     return new FormData(form);
   }
 
+  setDisableScore(isDisabled) {
+    [...this.getElement().querySelectorAll(`.film-details__user-rating-score input`)].forEach((input) => {
+      input.disabled = isDisabled;
+    });
+  }
+
+  setColorScore(activeColor) {
+
+    [...this.getElement().querySelectorAll(`.film-details__user-rating-score label`)].forEach((element) => {
+      element.style.backgroundColor = COLOR_NO_ACTIVE;
+    });
+
+    this.getElement().querySelector(`.film-details__user-rating-score input:checked + label`).style.backgroundColor = activeColor;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.film-details__emoji-list`)
+      .addEventListener(`change`, (evt) => {
+        evt.preventDefault();
+
+        switch (evt.target.value) {
+          case FacesEmoji.SMILE:
+            this._emojiImage = FacesEmoji.SMILE;
+            break;
+          case FacesEmoji.SLEEPING:
+            this._emojiImage = FacesEmoji.SLEEPING;
+            break;
+          case FacesEmoji.PUKE:
+            this._emojiImage = FacesEmoji.PUKE;
+            break;
+          case FacesEmoji.ANGRY:
+            this._emojiImage = FacesEmoji.ANGRY;
+            break;
+        }
+
+        if (this._emojiImage) {
+
+          this._isEmoji = true;
+          this.rerender();
+        }
+      });
+  }
+
   setClickCloseButtonPopupHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
@@ -447,50 +492,4 @@ export default class FilmDetails extends AbstractSmartComponent {
 
     this._undoButtonHandler = handler;
   }
-
-  setDisableScore(isDisabled) {
-    [...this.getElement().querySelectorAll(`.film-details__user-rating-score input`)].forEach((input) => {
-      input.disabled = isDisabled;
-    });
-  }
-
-  setColorScore(activeColor) {
-
-    [...this.getElement().querySelectorAll(`.film-details__user-rating-score label`)].forEach((element) => {
-      element.style.backgroundColor = COLOR_NO_ACTIVE;
-    });
-
-    this.getElement().querySelector(`.film-details__user-rating-score input:checked + label`).style.backgroundColor = activeColor;
-  }
-
-  _subscribeOnEvents() {
-    const element = this.getElement();
-
-    element.querySelector(`.film-details__emoji-list`)
-      .addEventListener(`change`, (evt) => {
-        evt.preventDefault();
-
-        switch (evt.target.value) {
-          case FacesEmoji.SMILE:
-            this._emojiImage = FacesEmoji.SMILE;
-            break;
-          case FacesEmoji.SLEEPING:
-            this._emojiImage = FacesEmoji.SLEEPING;
-            break;
-          case FacesEmoji.PUKE:
-            this._emojiImage = FacesEmoji.PUKE;
-            break;
-          case FacesEmoji.ANGRY:
-            this._emojiImage = FacesEmoji.ANGRY;
-            break;
-        }
-
-        if (this._emojiImage) {
-
-          this._isEmoji = true;
-          this.rerender();
-        }
-      });
-  }
 }
-

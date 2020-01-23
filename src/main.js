@@ -16,8 +16,10 @@ const moviesModel = new MoviesModel();
 
 
 const siteMainElement = document.querySelector(`.${TagName.MAIN}`);
+
 const filterController = new FilterController(siteMainElement, moviesModel);
 filterController.render();
+
 
 const sortMenuComponent = new SortMenuComponent();
 render(siteMainElement, sortMenuComponent, RenderPosition.BEFOREEND);
@@ -26,8 +28,10 @@ render(siteMainElement, sortMenuComponent, RenderPosition.BEFOREEND);
 const statisticsComponent = new StatisticsComponent(moviesModel);
 render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
 
+
 const loadingComponent = new LoadingComponent();
 render(siteMainElement, loadingComponent, RenderPosition.BEFOREEND);
+
 
 const pageController = new PageController(siteMainElement, moviesModel, api, sortMenuComponent, loadingComponent);
 statisticsComponent.hide();
