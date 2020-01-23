@@ -141,24 +141,29 @@ const getSortedGenres = (movies) => {
     return allGenres.push(...movie.filmInfo.genres);
   });
 
-  const arrayGenres = Array.from(new Set(allGenres));
+  const typeGenres = Array.from(new Set(allGenres));
 
-  const quantityGenres = [];
 
-  arrayGenres.forEach((mainGenre) => {
+  const quantityGenre = allGenres.reduce((tally, genre) => {
 
-    const filterGenres = allGenres.filter((genreSame) => {
-      return mainGenre === genreSame;
-    });
+    if (!tally[genre]) {
+      tally[genre] = ONE;
+    } else {
+      tally[genre] = tally[genre] + ONE;
+    }
+    return tally;
+  }, {});
 
-    return quantityGenres.push({
-      genre: mainGenre,
-      quantity: filterGenres.length
-    });
+
+  const genres = typeGenres.map((nameGenre) => {
+    return {
+      genre: nameGenre,
+      quantity: quantityGenre[nameGenre]
+    };
   });
 
 
-  const sortGenres = quantityGenres.sort((a, b) => {
+  const sortGenres = genres.sort((a, b) => {
     let difference = b.quantity - a.quantity;
 
     if (difference === ZERO) {
