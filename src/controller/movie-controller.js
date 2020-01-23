@@ -1,10 +1,19 @@
 import CardFilmComponent from '../components/card-film.js';
 import FilmDetailsPopupComponent from '../components/film-details.js';
 import MovieModel from '../models/movie.js';
-import {KeyDown, TagName, ZERO} from '../const.js';
+import {KeyDown, TagName, ZERO, ElementClass} from '../const.js';
 import {render, RenderPosition, removePopup, replace} from '../utils/render.js';
-import clonedeep from 'lodash.clonedeep';
 
+
+const RED_COLOR = `red`;
+const TEXT_DELETE = `Delete`;
+const STYLE_BORDER_COMMENT = `3px solid crimson`;
+const SHAKE_CLASS = `shake`;
+
+const TimeAnimation = {
+  MIN: 600,
+  MAX: 1000
+};
 
 const Mode = {
   DEFAULT: `default`,
@@ -60,9 +69,14 @@ export default class MovieController {
 
     // Метод попапа - обработчик события клика на Watchlist
     this._filmPopupComponent.setWatchlistInputClickHandler(() => {
+      const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isWatchlist = !newMovie.userDetails.isWatchlist;
+
+      if (!isWatchedMovie) {
+        newMovie.userDetails.watchedDate = new Date().toISOString(ZERO);
+      }
 
       this._dataChangeHandler(this, movie, newMovie);
     });
@@ -72,7 +86,7 @@ export default class MovieController {
       const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
-      newMovie.userDetails.personalRating = isWatchedMovie ? 0 : 0;
+      newMovie.userDetails.personalRating = ZERO;
       newMovie.userDetails.isWatched = !newMovie.userDetails.isWatched;
       newMovie.userDetails.watchedDate = isWatchedMovie ? new Date().toISOString(ZERO) : new Date().toISOString();
 
@@ -81,9 +95,15 @@ export default class MovieController {
 
     // Метод попапа - обработчик события клика на Favorite
     this._filmPopupComponent.setFavoriteInputClickHandler(() => {
+      const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isFavorite = !newMovie.userDetails.isFavorite;
+
+
+      if (!isWatchedMovie) {
+        newMovie.userDetails.watchedDate = new Date().toISOString(ZERO);
+      }
 
       this._dataChangeHandler(this, movie, newMovie);
     });
@@ -92,9 +112,14 @@ export default class MovieController {
     // Метод карточки - обработчик события клика на Watchlist
     this._cardFilmComponent.setWatchlistButtonClickHandler((evt) => {
       evt.preventDefault();
+      const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isWatchlist = !newMovie.userDetails.isWatchlist;
+
+      if (!isWatchedMovie) {
+        newMovie.userDetails.watchedDate = new Date().toISOString(ZERO);
+      }
 
       this._dataChangeHandler(this, movie, newMovie);
     });
@@ -106,7 +131,7 @@ export default class MovieController {
       const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
-      newMovie.userDetails.personalRating = isWatchedMovie ? 0 : 0;
+      newMovie.userDetails.personalRating = ZERO;
       newMovie.userDetails.isWatched = !newMovie.userDetails.isWatched;
       newMovie.userDetails.watchedDate = isWatchedMovie ? new Date().toISOString(ZERO) : new Date().toISOString();
 
@@ -116,9 +141,14 @@ export default class MovieController {
     // Метод карточки - обработчик события клика Favorite
     this._cardFilmComponent.setFavoriteButtonClickHandler((evt) => {
       evt.preventDefault();
+      const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isFavorite = !newMovie.userDetails.isFavorite;
+
+      if (!isWatchedMovie) {
+        newMovie.userDetails.watchedDate = new Date().toISOString(ZERO);
+      }
 
       this._dataChangeHandler(this, movie, newMovie);
     });
@@ -133,32 +163,16 @@ export default class MovieController {
 
       const formData = this._filmPopupComponent.getFormData();
       const newComment = parseFormData(formData);
-      const cloneMovie = clonedeep(movie);
 
-      const id = {
-        id: cloneMovie.filmInfo.id,
-        author: `Nikita`,
-      };
 
-      const newComments = [Object.assign({}, id, newComment)];
-      const oldComments = cloneMovie.filmInfo.commentUsers;
-      const concatNewComments = [].concat(newComments, oldComments);
+      const newMovie = MovieModel.clone(movie);
+      newMovie.filmInfo.commentUsers = newComment;
 
-      cloneMovie.filmInfo.commentUsers = concatNewComments;
-
-      this._dataChangeHandler(this, null, clonedeep(cloneMovie));
+      this._dataChangeHandler(this, null, newMovie);
     });
 
     // Выбор рейтинга
     this._filmPopupComponent.setClickRatingInputHandler((rating) => {
-      if (movie.userDetails.personalRating !== ZERO) {
-
-        [...document.querySelectorAll(`.film-details__user-rating-score input`)].forEach((input) => {
-          input.classList.add(`disabled`);
-        });
-
-        return;
-      }
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.personalRating = Number(rating);
@@ -194,6 +208,36 @@ export default class MovieController {
     }
   }
 
+  catchAddCommentError() {
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).disabled = false;
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).style.border = STYLE_BORDER_COMMENT;
+  }
+
+  catchDeleteCommentError() {
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comments-list .${ElementClass.DELETE} button`).textContent = TEXT_DELETE;
+    this._filmPopupComponent.getElement().querySelector(`.film-details__comments-list .${ElementClass.DELETE} button`).disabled = false;
+  }
+
+  catchRatingError() {
+    if (this._filmPopupComponent.getElement().querySelector(`.form-details__middle-container`)) {
+
+      this._filmPopupComponent.setColorScore(RED_COLOR);
+      this._filmPopupComponent.setDisableScore(false);
+    }
+  }
+
+  shake(classElement) {
+
+    if (this._filmPopupComponent.getElement().querySelector(`.film-details__${classElement}`)) {
+
+      this._filmPopupComponent.getElement().querySelector(`.film-details__${classElement}`).style.animation = `${SHAKE_CLASS} ${TimeAnimation.MIN / TimeAnimation.MAX}s`;
+
+      setTimeout(() => {
+        this._filmPopupComponent.getElement().querySelector(`.film-details__${classElement}`).style.animation = ``;
+      }, TimeAnimation.MIN);
+    }
+  }
+
   _switchPopupToCard() {
 
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
@@ -219,3 +263,4 @@ export default class MovieController {
     }
   }
 }
+

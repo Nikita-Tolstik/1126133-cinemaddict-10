@@ -2,11 +2,11 @@ import ProfileRatingComponent from '../components/profile-rating.js';
 import NoMoviesComponent from '../components/no-movies.js';
 import FilmsListComponent from '../components/films-list.js';
 import LoadMoreButtonComponent from '../components/load-more-button.js';
-import SortMenuComponent, {SortType} from '../components/sort-menu.js';
 import MovieController from './movie-controller.js';
-import {ZERO, ONE, Feature, TagName} from '../const.js';
+import {ZERO, ONE, TWO, Feature, TagName, ElementClass, SortType} from '../const.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 
+const TEXT_FOOTER = `movies inside`;
 
 // Отрисовка карточек
 const renderCards = (container, cards, dataChangeHandler, viewChangeHandler) => {
@@ -19,16 +19,17 @@ const renderCards = (container, cards, dataChangeHandler, viewChangeHandler) => 
 };
 
 export default class PageController {
-  constructor(container, moviesModel, api) {
+  constructor(container, moviesModel, api, sortMenuComponent, loadingComponent) {
     this._container = container;
     this._moviesModel = moviesModel;
     this._api = api;
+    this._sortMenuComponent = sortMenuComponent;
+    this._loadingComponent = loadingComponent;
 
     this._SHOWING_CARDS_COUNT_ON_START = 5;
     this._SHOWING_CARDS_COUNT_BY_BUTTON = 5;
-    this._TWO = 2;
 
-
+    this._sortAllFilms = [];
     this._showedMovieControllers = [];
     this._showingMovieCount = this._SHOWING_CARDS_COUNT_ON_START;
 
@@ -36,7 +37,6 @@ export default class PageController {
     this._noMoviesComponent = new NoMoviesComponent();
     this._filmsListComponent = new FilmsListComponent();
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
-    this._sortMenuComponent = new SortMenuComponent();
 
     this._dataChangeHandler = this._dataChangeHandler.bind(this);
     this._viewChangeHandler = this._viewChangeHandler.bind(this);
@@ -76,6 +76,8 @@ export default class PageController {
   }
 
   render() {
+    remove(this._loadingComponent);
+
     const movies = this._moviesModel.getMovies();
     const isNoMovies = this._moviesModel.getMovies().length === ZERO;
 
@@ -88,7 +90,6 @@ export default class PageController {
     }
 
 
-    render(this._container, this._sortMenuComponent, RenderPosition.BEFOREEND);
     render(this._container, this._filmsListComponent, RenderPosition.BEFOREEND);
     this._filmsListElements = this._filmsListComponent.getElement().querySelectorAll(`.films-list__container`);
 
@@ -97,11 +98,11 @@ export default class PageController {
 
     // Отображение кол-ва фильмов
     const footerStatisticsElement = this._bodyElement.querySelector(`.footer__statistics p`);
-    footerStatisticsElement.textContent = `${movies.length} movies inside`;
+    footerStatisticsElement.textContent = `${movies.length} ${TEXT_FOOTER}`;
 
     // Отсортировка фильмов в блоки самые комментированные и рейтинговые
-    this._renderExtraFilmBlock(movies, Feature.rating, this._dataChangeHandler, this._viewChangeHandler);
-    this._renderExtraFilmBlock(movies, Feature.comment, this._dataChangeHandler, this._viewChangeHandler);
+    this._renderExtraFilmBlock(movies, Feature.RATING, this._dataChangeHandler, this._viewChangeHandler);
+    this._renderExtraFilmBlock(movies, Feature.COMMENT, this._dataChangeHandler, this._viewChangeHandler);
   }
 
   _removeMovies() {
@@ -116,30 +117,67 @@ export default class PageController {
   }
 
   // Реагирует на изменения Данных пользователем, отрисовывает новый компонент
-  _dataChangeHandler(movieController, oldData, newData) {
+  _dataChangeHandler(movieController, oldMovie, newMovie) {
 
-    if (newData === null) { // Удаление комментария
-      this._moviesModel.deleteComment(oldData.filmInfo.id);
-      this._updateMoviesList();
+    if (newMovie === null) { // Удаление комментария
+      const idComment = Number(document.querySelector(`.delete`).id);
 
-    } else if (oldData === null) { // Добавление комментария
-      const isSuccess = this._moviesModel.addComment(newData.filmInfo.id, newData);
-      if (isSuccess) {
-        movieController.render(newData);
-        this._updateMoviesList();
+      if (idComment) {
+        this._api.deleteComment(idComment)
+        .then((response) => {
+          if (response.ok) {
+            const isUpdateComment = this._moviesModel.deleteComment(oldMovie.filmInfo.id, idComment);
+
+            if (isUpdateComment) {
+              const isSuccess = this._moviesModel.updateMovies(oldMovie.filmInfo.id, oldMovie);
+
+              if (isSuccess) {
+                movieController.render(oldMovie);
+                this._updateMoviesList();
+              }
+            }
+          }
+        })
+        .catch(() => {
+
+          movieController.catchDeleteCommentError();
+        });
       }
+
+    } else if (oldMovie === null) { // Добавление комментария
+
+      this._api.createComment(newMovie.filmInfo.id, newMovie.filmInfo.commentUsers)
+        .then((newMovieModel) => {
+
+          newMovie.filmInfo.commentUsers = newMovieModel.comments;
+          const isSuccess = this._moviesModel.updateMovies(newMovie.filmInfo.id, newMovie);
+
+          if (isSuccess) {
+            movieController.render(newMovie);
+            this._updateMoviesList();
+          }
+        })
+        .catch(() => {
+
+          movieController.catchAddCommentError();
+          movieController.shake(ElementClass.COMMENT);
+        });
 
     } else { // Просто обновление данных фильма
 
-      this._api.updateMovie(oldData.filmInfo.id, newData)
+      this._api.updateMovie(oldMovie.filmInfo.id, newMovie)
         .then((newMovieModel) => {
-          newMovieModel.filmInfo.commentUsers = oldData.filmInfo.commentUsers;
-          const isSuccess = this._moviesModel.updateMovies(oldData.filmInfo.id, newMovieModel);
+          newMovieModel.filmInfo.commentUsers = oldMovie.filmInfo.commentUsers;
+          const isSuccess = this._moviesModel.updateMovies(oldMovie.filmInfo.id, newMovieModel);
 
           if (isSuccess) {
             movieController.render(newMovieModel);
             this._updateMoviesList();
           }
+        })
+        .catch(() => {
+          movieController.catchRatingError();
+          movieController.shake(ElementClass.RATING);
         });
     }
   }
@@ -151,12 +189,12 @@ export default class PageController {
     this._sortTypeChangeHandler(this._sortMenuComponent.getElement().querySelector(`.sort__button--active`).dataset.sortType, true);
 
     const blockFilmElements = document.querySelectorAll(`.films-list__container`);
-    blockFilmElements[this._TWO].innerHTML = ``;
+    blockFilmElements[TWO].innerHTML = ``;
     blockFilmElements[ONE].innerHTML = ``;
 
     // Отсортировка фильмов в блоки самые комментированные и рейтинговые
-    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.rating, this._dataChangeHandler, this._viewChangeHandler);
-    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.comment, this._dataChangeHandler, this._viewChangeHandler);
+    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.RATING, this._dataChangeHandler, this._viewChangeHandler);
+    this._renderExtraFilmBlock(this._moviesModel.getAllMovies(), Feature.COMMENT, this._dataChangeHandler, this._viewChangeHandler);
 
     // обновление звания пользователя при изменении списка просмотренных фильмов
     this._profileRatingComponent.rerender();
@@ -178,11 +216,11 @@ export default class PageController {
     let blockElement = null;
 
     switch (feature) {
-      case Feature.comment:
+      case Feature.COMMENT:
         extraElement = extraFilmElement[ONE];
-        blockElement = blockFilmElements[this._TWO];
+        blockElement = blockFilmElements[TWO];
         break;
-      case Feature.rating:
+      case Feature.RATING:
         extraElement = extraFilmElement[ZERO];
         blockElement = blockFilmElements[ONE];
     }
@@ -215,7 +253,7 @@ export default class PageController {
 
         renderCards(blockElement, sameCards, dataChangeHandler, viewChangeHandler);
       } else {
-        renderCards(blockElement, sortCards.slice(ZERO, this._TWO), dataChangeHandler, viewChangeHandler);
+        renderCards(blockElement, sortCards.slice(ZERO, TWO), dataChangeHandler, viewChangeHandler);
       }
 
     } else {
@@ -241,6 +279,10 @@ export default class PageController {
   // Сортировка фильмов в зависимости от выбранного типа
   _sortTypeChangeHandler(sortType, isUpdate) {
 
+    if (this._moviesModel.getAllMovies().length === ZERO) {
+      return;
+    }
+
     let sortedFilms = [];
     const movies = this._moviesModel.getMovies();
 
@@ -254,28 +296,30 @@ export default class PageController {
 
     switch (sortType) {
       case SortType.DATE:
-        sortedFilms = movies.slice().sort((a, b) => b.filmInfo.date - a.filmInfo.date);
+        this._sortAllFilms = movies.slice().sort((a, b) => b.filmInfo.date - a.filmInfo.date);
+        sortedFilms = this._sortAllFilms.slice(ZERO, quantity);
         break;
       case SortType.RATING:
-        sortedFilms = movies.slice().sort((a, b) => b.filmInfo.rating - a.filmInfo.rating);
+        this._sortAllFilms = movies.slice().sort((a, b) => b.filmInfo.rating - a.filmInfo.rating);
+        sortedFilms = this._sortAllFilms.slice(ZERO, quantity);
         break;
       case SortType.DEFAULT:
-        sortedFilms = movies.slice(ZERO, quantity);
+        this._sortAllFilms = movies;
+        sortedFilms = this._sortAllFilms.slice(ZERO, quantity);
         break;
     }
 
     this._removeMovies();
     this._renderMovies(sortedFilms);
 
-    if (sortType === SortType.DEFAULT) {
-      this._renderLoadMoreButton();
-    } else {
-      remove(this._loadMoreButtonComponent);
-    }
+    this._renderLoadMoreButton();
   }
 
   _loadMoreButtonClickHandler() {
-    const movies = this._moviesModel.getMovies();
+    if (this._sortAllFilms.length === ZERO) {
+      this._sortAllFilms = this._moviesModel.getMovies();
+    }
+    const movies = this._sortAllFilms;
     const prevMovieCount = this._showingMovieCount;
 
     this._showingMovieCount = this._showingMovieCount + this._SHOWING_CARDS_COUNT_BY_BUTTON;

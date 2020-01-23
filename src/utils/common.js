@@ -3,6 +3,7 @@ import moment from 'moment';
 
 const MINUTE = 60;
 const MINUS_ONE = -1;
+const DAYS = `days`;
 
 const NumberRating = {
   ZERO: 0,
@@ -89,6 +90,6 @@ export const getDifferenceDate = (date) => {
   const a = moment(new Date());
   const b = moment(date);
 
-  return a.diff(b, `days`, true);
+  return a.diff(b, DAYS, true);
 };
 

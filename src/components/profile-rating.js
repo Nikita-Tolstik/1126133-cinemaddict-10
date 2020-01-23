@@ -1,4 +1,4 @@
-import AbstractSmartComponent from './smart-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {getWatchedMovies} from '../utils/filter.js';
 import {getRating} from '../utils/common.js';
 
@@ -27,9 +27,9 @@ export default class ProfileRating extends AbstractSmartComponent {
     return createProfileRatingTemplate(this._moviesModel.getAllMovies());
   }
 
+  recoveryListeners() {}
+
   rerender() {
     super.rerender();
   }
-
-  recoveryListeners() {}
 }

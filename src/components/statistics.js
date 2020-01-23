@@ -1,4 +1,4 @@
-import AbstractSmartComponent from './smart-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {getGeneralTimeMovies, getTimeFilm, valuesComparator, getRating, getDifferenceDate} from '../utils/common.js';
 import {getWatchedMovies} from '../utils/filter.js';
 import {ZERO, ONE, SymbolName} from '../const.js';
@@ -146,17 +146,14 @@ const getSortedGenres = (movies) => {
   let quantityGenres = [];
 
   arrayGenres.forEach((mainGenre) => {
-    let index = ZERO;
 
-    allGenres.forEach((genreSame) => {
-      if (mainGenre === genreSame) {
-        index += ONE;
-      }
+    const filterGenres = allGenres.filter((genreSame) => {
+      return mainGenre === genreSame;
     });
 
     return quantityGenres.push({
       genre: mainGenre,
-      quantity: index,
+      quantity: filterGenres.length
     });
   });
 
@@ -258,12 +255,11 @@ const createStatisticsTemplate = (allMovies, sortedMovies, activeFilter) => {
 
 
 export default class Statistics extends AbstractSmartComponent {
-
-  constructor(moviesModel, movies) {
+  constructor(moviesModel) {
     super();
 
     this._moviesModel = moviesModel;
-    this._movies = movies;
+    this._movies = this._moviesModel.getAllMovies();
 
     this._genresChart = null;
 
@@ -282,6 +278,18 @@ export default class Statistics extends AbstractSmartComponent {
     this.rerender(this._moviesModel.getAllMovies());
   }
 
+  recoveryListeners() {
+    this._subscribeOnEvents();
+  }
+
+  rerender(movies) {
+    this._movies = movies;
+
+    super.rerender();
+
+    this._renderChart();
+  }
+
   _renderChart() {
     const element = this.getElement();
 
@@ -295,18 +303,6 @@ export default class Statistics extends AbstractSmartComponent {
       this._genresChart.destroy();
       this._genresChart = null;
     }
-  }
-
-  rerender(movies) {
-    this._movies = movies;
-
-    super.rerender();
-
-    this._renderChart();
-  }
-
-  recoveryListeners() {
-    this._subscribeOnEvents();
   }
 
   _subscribeOnEvents() {
@@ -342,5 +338,3 @@ export default class Statistics extends AbstractSmartComponent {
     });
   }
 }
-
-

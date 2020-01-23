@@ -1,14 +1,17 @@
 export const ZERO = 0;
 export const ONE = 1;
+export const TWO = 2;
 
 export const KeyDown = {
   ESC: `Esc`,
-  ESCAPE: `Escape`
+  ESCAPE: `Escape`,
+  ENT: `Ent`,
+  ENTER: `Enter`
 };
 
 export const Feature = {
-  comment: `commentUsers`,
-  rating: `rating`
+  COMMENT: `commentUsers`,
+  RATING: `rating`
 };
 
 export const FilterType = {
@@ -35,4 +38,16 @@ export const SymbolName = {
   MINUTE: `m`,
   LONG_DASH: `&mdash;`,
   THREE_DOTS: `&hellip;`
+};
+
+export const ElementClass = {
+  DELETE: `delete`,
+  COMMENT: `comment-input`,
+  RATING: `user-rating-score`
+};
+
+export const SortType = {
+  DEFAULT: `default`,
+  DATE: `date`,
+  RATING: `rating`
 };

@@ -1,8 +1,22 @@
-import AbstractSmartComponent from './smart-component.js';
-import {ONE, FilterType, TagName, ZERO} from '../const.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
+import {ONE, FilterType, TagName, ZERO, ElementClass, KeyDown} from '../const.js';
 import {getTimeFilm, formatReleaseDate, formatCommentDate} from '../utils/common.js';
 import he from 'he';
 
+const TEXT_DELETING = `Deleting…`;
+const COLOR_ACTIVE = `#ffe800`;
+const COLOR_NO_ACTIVE = `#d8d8d8`;
+const QUANTITY_SCORE = 9;
+
+const VariantGenre = {
+  ONE_GENRE: `Genre`,
+  MANY_GENRE: `Genres`
+};
+
+const StatusTemplate = {
+  CHECKED: `checked`,
+  DISABLED: `disabled`
+};
 
 const FacesEmoji = {
   SMILE: `smile`,
@@ -54,14 +68,32 @@ const generateCommentTemplate = (commentUser, idComment) => {
 const createButtonMarkup = (name, nameButton, isActive) => {
 
   return (
-    `<input type="checkbox" class="film-details__control-input visually-hidden" id=${name} name=${name} ${isActive ? `checked` : ``}>
+    `<input type="checkbox" class="film-details__control-input visually-hidden" id=${name} name=${name} ${isActive ? StatusTemplate.CHECKED : ``}>
     <label for=${name} class="film-details__control-label film-details__control-label--${name}">${nameButton}</label>`
   );
 
 };
 
+const createNumberRatingMarkup = (rating) => {
+
+
+  const templates = new Array(QUANTITY_SCORE).fill(``).map((it, i) => {
+    const mark = i + ONE;
+
+    return (`
+
+    <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="${mark}" id="rating-${mark}" ${rating === mark ? StatusTemplate.CHECKED : ``} ${rating !== ZERO ? StatusTemplate.DISABLED : ``}>
+  <label class="film-details__user-rating-label" for="rating-${mark}">${mark}</label>
+
+    `);
+  }).join(`\n`);
+
+  return templates;
+};
+
 const createRatingBlockMarkup = (isWatched, image, title, rating) => {
 
+  const markupRating = createNumberRatingMarkup(rating);
 
   return (isWatched ?
     `<div class="form-details__middle-container">
@@ -81,32 +113,8 @@ const createRatingBlockMarkup = (isWatched, image, title, rating) => {
           <p class="film-details__user-rating-feelings">How you feel it?</p>
 
           <div class="film-details__user-rating-score">
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="1" id="rating-1" ${rating === 1 ? `checked` : ``}>
-            <label class="film-details__user-rating-label" for="rating-1">1</label>
 
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="2" id="rating-2" ${rating === 2 ? `checked` : ``}>
-            <label class="film-details__user-rating-label" for="rating-2">2</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="3" id="rating-3" ${rating === 3 ? `checked` : ``}>
-            <label class="film-details__user-rating-label" for="rating-3">3</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="4" id="rating-4" ${rating === 4 ? `checked` : ``}>
-            <label class="film-details__user-rating-label" for="rating-4">4</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="5" id="rating-5" ${rating === 5 ? `checked` : ``}>
-            <label class="film-details__user-rating-label" for="rating-5">5</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="6" id="rating-6" ${rating === 6 ? `checked` : ``}>
-            <label class="film-details__user-rating-label" for="rating-6">6</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="7" id="rating-7" ${rating === 7 ? `checked` : ``}>
-            <label class="film-details__user-rating-label" for="rating-7">7</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="8" id="rating-8" ${rating === 8 ? `checked` : ``}>
-            <label class="film-details__user-rating-label" for="rating-8">8</label>
-
-            <input type="radio" name="score" class="film-details__user-rating-input visually-hidden" value="9" id="rating-9" ${rating === 9 ? `checked` : ``}>
-            <label class="film-details__user-rating-label" for="rating-9">9</label>
+            ${markupRating}
 
           </div>
         </section>
@@ -118,7 +126,6 @@ const createRatingBlockMarkup = (isWatched, image, title, rating) => {
 const createPersonalRatingMarkup = (isWatched, rating) => {
 
   return (isWatched && rating ? `<p class="film-details__user-rating">Your rate ${rating}</p>` : ``);
-
 };
 
 const createAddEmojiMarkup = (isEmoji, emojiImage) => {
@@ -151,7 +158,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
   const personalRatingMarkup = createPersonalRatingMarkup(isWatched, personalRating);
 
   const emojiComment = createAddEmojiMarkup(isEmoji, emojiImage);
-  const commentTemplate = commentUsers.map((it, i) => generateCommentTemplate(it, i)).join(`\n`);
+  const commentTemplate = commentUsers.map((it) => generateCommentTemplate(it, it.id)).join(`\n`);
 
 
   return (
@@ -209,7 +216,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
             <td class="film-details__cell">${country}</td>
           </tr>
           <tr class="film-details__row">
-            <td class="film-details__term">${isOneGenre ? `Genre` : `Genres`}</td>
+            <td class="film-details__term">${isOneGenre ? VariantGenre.ONE_GENRE : VariantGenre.MANY_GENRE}</td>
             <td class="film-details__cell">${genreTemplate}</td>
           </tr>
         </table>
@@ -249,22 +256,22 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
         </label>
 
         <div class="film-details__emoji-list">
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emojiImage === FacesEmoji.SMILE ? `checked` : ``}>
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emojiImage === FacesEmoji.SMILE ? StatusTemplate.CHECKED : ``}>
           <label class="film-details__emoji-label" for="emoji-smile">
             <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emojiImage === FacesEmoji.SLEEPING ? `checked` : ``}>
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emojiImage === FacesEmoji.SLEEPING ? StatusTemplate.CHECKED : ``}>
           <label class="film-details__emoji-label" for="emoji-sleeping">
             <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="puke" ${emojiImage === FacesEmoji.PUKE ? `checked` : ``}>
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="puke" ${emojiImage === FacesEmoji.PUKE ? StatusTemplate.CHECKED : ``}>
           <label class="film-details__emoji-label" for="emoji-gpuke">
             <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emojiImage === FacesEmoji.ANGRY ? `checked` : ``}>
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emojiImage === FacesEmoji.ANGRY ? StatusTemplate.CHECKED : ``}>
           <label class="film-details__emoji-label" for="emoji-angry">
             <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
           </label>
@@ -336,6 +343,57 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.rerender();
   }
 
+  getFormData() {
+    const form = this.getElement().querySelector(`form`);
+
+    return new FormData(form);
+  }
+
+  setDisableScore(isDisabled) {
+    [...this.getElement().querySelectorAll(`.film-details__user-rating-score input`)].forEach((input) => {
+      input.disabled = isDisabled;
+    });
+  }
+
+  setColorScore(activeColor) {
+
+    [...this.getElement().querySelectorAll(`.film-details__user-rating-score label`)].forEach((element) => {
+      element.style.backgroundColor = COLOR_NO_ACTIVE;
+    });
+
+    this.getElement().querySelector(`.film-details__user-rating-score input:checked + label`).style.backgroundColor = activeColor;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.film-details__emoji-list`)
+      .addEventListener(`change`, (evt) => {
+        evt.preventDefault();
+
+        switch (evt.target.value) {
+          case FacesEmoji.SMILE:
+            this._emojiImage = FacesEmoji.SMILE;
+            break;
+          case FacesEmoji.SLEEPING:
+            this._emojiImage = FacesEmoji.SLEEPING;
+            break;
+          case FacesEmoji.PUKE:
+            this._emojiImage = FacesEmoji.PUKE;
+            break;
+          case FacesEmoji.ANGRY:
+            this._emojiImage = FacesEmoji.ANGRY;
+            break;
+        }
+
+        if (this._emojiImage) {
+
+          this._isEmoji = true;
+          this.rerender();
+        }
+      });
+  }
+
   setClickCloseButtonPopupHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
@@ -373,20 +431,16 @@ export default class FilmDetails extends AbstractSmartComponent {
         return;
       }
 
+      evt.target.textContent = TEXT_DELETING;
+      evt.target.disabled = true;
+
       const elem = evt.target.closest(TagName.LI);
-      elem.classList.add(`delete`);
+      elem.classList.add(ElementClass.DELETE);
 
       handler();
-      this.rerender();
     });
 
     this._deleteCommentButtonHandler = handler;
-  }
-
-  getFormData() {
-    const form = this.getElement().querySelector(`form`);
-
-    return new FormData(form);
   }
 
   setFormSubmitHandler(handler) {
@@ -395,10 +449,11 @@ export default class FilmDetails extends AbstractSmartComponent {
 
       if (this.getElement().querySelector(`.film-details__add-emoji-label`).children.length !== ZERO && evt.target.value.length !== ZERO) {
 
+        if (evt.ctrlKey && (evt.key === KeyDown.ENTER || evt.key === KeyDown.ENT)) {
+          this.getElement().querySelector(`.film-details__comment-input`).style.border = ``;
 
-        if (evt.ctrlKey && (evt.key === `Enter` || evt.key === `Ent`)) {
           handler();
-          // this.getElement().querySelector(`form`).submit();
+          this.getElement().querySelector(`.film-details__comment-input`).disabled = true;
         }
       }
     });
@@ -414,6 +469,10 @@ export default class FilmDetails extends AbstractSmartComponent {
           evt.stopPropagation();
 
           const rating = this.getElement().querySelector(`.film-details__user-rating-score input:checked`).value;
+
+          this.setDisableScore(true);
+
+          this.setColorScore(COLOR_ACTIVE);
 
           handler(rating);
         });
@@ -433,35 +492,4 @@ export default class FilmDetails extends AbstractSmartComponent {
 
     this._undoButtonHandler = handler;
   }
-
-  _subscribeOnEvents() {
-    const element = this.getElement();
-
-    element.querySelector(`.film-details__emoji-list`)
-      .addEventListener(`change`, (evt) => {
-        evt.preventDefault();
-
-        switch (evt.target.value) {
-          case FacesEmoji.SMILE:
-            this._emojiImage = FacesEmoji.SMILE;
-            break;
-          case FacesEmoji.SLEEPING:
-            this._emojiImage = FacesEmoji.SLEEPING;
-            break;
-          case FacesEmoji.PUKE:
-            this._emojiImage = FacesEmoji.PUKE;
-            break;
-          case FacesEmoji.ANGRY:
-            this._emojiImage = FacesEmoji.ANGRY;
-            break;
-        }
-
-        if (this._emojiImage) {
-
-          this._isEmoji = true;
-          this.rerender();
-        }
-      });
-  }
 }
-
