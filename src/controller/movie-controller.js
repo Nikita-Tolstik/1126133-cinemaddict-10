@@ -69,9 +69,14 @@ export default class MovieController {
 
     // Метод попапа - обработчик события клика на Watchlist
     this._filmPopupComponent.setWatchlistInputClickHandler(() => {
+      const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isWatchlist = !newMovie.userDetails.isWatchlist;
+
+      if (!isWatchedMovie) {
+        newMovie.userDetails.watchedDate = new Date().toISOString(ZERO);
+      }
 
       this._dataChangeHandler(this, movie, newMovie);
     });
@@ -90,9 +95,15 @@ export default class MovieController {
 
     // Метод попапа - обработчик события клика на Favorite
     this._filmPopupComponent.setFavoriteInputClickHandler(() => {
+      const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isFavorite = !newMovie.userDetails.isFavorite;
+
+
+      if (!isWatchedMovie) {
+        newMovie.userDetails.watchedDate = new Date().toISOString(ZERO);
+      }
 
       this._dataChangeHandler(this, movie, newMovie);
     });
@@ -101,9 +112,14 @@ export default class MovieController {
     // Метод карточки - обработчик события клика на Watchlist
     this._cardFilmComponent.setWatchlistButtonClickHandler((evt) => {
       evt.preventDefault();
+      const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isWatchlist = !newMovie.userDetails.isWatchlist;
+
+      if (!isWatchedMovie) {
+        newMovie.userDetails.watchedDate = new Date().toISOString(ZERO);
+      }
 
       this._dataChangeHandler(this, movie, newMovie);
     });
@@ -125,9 +141,14 @@ export default class MovieController {
     // Метод карточки - обработчик события клика Favorite
     this._cardFilmComponent.setFavoriteButtonClickHandler((evt) => {
       evt.preventDefault();
+      const isWatchedMovie = movie.userDetails.isWatched;
 
       const newMovie = MovieModel.clone(movie);
       newMovie.userDetails.isFavorite = !newMovie.userDetails.isFavorite;
+
+      if (!isWatchedMovie) {
+        newMovie.userDetails.watchedDate = new Date().toISOString(ZERO);
+      }
 
       this._dataChangeHandler(this, movie, newMovie);
     });

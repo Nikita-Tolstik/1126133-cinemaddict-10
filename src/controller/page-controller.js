@@ -30,7 +30,7 @@ export default class PageController {
     this._SHOWING_CARDS_COUNT_ON_START = 5;
     this._SHOWING_CARDS_COUNT_BY_BUTTON = 5;
 
-
+    this._sortAllFilms = [];
     this._showedMovieControllers = [];
     this._showingMovieCount = this._SHOWING_CARDS_COUNT_ON_START;
 
@@ -297,28 +297,30 @@ export default class PageController {
 
     switch (sortType) {
       case SortType.DATE:
-        sortedFilms = movies.slice().sort((a, b) => b.filmInfo.date - a.filmInfo.date);
+        this._sortAllFilms = movies.slice().sort((a, b) => b.filmInfo.date - a.filmInfo.date);
+        sortedFilms = this._sortAllFilms.slice(ZERO, quantity);
         break;
       case SortType.RATING:
-        sortedFilms = movies.slice().sort((a, b) => b.filmInfo.rating - a.filmInfo.rating);
+        this._sortAllFilms = movies.slice().sort((a, b) => b.filmInfo.rating - a.filmInfo.rating);
+        sortedFilms = this._sortAllFilms.slice(ZERO, quantity);
         break;
       case SortType.DEFAULT:
-        sortedFilms = movies.slice(ZERO, quantity);
+        this._sortAllFilms = movies;
+        sortedFilms = this._sortAllFilms.slice(ZERO, quantity);
         break;
     }
 
     this._removeMovies();
     this._renderMovies(sortedFilms);
 
-    if (sortType === SortType.DEFAULT) {
-      this._renderLoadMoreButton();
-    } else {
-      remove(this._loadMoreButtonComponent);
-    }
+    this._renderLoadMoreButton();
   }
 
   _loadMoreButtonClickHandler() {
-    const movies = this._moviesModel.getMovies();
+    if (this._sortAllFilms.length === ZERO) {
+      this._sortAllFilms = this._moviesModel.getMovies();
+    }
+    const movies = this._sortAllFilms;
     const prevMovieCount = this._showingMovieCount;
 
     this._showingMovieCount = this._showingMovieCount + this._SHOWING_CARDS_COUNT_BY_BUTTON;

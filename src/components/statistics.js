@@ -146,17 +146,14 @@ const getSortedGenres = (movies) => {
   let quantityGenres = [];
 
   arrayGenres.forEach((mainGenre) => {
-    let index = ZERO;
 
-    allGenres.forEach((genreSame) => {
-      if (mainGenre === genreSame) {
-        index += ONE;
-      }
+    const filterGenres = allGenres.filter((genreSame) => {
+      return mainGenre === genreSame;
     });
 
     return quantityGenres.push({
       genre: mainGenre,
-      quantity: index,
+      quantity: filterGenres.length
     });
   });
 
