@@ -211,6 +211,7 @@ export default class MovieController {
   catchAddCommentError() {
     this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).disabled = false;
     this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).style.border = STYLE_BORDER_COMMENT;
+    this._filmPopupComponent.setDisableEmoji(false);
   }
 
   catchDeleteCommentError() {
