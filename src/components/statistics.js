@@ -111,7 +111,7 @@ const renderGenresChart = (statisticCtx, movies) => {
 
 // Данные для чарт: кол-во фильмов
 const getQuantityForChart = (movies) => {
-  let values = [];
+  const values = [];
 
   movies.forEach((it) => {
     values.push(it.quantity);
@@ -135,7 +135,7 @@ const getSortedGenres = (movies) => {
 
   const watchedMovies = getWatchedMovies(movies.slice());
 
-  let allGenres = [];
+  const allGenres = [];
 
   watchedMovies.forEach((movie) => {
     return allGenres.push(...movie.filmInfo.genres);
@@ -143,7 +143,7 @@ const getSortedGenres = (movies) => {
 
   const arrayGenres = Array.from(new Set(allGenres));
 
-  let quantityGenres = [];
+  const quantityGenres = [];
 
   arrayGenres.forEach((mainGenre) => {
 

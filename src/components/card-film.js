@@ -85,7 +85,7 @@ export default class CardFilm extends AbstractComponent {
 
   setClickCardElementsHandler(handler) {
 
-    let cardElements = [];
+    const cardElements = [];
 
     cardElements.push(this.getElement().querySelector(`.film-card__poster`));
     cardElements.push(this.getElement().querySelector(`.film-card__title`));
