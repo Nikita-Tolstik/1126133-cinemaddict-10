@@ -63,7 +63,7 @@ api.getMovies()
   .then((movies) => {
     moviesModel.setMovies(movies);
 
-    const commentsPromisses = movies.map((movie) => {
+    const allComments = movies.map((movie) => {
 
       return api.getComments(movie.filmInfo.id)
         .then((comments) => {
@@ -71,7 +71,7 @@ api.getMovies()
         });
     });
 
-    Promise.all(commentsPromisses)
+    Promise.all(allComments)
       .then(() => {
 
         filterController.render();

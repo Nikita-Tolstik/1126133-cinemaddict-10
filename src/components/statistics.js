@@ -1,5 +1,5 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {getGeneralTimeMovies, getTimeFilm, valuesComparator, getRating, getDifferenceDate} from '../utils/common.js';
+import {getGeneralTimeMovies, getTimeFilm, getValuesComparator, getRating, getDifferenceDate} from '../utils/common.js';
 import {getWatchedMovies} from '../utils/filter.js';
 import {ZERO, ONE, SymbolName} from '../const.js';
 import Chart from 'chart.js';
@@ -167,7 +167,7 @@ const getSortedGenres = (movies) => {
     let difference = b.quantity - a.quantity;
 
     if (difference === ZERO) {
-      difference = valuesComparator(a.genre, b.genre);
+      difference = getValuesComparator(a.genre, b.genre);
     }
     return difference;
   });

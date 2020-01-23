@@ -57,7 +57,7 @@ export const getGeneralTimeMovies = (generalTime) => {
   };
 };
 
-export const valuesComparator = (left, right) => {
+export const getValuesComparator = (left, right) => {
   if (left > right) {
     return ONE;
   } else if (left < right) {
