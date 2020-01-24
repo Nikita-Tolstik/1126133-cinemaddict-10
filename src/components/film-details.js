@@ -1,12 +1,27 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {ONE, FilterType, TagName, ZERO, ElementClass, KeyDown} from '../const.js';
 import {getTimeFilm, formatReleaseDate, formatCommentDate} from '../utils/common.js';
+import {createElement} from '../utils/render.js';
 import he from 'he';
 
-const TEXT_DELETING = `Deleting…`;
-const COLOR_ACTIVE = `#ffe800`;
-const COLOR_NO_ACTIVE = `#d8d8d8`;
 const QUANTITY_SCORE = 9;
+const STYLE_BORDER_COMMENT = `3px solid crimson`;
+
+const TextButton = {
+  DELETING: `Deleting…`,
+  DELETE: `Delete`
+};
+
+const TimeAnimation = {
+  MIN: 600,
+  MAX: 1000
+};
+
+const Color = {
+  RED: `red`,
+  ACTIVE: `#ffe800`,
+  NO_ACTIVE: `#d8d8d8`
+};
 
 const VariantGenre = {
   ONE_GENRE: `Genre`,
@@ -140,7 +155,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
   const {title, originalTitle, image, age, rating, director, actors, writers, time, country, description, date, genres, commentUsers} = card.filmInfo;
   const {personalRating} = card.userDetails;
 
-  const {isWatchlist, isWatched, isFavorite, isEmoji, emojiImage} = options;
+  const {isWatchlist, isWatched, isFavorite} = options;
 
   const timeFilm = getTimeFilm(time);
   const genreTemplate = genres.length === ZERO ? `` : generateGenreTemplate(genres);
@@ -157,9 +172,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
   const ratingMarkup = createRatingBlockMarkup(isWatched, image, title, personalRating);
   const personalRatingMarkup = createPersonalRatingMarkup(isWatched, personalRating);
 
-  const emojiComment = createAddEmojiMarkup(isEmoji, emojiImage);
   const commentTemplate = commentUsers.map((it) => generateCommentTemplate(it, it.id)).join(`\n`);
-
 
   return (
     `<section class="film-details">
@@ -248,7 +261,7 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
 
       <div class="film-details__new-comment">
         <div for="add-emoji" class="film-details__add-emoji-label">
-        ${emojiComment}
+
         </div>
 
         <label class="film-details__comment-label">
@@ -256,22 +269,22 @@ const createFilmDetailsPopupTemplate = (card, options = {}) => {
         </label>
 
         <div class="film-details__emoji-list">
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile" ${emojiImage === FacesEmoji.SMILE ? StatusTemplate.CHECKED : ``}>
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile"}>
           <label class="film-details__emoji-label" for="emoji-smile">
             <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping" ${emojiImage === FacesEmoji.SLEEPING ? StatusTemplate.CHECKED : ``}>
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
           <label class="film-details__emoji-label" for="emoji-sleeping">
             <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="puke" ${emojiImage === FacesEmoji.PUKE ? StatusTemplate.CHECKED : ``}>
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-gpuke" value="puke">
           <label class="film-details__emoji-label" for="emoji-gpuke">
             <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
           </label>
 
-          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry" ${emojiImage === FacesEmoji.ANGRY ? StatusTemplate.CHECKED : ``}>
+          <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
           <label class="film-details__emoji-label" for="emoji-angry">
             <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
           </label>
@@ -313,9 +326,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     return createFilmDetailsPopupTemplate(this._card, {
       isWatchlist: this._isWatchlist,
       isWatched: this._isWatched,
-      isFavorite: this._isFavorite,
-      isEmoji: this._isEmoji,
-      emojiImage: this._emojiImage
+      isFavorite: this._isFavorite
     });
   }
 
@@ -355,13 +366,63 @@ export default class FilmDetails extends AbstractSmartComponent {
     });
   }
 
+  setDisableEmoji(isDisabled) {
+    [...this.getElement().querySelectorAll(`.film-details__emoji-list input`)].forEach((input) => {
+      input.disabled = isDisabled;
+    });
+  }
+
   setColorScore(activeColor) {
 
     [...this.getElement().querySelectorAll(`.film-details__user-rating-score label`)].forEach((element) => {
-      element.style.backgroundColor = COLOR_NO_ACTIVE;
+      element.style.backgroundColor = Color.NO_ACTIVE;
     });
 
     this.getElement().querySelector(`.film-details__user-rating-score input:checked + label`).style.backgroundColor = activeColor;
+  }
+
+  setAddCommentError() {
+    this.getElement().querySelector(`.film-details__comment-input`).disabled = false;
+    this.getElement().querySelector(`.film-details__comment-input`).style.border = STYLE_BORDER_COMMENT;
+  }
+
+  setDeleteCommentError() {
+    this.getElement().querySelector(`.film-details__comments-list .${ElementClass.DELETE} button`).textContent = TextButton.DELETE;
+    this.getElement().querySelector(`.film-details__comments-list .${ElementClass.DELETE} button`).disabled = false;
+  }
+
+  setRatingError() {
+    if (this.getElement().querySelector(`.form-details__middle-container`)) {
+
+      this.setColorScore(Color.RED);
+      this.setDisableScore(false);
+    }
+  }
+
+  setShake(classElement) {
+    if (this.getElement().querySelector(`.film-details__${classElement}`)) {
+
+      this.getElement().querySelector(`.film-details__${classElement}`).style.animation = `${ElementClass.SHAKE} ${TimeAnimation.MIN / TimeAnimation.MAX}s`;
+
+      setTimeout(() => {
+        this.getElement().querySelector(`.film-details__${classElement}`).style.animation = ``;
+      }, TimeAnimation.MIN);
+    }
+  }
+
+  _createEmojiMarkup(isEmoji, emojiImage) {
+
+    let emojiElement = this.getElement().querySelector(`.film-details__add-emoji-label img`);
+
+    if (emojiElement) {
+      emojiElement.remove();
+      emojiElement = null;
+    }
+
+    const container = this.getElement().querySelector(`.film-details__add-emoji-label`);
+    const emojiTemplate = createElement(createAddEmojiMarkup(isEmoji, emojiImage));
+
+    container.append(emojiTemplate);
   }
 
   _subscribeOnEvents() {
@@ -389,7 +450,7 @@ export default class FilmDetails extends AbstractSmartComponent {
         if (this._emojiImage) {
 
           this._isEmoji = true;
-          this.rerender();
+          this._createEmojiMarkup(this._isEmoji, this._emojiImage);
         }
       });
   }
@@ -431,7 +492,7 @@ export default class FilmDetails extends AbstractSmartComponent {
         return;
       }
 
-      evt.target.textContent = TEXT_DELETING;
+      evt.target.textContent = TextButton.DELETING;
       evt.target.disabled = true;
 
       const elem = evt.target.closest(TagName.LI);
@@ -454,6 +515,7 @@ export default class FilmDetails extends AbstractSmartComponent {
 
           handler();
           this.getElement().querySelector(`.film-details__comment-input`).disabled = true;
+          this.setDisableEmoji(true);
         }
       }
     });
@@ -472,7 +534,7 @@ export default class FilmDetails extends AbstractSmartComponent {
 
           this.setDisableScore(true);
 
-          this.setColorScore(COLOR_ACTIVE);
+          this.setColorScore(Color.ACTIVE);
 
           handler(rating);
         });

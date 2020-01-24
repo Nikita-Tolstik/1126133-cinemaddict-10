@@ -12,8 +12,7 @@ const Method = {
 
 const ResponseStatus = {
   SUCCESS: 200,
-  REDIRECTION: 300,
-  CLIENT_ERROR: 400,
+  REDIRECTION: 300
 };
 
 const checkStatus = (response) => {

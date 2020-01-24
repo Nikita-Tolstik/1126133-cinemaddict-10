@@ -23,14 +23,8 @@ const createButtonMarkup = (nameClass, nameButton, isActive = true) => {
 };
 
 const parseDescriptionLength = (description) => {
-  let formatDescription = null;
 
-  if (description.length > DESCRIPTION_LENGTH) {
-    formatDescription = `${description.slice(ZERO, DESCRIPTION_LENGTH_FORMAT)}`;
-
-  } else {
-    formatDescription = description;
-  }
+  const formatDescription = description.length > DESCRIPTION_LENGTH ? `${description.slice(ZERO, DESCRIPTION_LENGTH_FORMAT)}` : description;
 
   return formatDescription;
 };
@@ -85,7 +79,7 @@ export default class CardFilm extends AbstractComponent {
 
   setClickCardElementsHandler(handler) {
 
-    let cardElements = [];
+    const cardElements = [];
 
     cardElements.push(this.getElement().querySelector(`.film-card__poster`));
     cardElements.push(this.getElement().querySelector(`.film-card__title`));
