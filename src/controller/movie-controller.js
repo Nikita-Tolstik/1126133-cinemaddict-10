@@ -1,19 +1,9 @@
 import CardFilmComponent from '../components/card-film.js';
 import FilmDetailsPopupComponent from '../components/film-details.js';
 import MovieModel from '../models/movie.js';
-import {KeyDown, TagName, ZERO, ElementClass} from '../const.js';
+import {KeyDown, TagName, ZERO} from '../const.js';
 import {render, RenderPosition, removePopup, replace} from '../utils/render.js';
 
-
-const RED_COLOR = `red`;
-const TEXT_DELETE = `Delete`;
-const STYLE_BORDER_COMMENT = `3px solid crimson`;
-const SHAKE_CLASS = `shake`;
-
-const TimeAnimation = {
-  MIN: 600,
-  MAX: 1000
-};
 
 const Mode = {
   DEFAULT: `default`,
@@ -209,34 +199,21 @@ export default class MovieController {
   }
 
   catchAddCommentError() {
-    this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).disabled = false;
-    this._filmPopupComponent.getElement().querySelector(`.film-details__comment-input`).style.border = STYLE_BORDER_COMMENT;
+    this._filmPopupComponent.setAddCommentError();
     this._filmPopupComponent.setDisableEmoji(false);
   }
 
   catchDeleteCommentError() {
-    this._filmPopupComponent.getElement().querySelector(`.film-details__comments-list .${ElementClass.DELETE} button`).textContent = TEXT_DELETE;
-    this._filmPopupComponent.getElement().querySelector(`.film-details__comments-list .${ElementClass.DELETE} button`).disabled = false;
+    this._filmPopupComponent.setDeleteCommentError();
   }
 
   catchRatingError() {
-    if (this._filmPopupComponent.getElement().querySelector(`.form-details__middle-container`)) {
-
-      this._filmPopupComponent.setColorScore(RED_COLOR);
-      this._filmPopupComponent.setDisableScore(false);
-    }
+    this._filmPopupComponent.setRatingError();
   }
 
   shake(classElement) {
+    this._filmPopupComponent.setShake(classElement);
 
-    if (this._filmPopupComponent.getElement().querySelector(`.film-details__${classElement}`)) {
-
-      this._filmPopupComponent.getElement().querySelector(`.film-details__${classElement}`).style.animation = `${SHAKE_CLASS} ${TimeAnimation.MIN / TimeAnimation.MAX}s`;
-
-      setTimeout(() => {
-        this._filmPopupComponent.getElement().querySelector(`.film-details__${classElement}`).style.animation = ``;
-      }, TimeAnimation.MIN);
-    }
   }
 
   _switchPopupToCard() {

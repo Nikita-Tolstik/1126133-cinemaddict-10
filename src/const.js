@@ -43,7 +43,8 @@ export const SymbolName = {
 export const ElementClass = {
   DELETE: `delete`,
   COMMENT: `comment-input`,
-  RATING: `user-rating-score`
+  RATING: `user-rating-score`,
+  SHAKE: `shake`
 };
 
 export const SortType = {

@@ -4,10 +4,24 @@ import {getTimeFilm, formatReleaseDate, formatCommentDate} from '../utils/common
 import {createElement} from '../utils/render.js';
 import he from 'he';
 
-const TEXT_DELETING = `Deleting…`;
-const COLOR_ACTIVE = `#ffe800`;
-const COLOR_NO_ACTIVE = `#d8d8d8`;
 const QUANTITY_SCORE = 9;
+const STYLE_BORDER_COMMENT = `3px solid crimson`;
+
+const TextButton = {
+  DELETING: `Deleting…`,
+  DELETE: `Delete`
+};
+
+const TimeAnimation = {
+  MIN: 600,
+  MAX: 1000
+};
+
+const Color = {
+  RED: `red`,
+  ACTIVE: `#ffe800`,
+  NO_ACTIVE: `#d8d8d8`
+};
 
 const VariantGenre = {
   ONE_GENRE: `Genre`,
@@ -361,10 +375,39 @@ export default class FilmDetails extends AbstractSmartComponent {
   setColorScore(activeColor) {
 
     [...this.getElement().querySelectorAll(`.film-details__user-rating-score label`)].forEach((element) => {
-      element.style.backgroundColor = COLOR_NO_ACTIVE;
+      element.style.backgroundColor = Color.NO_ACTIVE;
     });
 
     this.getElement().querySelector(`.film-details__user-rating-score input:checked + label`).style.backgroundColor = activeColor;
+  }
+
+  setAddCommentError() {
+    this.getElement().querySelector(`.film-details__comment-input`).disabled = false;
+    this.getElement().querySelector(`.film-details__comment-input`).style.border = STYLE_BORDER_COMMENT;
+  }
+
+  setDeleteCommentError() {
+    this.getElement().querySelector(`.film-details__comments-list .${ElementClass.DELETE} button`).textContent = TextButton.DELETE;
+    this.getElement().querySelector(`.film-details__comments-list .${ElementClass.DELETE} button`).disabled = false;
+  }
+
+  setRatingError() {
+    if (this.getElement().querySelector(`.form-details__middle-container`)) {
+
+      this.setColorScore(Color.RED);
+      this.setDisableScore(false);
+    }
+  }
+
+  setShake(classElement) {
+    if (this.getElement().querySelector(`.film-details__${classElement}`)) {
+
+      this.getElement().querySelector(`.film-details__${classElement}`).style.animation = `${ElementClass.SHAKE} ${TimeAnimation.MIN / TimeAnimation.MAX}s`;
+
+      setTimeout(() => {
+        this.getElement().querySelector(`.film-details__${classElement}`).style.animation = ``;
+      }, TimeAnimation.MIN);
+    }
   }
 
   _createEmojiMarkup(isEmoji, emojiImage) {
@@ -449,7 +492,7 @@ export default class FilmDetails extends AbstractSmartComponent {
         return;
       }
 
-      evt.target.textContent = TEXT_DELETING;
+      evt.target.textContent = TextButton.DELETING;
       evt.target.disabled = true;
 
       const elem = evt.target.closest(TagName.LI);
@@ -491,7 +534,7 @@ export default class FilmDetails extends AbstractSmartComponent {
 
           this.setDisableScore(true);
 
-          this.setColorScore(COLOR_ACTIVE);
+          this.setColorScore(Color.ACTIVE);
 
           handler(rating);
         });
