@@ -170,7 +170,6 @@ export default class MovieController {
       this._dataChangeHandler(this, movie, newMovie);
     });
 
-    // Сброс рейтинга на кнопку Undo
     this._filmPopupComponent.setClickUndoButtonHandler(() => {
 
       if (movie.userDetails.personalRating === ZERO) {
